@@ -1,0 +1,32 @@
+using System.Windows.Media;
+
+namespace OCCMissionGoals.Models;
+
+/// <summary>
+/// 严重程度等级的统一文字描述和颜色。
+/// 五等：致命(红)、严重(橙)、一般(黄)、补丁(蓝)、更新(绿)
+/// </summary>
+public static class SeverityHelper
+{
+    public static string GetText(GoalSeverity s) => s switch
+    {
+        GoalSeverity.Fatal   => "致命",
+        GoalSeverity.Severe  => "严重",
+        GoalSeverity.General => "一般",
+        GoalSeverity.Patch   => "补丁",
+        GoalSeverity.Update  => "更新",
+        _                    => "未知"
+    };
+
+    public static Color GetColor(GoalSeverity s) => s switch
+    {
+        GoalSeverity.Fatal   => Color.FromRgb(0xE8, 0x3D, 0x3D), // 红
+        GoalSeverity.Severe  => Color.FromRgb(0xE8, 0x8D, 0x3D), // 橙
+        GoalSeverity.General => Color.FromRgb(0xE8, 0xD4, 0x3D), // 黄
+        GoalSeverity.Patch   => Color.FromRgb(0x3D, 0x9D, 0xE8), // 蓝
+        GoalSeverity.Update  => Color.FromRgb(0x4C, 0xAF, 0x50), // 绿
+        _                    => Color.FromRgb(0x8D, 0x8D, 0x8D)  // 灰
+    };
+
+    public static Brush GetBrush(GoalSeverity s) => new SolidColorBrush(GetColor(s));
+}

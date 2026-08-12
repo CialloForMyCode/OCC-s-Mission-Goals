@@ -1,0 +1,194 @@
+﻿<Window x:Class="OCCMissionGoals.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OCCMissionGoals"
+        xmlns:dialogs="clr-namespace:OCCMissionGoals.Dialogs"
+        mc:Ignorable="d" Background="Transparent"
+        AllowsTransparency="True" WindowStyle="None"
+        Title="MainWindow" Height="766" Width="1250">
+
+    <Border x:Name="MainBorder" Background="{DynamicResource BackgroundBrush}"
+        BorderBrush="{DynamicResource MainBorderBrush}" CornerRadius="10"
+        BorderThickness="2" Grid.Row="1"
+        Margin="5">
+        <Grid>
+            <!-- 主内容 -->
+            <Grid x:Name="MainContentGrid" ClipToBounds="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+
+                <!-- 标题与控制 -->
+            <Grid Grid.Row="0"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="160"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- 主控制器 -->
+                <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Margin="5,5,0,5" CornerRadius="10">
+                    <Grid ClipToBounds="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- 控制按钮 -->
+                        <Frame x:Name="CtrlToolPage" NavigationUIVisibility="Hidden"
+                               ClipToBounds="True" Grid.Column="0"/>
+
+                        <!-- 搜索框 -->
+                        <Border Grid.Column="1" Margin="5,5,0,5"
+                                Style="{StaticResource SearchBoxBorder}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="SearchTextBox" Grid.Column="0" Margin="5,2,5,2"
+                                         Style="{StaticResource SearchTextBox}"
+                                         TextChanged="SearchTextBox_TextChanged"/>
+
+                                <Button Grid.Column="1" Style="{StaticResource SearchIconButton}">
+                                    <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="4"
+                                          Data="M10.0195 10.7266C9.06578 11.5217 7.83875 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5C12 7.83875 11.5217 9.06578 10.7266 10.0195L13.8535 13.1464C14.0488 13.3417 14.0488 13.6583 13.8535 13.8536C13.6583 14.0488 13.3417 14.0488 13.1464 13.8536L10.0195 10.7266ZM11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11C8.98528 11 11 8.98528 11 6.5Z"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- 其他控制 -->
+                        <Frame x:Name="ToolPage" NavigationUIVisibility="Hidden"
+                               ClipToBounds="True" Grid.Column="2"/>
+                    </Grid>
+                </Border>
+
+                <!-- 控制按钮 -->
+                <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Margin="5" CornerRadius="10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                        <!-- 最小化按钮 -->
+                        <Button Style="{StaticResource WinControlButton}"
+                                Click="MinimizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                            <TextBlock Text="&#xE921;" Foreground="{DynamicResource ForegroundBrush}"/>
+                        </Button>
+
+                        <!-- 最大化/还原按钮 -->
+                        <Button Style="{StaticResource WinControlButton}"
+                                Click="MaximizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                            <TextBlock x:Name="MaximizeIcon" Text="&#xE922;" Foreground="{DynamicResource ForegroundBrush}"/>
+                        </Button>
+
+                        <!-- 关闭按钮 -->
+                        <Button Style="{StaticResource CloseButton}"
+                                Click="CloseWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                            <TextBlock Text="&#xE106;"/>
+                        </Button>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+            <!-- 主要栏 -->
+            <Frame x:Name="ListPage" Grid.Row="1" NavigationUIVisibility="Hidden" Margin="5,0,5,5"
+                   ClipToBounds="True"/>
+
+            <!-- 状态 -->
+            <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                    Margin="5,0,5,5" CornerRadius="7">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="26"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="13.23"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="BellBtn" Style="{StaticResource StatusBarIconButton}" Margin="5,2,2,2" Click="BellBtn_Click">
+                            <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="2"
+                                  Data="M1 4.5C1 3.11929 2.11929 2 3.5 2H12.5C13.8807 2 15 3.11929 15 4.5V9.5C15 10.8807 13.8807 12 12.5 12H8.68787L5.62533 14.6797C4.99168 15.2342 4 14.7842 4 13.9422V12H3.5C2.11929 12 1 10.8807 1 9.5V4.5ZM3.5 3C2.67157 3 2 3.67157 2 4.5V9.5C2 10.3284 2.67157 11 3.5 11H5V13.8981L8.31213 11H12.5C13.3284 11 14 10.3284 14 9.5V4.5C14 3.67157 13.3284 3 12.5 3H3.5Z"/>
+                        </Button>
+                        <TextBlock x:Name="StatusLabel" Text="就绪" Foreground="{DynamicResource ForegroundBrush}"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"
+                                   Margin="5,0,5,0" Grid.Column="1"/>
+                        <TextBlock Text="|" Foreground="{DynamicResource ForegroundBrush}"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"
+                                   Margin="5,0,5,0" Grid.Column="2"/>
+                        <TextBlock x:Name="StatusText" Text="状态机无更新" Foreground="{DynamicResource ForegroundBrush}"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"
+                                   Margin="5,0,5,0" Grid.Column="3"/>
+                    </Grid>
+                    
+                    <TextBlock Text="" Foreground="{DynamicResource ForegroundBrush}"
+                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                               Margin="5,0,5,0" Grid.Column="2" x:Name="TipText">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="0"/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    
+                    <Grid Grid.Column="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="27"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="VersionComboBox" Grid.Column="0" Margin="3"
+                                  Style="{StaticResource StatusBarActionComboBox}"
+                                  SelectionChanged="VersionComboBox_SelectionChanged">
+                            <ComboBoxItem Content="调整目标的文件" Tag="__placeholder__"/>
+                        </ComboBox>
+
+                        <Button x:Name="NotificationBtn" Grid.Column="1" Style="{StaticResource StatusBarIconButton}" Margin="2,2,5,2" Click="NotificationBtn_Click">
+                            <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="2"
+                                  Data="M13.964 12.315L13 9.90201V6.00101C13 3.24401 10.757 1.00101 8 1.00101C5.243 1.00101 3 3.24301 3 6.00001V9.90101L2.036 12.314C1.974 12.468 1.993 12.642 2.086 12.78C2.179 12.917 2.334 13 2.5 13H5.99999C5.99999 14.108 6.892 15 8 15C9.108 15 10 14.108 10 13H13.5C13.666 13 13.821 12.918 13.914 12.78C14.007 12.643 14.026 12.469 13.964 12.315ZM8 14C7.444 14 7 13.556 7 13H9C9 13.556 8.55599 14 8 14ZM3.238 12L3.964 10.183C3.988 10.124 4 10.061 4 9.99701V5.99901C4 3.79301 5.794 1.99901 8 1.99901C10.206 1.99901 12 3.79301 12 5.99901V9.99701C12 10.061 12.012 10.124 12.036 10.183L12.762 12H3.238Z"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            </Grid>
+
+            <!-- 弹窗遮罩 -->
+            <Border x:Name="DialogOverlay" Visibility="Collapsed"
+                    Background="#80000000" CornerRadius="10"/>
+
+            <!-- 新建条目弹窗 (480px 适配纵向表单布局) -->
+            <dialogs:NewEntryDialog x:Name="NewEntryDialog"
+                                    Width="560" Height="660"
+                                    Visibility="Collapsed"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+
+            <!-- 新建项目弹窗 -->
+            <dialogs:NewProjectDialog x:Name="NewProjectDialog"
+                                      Width="560" Height="450"
+                                      Visibility="Collapsed"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+            <!-- 版本管理弹窗 -->
+            <dialogs:VersionDialog x:Name="VersionDialog"
+                                   Visibility="Collapsed"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+        </Grid>
+    </Border>
+</Window>
