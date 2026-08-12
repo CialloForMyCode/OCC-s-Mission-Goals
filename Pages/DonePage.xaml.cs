@@ -80,10 +80,8 @@ namespace OCCMissionGoals.Pages
                 SortMode.SeverityDesc => query.OrderByDescending(i => i.Entry.Severity),
                 SortMode.DeadlineAsc  => query.OrderBy(i => i.Entry.Deadline),
                 SortMode.DeadlineDesc => query.OrderByDescending(i => i.Entry.Deadline),
-                SortMode.DemandAsc    => query.OrderBy(i => i.Entry.ChangeDemand),
-                SortMode.DemandDesc   => query.OrderByDescending(i => i.Entry.ChangeDemand),
-                SortMode.AlphabetAsc  => query.OrderBy(i => i.Entry.Title),
-                SortMode.AlphabetDesc => query.OrderByDescending(i => i.Entry.Title),
+                SortMode.VersionAsc   => query.OrderBy(i => i.Entry.Version),
+                SortMode.VersionDesc  => query.OrderByDescending(i => i.Entry.Version),
                 _ => query.OrderBy(i => i.Entry.Severity),
             };
         }
@@ -136,6 +134,7 @@ namespace OCCMissionGoals.Pages
                 {
                     VersionName = group.Key,
                     IsExpanded = oldExpandStates.TryGetValue(group.Key, out var expanded) ? expanded : true,
+                    CanArchive = CanArchiveVersion(group.Key),
                 };
                 foreach (var item in group)
                     vm.Items.Add(item);
@@ -144,6 +143,29 @@ namespace OCCMissionGoals.Pages
 
             DoneList.ItemsSource = _groups;
             EmptyPlaceholder.Visibility = _items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private static bool CanArchiveVersion(string versionName)
+        {
+            // 未指定版本不可归档
+            if (string.IsNullOrEmpty(versionName) || versionName == "未指定版本")
+                return false;
+
+            var projectDir = Services.ProjectService.CurrentProjectDir;
+            if (string.IsNullOrEmpty(projectDir)) return false;
+
+            var versionsDir = Services.ProjectService.GetVersionsDir(projectDir);
+            var versionFile = Path.Combine(versionsDir, versionName + ".json");
+            if (!File.Exists(versionFile)) return false;
+
+            try
+            {
+                var json = File.ReadAllText(versionFile);
+                var data = System.Text.Json.JsonSerializer.Deserialize<DataFile>(json);
+                // 只有全部条目均已完成时才可归档
+                return data != null && data.Unfinished.Count == 0 && data.Finished.Count > 0;
+            }
+            catch { return false; }
         }
 
         private void VersionHeader_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -305,6 +327,14 @@ namespace OCCMissionGoals.Pages
 
                 File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
 
+                // 安全校验：确认版本内全部条目均已完成
+                if (!CanArchiveVersion(group.VersionName))
+                {
+                    MessageBox.Show("该版本中仍有未完成的条目，无法归档。", "无法归档",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 // 删除对应的版本 JSON 文件
                 var projectDir = Services.ProjectService.CurrentProjectDir;
                 if (!string.IsNullOrEmpty(projectDir) && !string.IsNullOrEmpty(group.VersionName))
@@ -459,6 +489,7 @@ namespace OCCMissionGoals.Pages
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<DoneItemVM> Items { get; set; } = new();
         public bool IsExpanded { get; set; } = true;
+        public bool CanArchive { get; set; }
     }
 
     public class DoneItemVM : INotifyPropertyChanged

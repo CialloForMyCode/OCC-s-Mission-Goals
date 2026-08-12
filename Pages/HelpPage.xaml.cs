@@ -1,54 +1,163 @@
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace OCCMissionGoals.Pages;
 
 public partial class HelpPage : Page
 {
-    private const string RepoUrl = "https://github.com/OCCOCCO/ONC";
+    private readonly Dictionary<string, FrameworkElement> _sectionMap = new();
+    private readonly Dictionary<string, Button> _navMap = new();
+    private string _currentTag = "Overview";
+    private bool _isNavigating;
 
     public HelpPage()
     {
         InitializeComponent();
+
+        _sectionMap = new Dictionary<string, FrameworkElement>
+        {
+            ["Overview"]     = Section_Overview,
+            ["Dashboard"]    = Section_Dashboard,
+            ["UnDone"]       = Section_UnDone,
+            ["Done"]         = Section_Done,
+            ["Expand"]       = Section_Expand,
+            ["Severity"]     = Section_Severity,
+            ["ChangeDemand"] = Section_ChangeDemand,
+            ["Version"]      = Section_Version,
+            ["Type"]         = Section_Type,
+            ["RelatedFiles"] = Section_RelatedFiles,
+            ["Shortcuts"]    = Section_Shortcuts,
+            ["Project"]      = Section_Project,
+            ["CLI"]          = Section_CLI,
+        };
+
+        _navMap = new Dictionary<string, Button>
+        {
+            ["Overview"]     = Nav_Overview,
+            ["Dashboard"]    = Nav_Dashboard,
+            ["UnDone"]       = Nav_UnDone,
+            ["Done"]         = Nav_Done,
+            ["Expand"]       = Nav_Expand,
+            ["Severity"]     = Nav_Severity,
+            ["ChangeDemand"] = Nav_ChangeDemand,
+            ["Version"]      = Nav_Version,
+            ["Type"]         = Nav_Type,
+            ["RelatedFiles"] = Nav_RelatedFiles,
+            ["Shortcuts"]    = Nav_Shortcuts,
+            ["Project"]      = Nav_Project,
+            ["CLI"]          = Nav_CLI,
+        };
+
         Loaded += OnLoaded;
     }
 
-    private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        var ver = Services.ProjectService.CurrentProject?.CurrentVersion;
-        VersionLabel.Text = string.IsNullOrEmpty(ver)
-            ? "版本 0.1.0-alpha.0"
-            : $"版本 {ver}";
+        HighlightNav(_currentTag);
     }
 
-    private void GitHubRepo_Click(object sender, System.Windows.RoutedEventArgs e)
+    // ==================== 导航点击 → 滚动 ====================
+
+    private async void NavButton_Click(object sender, RoutedEventArgs e)
     {
-        OpenUrl(RepoUrl);
+        if (sender is not Button btn) return;
+        var tag = btn.Tag as string;
+        if (tag is null || !_sectionMap.TryGetValue(tag, out var target)) return;
+        if (!target.IsLoaded) return;
+
+        HighlightNav(tag);
+
+        var to = GetSectionTop(target);
+
+        _isNavigating = true;
+        await AnimateScrollAsync(ContentScroll.VerticalOffset, to, TimeSpan.FromMilliseconds(300));
+        _isNavigating = false;
     }
 
-    private void GitHubIssue_Click(object sender, System.Windows.RoutedEventArgs e)
-    {
-        OpenUrl(RepoUrl + "/issues/new");
-    }
+    // ==================== 滚动 → 导航高亮 (scroll-spy) ====================
 
-    private void License_Click(object sender, System.Windows.RoutedEventArgs e)
+    private void ContentScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {
-        OpenUrl(RepoUrl + "/blob/master/LICENSE");
-    }
+        if (_isNavigating) return;
 
-    private static void OpenUrl(string url)
-    {
-        try
+        var viewportTop = ContentScroll.VerticalOffset + 60;
+        FrameworkElement? best = null;
+        var bestDistance = double.MaxValue;
+
+        foreach (var (tag, section) in _sectionMap)
         {
-            Process.Start(new ProcessStartInfo
+            if (!section.IsLoaded) continue;
+
+            var top = GetSectionTop(section);
+            if (top <= viewportTop && (viewportTop - top) < bestDistance)
             {
-                FileName = url,
-                UseShellExecute = true
-            });
+                best = section;
+                bestDistance = viewportTop - top;
+            }
         }
-        catch
+
+        if (best is null) return;
+
+        foreach (var (tag, sec) in _sectionMap)
         {
-            // 忽略打开失败
+            if (sec == best)
+            {
+                HighlightNav(tag);
+                break;
+            }
+        }
+    }
+
+    // ==================== 辅助 ====================
+
+    private double GetSectionTop(FrameworkElement section)
+    {
+        var transform = section.TransformToVisual(ContentScroll);
+        return ContentScroll.VerticalOffset + transform.Transform(new Point(0, 0)).Y;
+    }
+
+    private void HighlightNav(string activeTag)
+    {
+        if (_currentTag == activeTag) return;
+        _currentTag = activeTag;
+
+        foreach (var (tag, btn) in _navMap)
+        {
+            if (tag == activeTag)
+            {
+                btn.FontWeight = FontWeights.Bold;
+                btn.Opacity = 1;
+            }
+            else
+            {
+                btn.FontWeight = FontWeights.Normal;
+                btn.Opacity = 0.55;
+            }
+        }
+    }
+
+    // ==================== 滚动动画 ====================
+
+    private async Task AnimateScrollAsync(double from, double to, TimeSpan duration)
+    {
+        var easing = new QuadraticEase { EasingMode = EasingMode.EaseInOut };
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+
+        while (true)
+        {
+            var progress = Math.Min(sw.Elapsed.TotalMilliseconds / duration.TotalMilliseconds, 1.0);
+            var eased = easing.Ease(progress);
+            ContentScroll.ScrollToVerticalOffset(from + (to - from) * eased);
+
+            if (progress >= 1.0) break;
+
+            await Task.Delay(16);
         }
     }
 }

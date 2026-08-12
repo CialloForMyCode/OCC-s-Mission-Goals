@@ -73,135 +73,152 @@
                 </Grid>
             </Border>
 
-            <!-- 分类筛选 -->
-            <Border CornerRadius="8"
-                    Background="{DynamicResource CardBackgroundBrush}"
-                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
-                    Padding="4" Margin="0,0,0,5">
-                <ItemsControl x:Name="CategoryList">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+            <!-- 内容区域：分类 + 列表 + 空状态（Grid 重叠布局） -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 分类筛选 -->
+                <Border x:Name="CategorySection" Grid.Row="0"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="4" Margin="0,0,0,5">
+                    <ItemsControl x:Name="CategoryList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}"
+                                        Margin="4" Padding="12,6"
+                                        FontSize="12"
+                                        Style="{StaticResource CardActionBtn}"
+                                        Click="CategoryButton_Click"
+                                        Tag="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <!-- 插件列表 -->
+                <ItemsControl x:Name="PluginList" Grid.Row="1">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding Name}"
-                                    Margin="4" Padding="12,6"
-                                    FontSize="12"
-                                    Style="{StaticResource CardActionBtn}"
-                                    Click="CategoryButton_Click"
-                                    Tag="{Binding}"/>
+                            <Border CornerRadius="8"
+                                    Background="{DynamicResource CardBackgroundBrush}"
+                                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                                    Padding="20" Margin="0,0,0,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 图标 -->
+                                    <Border Grid.Column="0" Grid.RowSpan="3"
+                                            Width="48" Height="48" CornerRadius="8"
+                                            Background="{DynamicResource SearchBackgroundBrush}"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <Image Source="{Binding Icon}"
+                                               Width="32" Height="32"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- 名称 + 版本 -->
+                                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Version, StringFormat=' v{0}'}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="11" Opacity="0.5"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                        <Border CornerRadius="3"
+                                                Background="#4CAF50"
+                                                Padding="4" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="已安装" FontSize="10"
+                                                       Foreground="White"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- 描述 -->
+                                    <TextBlock Grid.Column="1" Grid.Row="1"
+                                               Text="{Binding Description}"
+                                               Foreground="{DynamicResource ForegroundBrush}"
+                                               FontSize="12" Opacity="0.6"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,4,0,6"/>
+
+                                    <!-- 底部信息 -->
+                                    <StackPanel Grid.Column="1" Grid.Row="2"
+                                                Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Author, StringFormat='作者: {0}'}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="11" Opacity="0.4"/>
+                                        <TextBlock Text="{Binding Downloads, StringFormat='  |  ⬇ {0}'}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="11" Opacity="0.4"/>
+                                        <TextBlock Text="{Binding Category, StringFormat='  |  {0}'}"
+                                                   Foreground="#4CAF50"
+                                                   FontSize="11" Opacity="0.7"/>
+                                    </StackPanel>
+
+                                    <!-- 操作按钮 -->
+                                    <StackPanel Grid.Column="2" Grid.RowSpan="3"
+                                                VerticalAlignment="Center" Margin="16,0,0,0">
+                                        <Button x:Name="InstallBtn"
+                                                Width="80" Height="32"
+                                                Click="InstallButton_Click"
+                                                Tag="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
+                                                    <Setter Property="Content" Value="安装"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                            <Setter Property="Content" Value="卸载"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </Border>
 
-            <!-- 插件列表 -->
-            <ItemsControl x:Name="PluginList">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border CornerRadius="8"
-                                Background="{DynamicResource CardBackgroundBrush}"
-                                BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
-                                Padding="20" Margin="0,0,0,8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- 图标 -->
-                                <Border Grid.Column="0" Grid.RowSpan="3"
-                                        Width="48" Height="48" CornerRadius="8"
-                                        Background="{DynamicResource SearchBackgroundBrush}"
-                                        VerticalAlignment="Top" Margin="0,0,16,0">
-                                    <TextBlock Text="{Binding Icon}"
-                                               FontSize="24"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
-                                </Border>
-
-                                <!-- 名称 + 版本 -->
-                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal"
-                                            VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Name}"
-                                               Foreground="{DynamicResource ForegroundBrush}"
-                                               FontSize="14" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Version, StringFormat=' v{0}'}"
-                                               Foreground="{DynamicResource ForegroundBrush}"
-                                               FontSize="11" Opacity="0.5"
-                                               VerticalAlignment="Center" Margin="8,0,0,0"/>
-                                    <Border CornerRadius="3"
-                                            Background="#4CAF50"
-                                            Padding="4" Margin="8,0,0,0" VerticalAlignment="Center"
-                                            Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
-                                        <TextBlock Text="已安装" FontSize="10"
-                                                   Foreground="White"/>
-                                    </Border>
-                                </StackPanel>
-
-                                <!-- 描述 -->
-                                <TextBlock Grid.Column="1" Grid.Row="1"
-                                           Text="{Binding Description}"
-                                           Foreground="{DynamicResource ForegroundBrush}"
-                                           FontSize="12" Opacity="0.6"
-                                           TextTrimming="CharacterEllipsis"
-                                           Margin="0,4,0,6"/>
-
-                                <!-- 底部信息 -->
-                                <StackPanel Grid.Column="1" Grid.Row="2"
-                                            Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Author, StringFormat='作者: {0}'}"
-                                               Foreground="{DynamicResource ForegroundBrush}"
-                                               FontSize="11" Opacity="0.4"/>
-                                    <TextBlock Text="{Binding Downloads, StringFormat='  |  ⬇ {0}'}"
-                                               Foreground="{DynamicResource ForegroundBrush}"
-                                               FontSize="11" Opacity="0.4"/>
-                                    <TextBlock Text="{Binding Category, StringFormat='  |  {0}'}"
-                                               Foreground="#4CAF50"
-                                               FontSize="11" Opacity="0.7"/>
-                                </StackPanel>
-
-                                <!-- 操作按钮 -->
-                                <StackPanel Grid.Column="2" Grid.RowSpan="3"
-                                            VerticalAlignment="Center" Margin="16,0,0,0">
-                                    <Button x:Name="InstallBtn"
-                                            Width="80" Height="32"
-                                            Click="InstallButton_Click"
-                                            Tag="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
-                                                <Setter Property="Content" Value="安装"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                                        <Setter Property="Content" Value="卸载"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!-- 空状态 -->
-            <TextBlock x:Name="EmptyHint"
-                       Text="没有找到匹配的扩展。"
-                       Foreground="{DynamicResource ForegroundBrush}"
-                       FontSize="13" Opacity="0.5"
-                       HorizontalAlignment="Center"
-                       Margin="0,40,0,0"
-                       Visibility="Collapsed"/>
+                <!-- 空状态（与 DonePage 一致：卡片风格 Border） -->
+                <Border x:Name="EmptyHint"
+                        Grid.RowSpan="2"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1" CornerRadius="8"
+                        Margin="0,0,0,6" Padding="24,20"
+                        VerticalAlignment="Top"
+                        Visibility="Collapsed">
+                    <TextBlock Text="没有扩展"
+                               Foreground="{DynamicResource ForegroundBrush}"
+                               FontSize="15" Opacity="0.5"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+            </Grid>
 
         </StackPanel>
     </ScrollViewer>

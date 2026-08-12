@@ -18,10 +18,8 @@ public enum SortMode
     SeverityDesc,
     DeadlineAsc,
     DeadlineDesc,
-    DemandAsc,
-    DemandDesc,
-    AlphabetAsc,
-    AlphabetDesc,
+    VersionAsc,
+    VersionDesc,
     FavoritesOnly
 }
 

@@ -16,14 +16,21 @@ namespace OCCMissionGoals.ToolPages
         public ControlButtonPage()
         {
             InitializeComponent();
+            SyncThemeIcon();
+        }
+
+        /// <summary>根据当前主题模式同步图标。</summary>
+        private void SyncThemeIcon()
+        {
+            ThemeIcon.Data = Geometry.Parse(ThemeManager.IsDark
+                ? ColorPalette.LightIconData
+                : ColorPalette.DarkIconData);
         }
 
         public void ToggleTheme_Click(object sender, RoutedEventArgs e)
         {
             ThemeManager.ToggleTheme();
-            ThemeIcon.Data = Geometry.Parse(ThemeManager.IsDark
-                ? ColorPalette.LightIconData
-                : ColorPalette.DarkIconData);
+            SyncThemeIcon();
             ConfigManager.Set("General", "theme", ThemeManager.IsDark ? "dark" : "light");
         }
 

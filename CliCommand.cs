@@ -308,6 +308,28 @@ public static class CliCommand
         var src = SysPath.Combine(versionsDir, ver + ".json");
         if (!File.Exists(src)) { Err($"版本文件不存在: {ver}.json"); return 1; }
         if (ver == (ProjectService.CurrentProject?.CurrentVersion ?? "")) { Err("不能归档当前版本。"); return 1; }
+
+        // 检查版本内是否全部条目均已完成
+        try
+        {
+            var json = File.ReadAllText(src);
+            var data = JsonSerializer.Deserialize<DataFile>(json);
+            if (data != null && data.Unfinished.Count > 0)
+            {
+                Err($"版本 {ver} 中仍有 {data.Unfinished.Count} 条未完成条目，无法归档。");
+                return 1;
+            }
+            if (data == null || data.Finished.Count == 0)
+            {
+                Err($"版本 {ver} 中无已完成条目，无法归档。");
+                return 1;
+            }
+        }
+        catch (Exception ex)
+        {
+            Err($"读取版本文件失败: {ex.Message}");
+            return 1;
+        }
         var archiveDir = SysPath.Combine(versionsDir, "archive");
         Directory.CreateDirectory(archiveDir);
         var dest = SysPath.Combine(archiveDir, ver + ".json");
@@ -549,7 +571,7 @@ public static class CliCommand
   -v <版本号>                切换到指定版本
   -v Iterate                 版本迭代
   -v Delete  <版本号>        删除版本
-  -v Archive <版本号>        归档版本 -> versions/archive/
+  -v Archive <版本号>        归档版本 -> versions/archive/（须全部条目已完成）
 
 全局:
   -p, --project <名称>       选择项目

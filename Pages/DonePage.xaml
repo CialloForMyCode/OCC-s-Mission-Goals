@@ -63,6 +63,7 @@
                                             Style="{StaticResource CardActionBtn}"
                                             Click="Archive_Click"
                                             Tag="{Binding}"
+                                            Visibility="{Binding CanArchive, Converter={StaticResource BoolToVis}}"
                                             VerticalAlignment="Center"/>
                                 </Grid>
                             </Border>

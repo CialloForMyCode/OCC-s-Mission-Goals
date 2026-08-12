@@ -84,10 +84,8 @@ namespace OCCMissionGoals.Pages
                 SortMode.SeverityDesc => query.OrderByDescending(i => i.Entry.Severity),
                 SortMode.DeadlineAsc  => query.OrderBy(i => i.Entry.Deadline),
                 SortMode.DeadlineDesc => query.OrderByDescending(i => i.Entry.Deadline),
-                SortMode.DemandAsc    => query.OrderBy(i => i.Entry.ChangeDemand),
-                SortMode.DemandDesc   => query.OrderByDescending(i => i.Entry.ChangeDemand),
-                SortMode.AlphabetAsc  => query.OrderBy(i => i.Entry.Title),
-                SortMode.AlphabetDesc => query.OrderByDescending(i => i.Entry.Title),
+                SortMode.VersionAsc   => query.OrderBy(i => i.Entry.Version),
+                SortMode.VersionDesc  => query.OrderByDescending(i => i.Entry.Version),
                 _ => query.OrderBy(i => i.Entry.Severity),
             };
         }
