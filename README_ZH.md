@@ -1,6 +1,6 @@
 # OCC's Mission & Goals
 
-一款为 ONC Compiler Collection 开发的更新/修复管理工具，旨在简化条目跟踪流程，提高效率。支持 GUI 与 CLI 双模式，CLI 输出标准 JSON 便于 AI / 脚本 / CI 集成。
+一款为 ONC Compiler Collection 开发的更新/修复管理工具，为了帮助患有健忘症的我更加快速的开发 ONC Compiler Collection。该工具旨在简化在MD中填写错误然后一个个找哪个没完成的流程，提高效率，并治好我的健忘症。
 
 # Language
 
