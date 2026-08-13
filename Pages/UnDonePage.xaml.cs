@@ -22,6 +22,7 @@ namespace OCCMissionGoals.Pages
         private ObservableCollection<UnDoneVersionGroupVM> _groups = new();
         private SortMode _currentSort = SortMode.SeverityAsc;
         private string _searchFilter = string.Empty;
+        private SearchMode _searchMode = SearchMode.Text;
 
         private const string StarFilled =
             "M15.022 7.25497L12.203 10.003L12.869 13.883C12.917 14.165 12.844 14.438 12.664 14.654C12.479 14.872 12.205 15.001 11.929 15.001C11.775 15.001 11.626 14.963 11.485 14.89L8.00101 13.057L4.51701 14.889C4.13401 15.093 3.62401 14.991 3.34001 14.657C3.15801 14.439 3.08501 14.165 3.13201 13.884L3.79801 10.004L0.979007 7.25597C0.714007 6.99797 0.624007 6.63297 0.737007 6.27997C0.853007 5.92497 1.14001 5.68197 1.50701 5.62797L5.40301 5.06197L7.14501 1.53197C7.47301 0.865971 8.52801 0.865971 8.85601 1.53197L10.598 5.06197L14.494 5.62797C14.862 5.68197 15.149 5.92397 15.264 6.27597C15.378 6.63197 15.286 6.99697 15.022 7.25497Z";
@@ -66,13 +67,7 @@ namespace OCCMissionGoals.Pages
 
             // 搜索过滤
             if (!string.IsNullOrWhiteSpace(_searchFilter))
-            {
-                var kw = _searchFilter.ToLowerInvariant();
-                query = query.Where(i =>
-                    i.Title.ToLowerInvariant().Contains(kw) ||
-                    i.Brief.ToLowerInvariant().Contains(kw) ||
-                    i.Detail.ToLowerInvariant().Contains(kw));
-            }
+                query = query.Where(i => SearchMatcher.Matches(i.Entry, _searchFilter, _searchMode, useCompletedDate: false));
 
             if (_currentSort == SortMode.FavoritesOnly)
                 query = query.Where(i => i.Entry.IsFavorited);
@@ -97,9 +92,10 @@ namespace OCCMissionGoals.Pages
         }
 
         /// <summary>应用搜索过滤。</summary>
-        public void ApplyFilter(string filter)
+        public void ApplyFilter(string filter, SearchMode mode = SearchMode.Text)
         {
             _searchFilter = (filter ?? string.Empty).Trim();
+            _searchMode = mode;
             RebuildGroups();
         }
 
@@ -119,6 +115,97 @@ namespace OCCMissionGoals.Pages
                 item.IsDetailExpanded = false;
         }
 
+        /// <summary>跳转并高亮指定条目（供搜索板跳转使用）。</summary>
+        public void SelectEntry(GoalEntry entry)
+        {
+            var group = _groups.FirstOrDefault(g => g.Items.Any(i => SameEntry(i.Entry, entry)));
+            if (group == null) return;
+            var item = group.Items.First(i => SameEntry(i.Entry, entry));
+            group.IsExpanded = true;
+
+            ScrollToItem(item);
+        }
+
+        private void ScrollToItem(UnDoneItemVM item)
+        {
+            var timer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(120)
+            };
+            var ticks = 0;
+            timer.Tick += (_, _) =>
+            {
+                ticks++;
+                var container = LocateItemContainer(item);
+                if (container != null)
+                {
+                    timer.Stop();
+                    container.BringIntoView();
+                    FlashEntryCard(container);
+                    return;
+                }
+                if (ticks >= 20) timer.Stop();
+            };
+            timer.Start();
+        }
+
+        private FrameworkElement? LocateItemContainer(UnDoneItemVM item)
+        {
+            foreach (var group in _groups)
+            {
+                if (!group.Items.Contains(item)) continue;
+                var gc = UnDoneList.ItemContainerGenerator.ContainerFromItem(group) as FrameworkElement;
+                if (gc == null) continue;
+                var groupItems = FindVisualChildByName<ItemsControl>(gc, "GroupItems");
+                if (groupItems == null) continue;
+                groupItems.UpdateLayout();
+                return groupItems.ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
+            }
+            return null;
+        }
+
+        private static bool SameEntry(GoalEntry a, GoalEntry b)
+        {
+            if (!string.IsNullOrEmpty(a.Id) && !string.IsNullOrEmpty(b.Id))
+                return a.Id == b.Id;
+            return a.Title == b.Title && a.Version == b.Version;
+        }
+
+        private static T? FindVisualChildByName<T>(DependencyObject parent, string name) where T : FrameworkElement
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T fe && fe.Name == name) return fe;
+                var found = FindVisualChildByName<T>(child, name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T t) return t;
+                var found = FindVisualChild<T>(child);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private static void FlashEntryCard(FrameworkElement container)
+        {
+            var card = container as Border ?? FindVisualChild<Border>(container);
+            if (card == null) return;
+            var original = card.BorderBrush;
+            card.BorderBrush = new SolidColorBrush(Color.FromRgb(0x60, 0xCD, 0xFF));
+            var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(900) };
+            timer.Tick += (_, _) => { timer.Stop(); card.BorderBrush = original; };
+            timer.Start();
+        }
+
         private void RebuildGroups()
         {
             var sorted = GetSortedItems().ToList();
@@ -128,7 +215,7 @@ namespace OCCMissionGoals.Pages
                 oldExpandStates[g.VersionName] = g.IsExpanded;
 
             var grouped = sorted
-                .GroupBy(i => string.IsNullOrEmpty(i.Version) ? "未指定版本" : i.Version)
+                .GroupBy(i => string.IsNullOrEmpty(i.Version) ? string.Empty : i.Version)
                 .OrderBy(g => g.Key);
 
             _groups.Clear();
@@ -372,7 +459,7 @@ namespace OCCMissionGoals.Pages
     public class UnDoneVersionGroupVM
     {
         public string VersionName { get; set; } = string.Empty;
-        public string DisplayName => string.IsNullOrEmpty(VersionName) ? "未指定版本" : VersionName;
+        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本", "No version") : VersionName;
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<UnDoneItemVM> Items { get; set; } = new();
         public bool IsExpanded { get; set; } = true;
@@ -397,7 +484,7 @@ namespace OCCMissionGoals.Pages
         }
 
         public bool IsExcerptVisible => !_isDetailExpanded;
-        public string DetailToggleText => _isDetailExpanded ? "收起" : "详情";
+        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起", "Collapse") : LocalizationManager.T("详情", "Details");
 
         public string Title => Entry.Title;
         public string SeverityText => SeverityHelper.GetText(Entry.Severity);
@@ -406,7 +493,8 @@ namespace OCCMissionGoals.Pages
         public string Brief => Entry.Brief;
         public string Detail => Entry.Detail;
         public string Version => Entry.Version;
-        public List<string> Type => Entry.Type;
+        public IEnumerable<TypeTag> TypeTags =>
+            Entry.Type.Select(t => new TypeTag(t, Services.ProjectService.GetTypeColor(t)));
         public bool HasType => Entry.Type.Count > 0;
         public List<FileRef> RelatedFiles => Entry.RelatedFiles;
         public bool HasRelatedFiles => Entry.RelatedFiles.Count > 0;

@@ -14,6 +14,9 @@ public class PageRegistration
     /// <summary>页签按钮上显示的文字。</summary>
     public string TabLabel { get; init; } = "";
 
+    /// <summary>页签按钮的英文标签（切换语言后显示）。</summary>
+    public string TabLabelEn { get; init; } = "";
+
     /// <summary>页面工厂，每次导航时按需创建（首次后会被缓存）。</summary>
     public Func<Page> PageFactory { get; init; } = () => new Page();
 
@@ -26,6 +29,6 @@ public class PageRegistration
     /// <summary>全局刷新时执行的动作（例如切换项目/版本后重载数据）。</summary>
     public Action<Page>? OnRefresh { get; init; }
 
-    /// <summary>是否帮助页签（会触发显示/隐藏帮助按钮的特殊行为）。</summary>
-    public bool IsHelpTab { get; init; }
+    /// <summary>是否隐藏页签（如帮助、设置）：不显示在常规页签栏，点击对应入口后才出现。</summary>
+    public bool IsOverlayTab { get; init; }
 }

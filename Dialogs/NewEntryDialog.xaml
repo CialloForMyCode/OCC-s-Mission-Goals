@@ -1,10 +1,45 @@
 <UserControl x:Class="OCCMissionGoals.Dialogs.NewEntryDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+             xmlns:loc="clr-namespace:OCCMissionGoals"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="660" d:DesignWidth="650">
+
+    <UserControl.Resources>
+        <Style x:Key="ColorSwatchRadio" TargetType="RadioButton">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Outer"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Outer" Property="BorderBrush" Value="{DynamicResource ForegroundBrush}"/>
+                                <Setter TargetName="Outer" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Outer" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
     <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
@@ -24,7 +59,7 @@
                     Padding="0,0,0,10"
                     Margin="0,0,0,12">
                 <Grid>
-                    <TextBlock x:Name="DialogTitle" Text="新建条目"
+                    <TextBlock x:Name="DialogTitle" Text="{loc:Loc Zh=新建条目, En=New Entry}"
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
@@ -35,23 +70,23 @@
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <!-- 严重程度 -->
-                    <TextBlock Text="严重程度" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=严重程度, En=Severity}" Style="{StaticResource DialogLabel}"/>
                     <ComboBox x:Name="SeverityComboBox" 
                               Style="{StaticResource DialogComboBox}"
                               Margin="0,0,0,14">
-                        <ComboBoxItem Content="🔴 致命" Tag="0"
+                        <ComboBoxItem Content="{loc:Loc Zh=🔴 致命, En=🔴 Fatal}" Tag="0"
                                       Foreground="#D32F2F"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="🔴 严重" Tag="1"
+                        <ComboBoxItem Content="{loc:Loc Zh=🔴 严重, En=🔴 Severe}" Tag="1"
                                       Foreground="#E65100"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="🔴 一般" Tag="2"
+                        <ComboBoxItem Content="{loc:Loc Zh=🔴 一般, En=🔴 General}" Tag="2"
                                       Foreground="#F9A825"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="🔴 补丁" Tag="3"
+                        <ComboBoxItem Content="{loc:Loc Zh=🔴 补丁, En=🔴 Patch}" Tag="3"
                                       Foreground="#2E7D32"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="🔵 更新" Tag="4"
+                        <ComboBoxItem Content="{loc:Loc Zh=🔵 更新, En=🔵 Update}" Tag="4"
                                       Foreground="#1565C0"
                                       Style="{StaticResource DialogComboBoxItem}"/>
                     </ComboBox>
@@ -61,7 +96,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="类别"
+                        <TextBlock Text="{loc:Loc Zh=类别, En=Category}"
                                    Style="{StaticResource DialogLabel}"
                                    VerticalAlignment="Center"/>
                     </Grid>
@@ -78,10 +113,10 @@
                                   SelectionChanged="TypeComboBox_SelectionChanged"
                                   DropDownOpened="TypeComboBox_DropDownOpened"
                                   KeyDown="TypeComboBox_KeyDown"
-                                  ToolTip="选择已有类别直接添加，或输入新类别后按回车/点添加"
+                                  ToolTip="{loc:Loc Zh=选择已有类别直接添加，或输入新类别后按回车/点添加, En=Select an existing category or type a new one and press Enter / click Add}"
                                   Margin="0,0,8,0"/>
                         <Button Grid.Column="1"
-                                Content="添加"
+                                Content="{loc:Loc Zh=添加, En=Add}"
                                 Click="AddType_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 Height="30" MinWidth="48"
@@ -89,12 +124,27 @@
                                 Padding="8,0"/>
                     </Grid>
 
+                    <!-- 类别颜色（可选） -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{loc:Loc Zh=颜色（可选）, En=Color (optional)}"
+                                   Style="{StaticResource DialogLabel}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0"/>
+                        <StackPanel Grid.Column="1"
+                                    x:Name="ColorSwatchPanel"
+                                    Orientation="Horizontal"/>
+                    </Grid>
+
                     <!-- 已选类别徽章 -->
                     <ItemsControl x:Name="TypeListControl"
                                   Margin="0,0,0,8">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{DynamicResource CardBackgroundBrush}"
+                                <Border x:Name="TagBg" Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}"
                                         BorderThickness="1"
                                         CornerRadius="4"
@@ -104,7 +154,7 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding}"
+                                        <TextBlock x:Name="TagText" Text="{Binding Text}"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    FontSize="12"
                                                    VerticalAlignment="Center"/>
@@ -125,6 +175,13 @@
                                         </Button>
                                     </Grid>
                                 </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding HasColor}" Value="True">
+                                        <Setter TargetName="TagBg" Property="Background" Value="{Binding Background}"/>
+                                        <Setter TargetName="TagBg" Property="BorderBrush" Value="{Binding Background}"/>
+                                        <Setter TargetName="TagText" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemsPanel>
@@ -135,13 +192,13 @@
                     </ItemsControl>
 
                     <!-- 标题 -->
-                    <TextBlock Text="标题" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=标题, En=Title}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="TitleTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Margin="0,0,0,14"/>
 
                     <!-- 简介 -->
-                    <TextBlock Text="简介" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=简介, En=Brief}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="BriefTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Height="60"
@@ -152,7 +209,7 @@
                              Margin="0,0,0,14"/>
 
                     <!-- 详细信息 -->
-                    <TextBlock Text="详细信息" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=详细信息, En=Details}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="DetailTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Height="80"
@@ -163,17 +220,17 @@
                              Margin="0,0,0,14"/>
 
                     <!-- 截止日期 -->
-                    <TextBlock Text="截止日期" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=截止日期, En=Deadline}" Style="{StaticResource DialogLabel}"/>
                     <DatePicker x:Name="DeadlinePicker"
                                 Style="{StaticResource DialogDatePicker}"
                                 Margin="0,0,0,14"/>
 
                     <!-- 版本 -->
-                    <TextBlock Text="版本" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=版本, En=Version}" Style="{StaticResource DialogLabel}"/>
                     <ComboBox x:Name="VersionComboBox"
                               Style="{StaticResource DialogComboBox}"
                               Margin="0,0,0,14"
-                              ToolTip="条目所属版本号"/>
+                              ToolTip="{loc:Loc Zh=条目所属版本号, En=The version this entry belongs to}"/>
 
                     <!-- 相关文件 -->
                     <Grid Margin="0,0,0,6">
@@ -181,11 +238,11 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="相关文件"
+                        <TextBlock Text="{loc:Loc Zh=相关文件, En=Related Files}"
                                    Style="{StaticResource DialogLabel}"
                                    VerticalAlignment="Center"/>
                         <Button Grid.Column="1"
-                                Content="＋ 添加文件"
+                                Content="{loc:Loc Zh=＋ 添加文件, En=＋ Add File}"
                                 Click="AddFile_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 Height="28" MinWidth="80"
@@ -249,10 +306,10 @@
                                                      Style="{StaticResource DialogTextBox}"
                                                      FontSize="11" Padding="4,2"
                                                      Margin="0,0,6,0"
-                                                     ToolTip="命名空间.类.方法"/>
+                                                     ToolTip="{loc:Loc Zh=命名空间.类.方法, En=Namespace.Class.Method}"/>
 
                                             <TextBlock Grid.Column="1"
-                                                       Text="行"
+                                                       Text="{loc:Loc Zh=行, En=Line}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        FontSize="11"
                                                        VerticalAlignment="Center"
@@ -266,7 +323,7 @@
                                                      Margin="0,0,6,0"/>
 
                                             <TextBlock Grid.Column="3"
-                                                       Text="列"
+                                                       Text="{loc:Loc Zh=列, En=Column}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        FontSize="11"
                                                        VerticalAlignment="Center"
@@ -294,11 +351,11 @@
                     Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button Content="取消"
+                    <Button Content="{loc:Loc Zh=取消, En=Cancel}"
                             Click="CancelButton_Click"
                             Style="{StaticResource DialogCancelButton}"
                             Margin="0,0,10,0"/>
-                    <Button Content="确认"
+                    <Button Content="{loc:Loc Zh=确认, En=Confirm}"
                             Click="ConfirmButton_Click"
                             Style="{StaticResource DialogConfirmButton}"/>
                 </StackPanel>

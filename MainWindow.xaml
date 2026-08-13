@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="clr-namespace:OCCMissionGoals"
         xmlns:local="clr-namespace:OCCMissionGoals"
         xmlns:dialogs="clr-namespace:OCCMissionGoals.Dialogs"
         mc:Ignorable="d" Background="Transparent"
@@ -23,7 +24,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- 标题与控制 -->
-            <Grid Grid.Row="0"
+            <Grid x:Name="TitleBar" Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -46,7 +47,7 @@
                                ClipToBounds="True" Grid.Column="0"/>
 
                         <!-- 搜索框 -->
-                        <Border Grid.Column="1" Margin="5,5,0,5"
+                        <Border x:Name="SearchHost" Grid.Column="1" Margin="5,5,0,5"
                                 Style="{StaticResource SearchBoxBorder}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -56,7 +57,10 @@
 
                                 <TextBox x:Name="SearchTextBox" Grid.Column="0" Margin="5,2,5,2"
                                          Style="{StaticResource SearchTextBox}"
-                                         TextChanged="SearchTextBox_TextChanged"/>
+                                         TextChanged="SearchTextBox_TextChanged"
+                                         KeyDown="SearchTextBox_KeyDown"
+                                         GotKeyboardFocus="SearchTextBox_GotKeyboardFocus"
+                                         LostKeyboardFocus="SearchTextBox_LostKeyboardFocus"/>
 
                                 <Button Grid.Column="1" Style="{StaticResource SearchIconButton}">
                                     <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="4"
@@ -126,13 +130,13 @@
                             <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="2"
                                   Data="M1 4.5C1 3.11929 2.11929 2 3.5 2H12.5C13.8807 2 15 3.11929 15 4.5V9.5C15 10.8807 13.8807 12 12.5 12H8.68787L5.62533 14.6797C4.99168 15.2342 4 14.7842 4 13.9422V12H3.5C2.11929 12 1 10.8807 1 9.5V4.5ZM3.5 3C2.67157 3 2 3.67157 2 4.5V9.5C2 10.3284 2.67157 11 3.5 11H5V13.8981L8.31213 11H12.5C13.3284 11 14 10.3284 14 9.5V4.5C14 3.67157 13.3284 3 12.5 3H3.5Z"/>
                         </Button>
-                        <TextBlock x:Name="StatusLabel" Text="就绪" Foreground="{DynamicResource ForegroundBrush}"
+                        <TextBlock x:Name="StatusLabel" Text="{loc:Loc Zh=就绪, En=Ready}" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="1"/>
                         <TextBlock Text="|" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="2"/>
-                        <TextBlock x:Name="StatusText" Text="状态机无更新" Foreground="{DynamicResource ForegroundBrush}"
+                        <TextBlock x:Name="StatusText" Text="{loc:Loc Zh=状态机无更新, En=No status update}" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="3"/>
                     </Grid>
@@ -152,8 +156,9 @@
                         </Grid.ColumnDefinitions>
                         <ComboBox x:Name="VersionComboBox" Grid.Column="0" Margin="3"
                                   Style="{StaticResource StatusBarActionComboBox}"
-                                  SelectionChanged="VersionComboBox_SelectionChanged">
-                            <ComboBoxItem Content="调整目标的文件" Tag="__placeholder__"/>
+                                  SelectionChanged="VersionComboBox_SelectionChanged"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="{loc:Loc Zh=调整目标的文件, En=Adjust target file}" Tag="__placeholder__"/>
                         </ComboBox>
 
                         <Button x:Name="NotificationBtn" Grid.Column="1" Style="{StaticResource StatusBarIconButton}" Margin="2,2,5,2" Click="NotificationBtn_Click">
@@ -165,6 +170,84 @@
             </Border>
 
             </Grid>
+
+            <!-- 搜索结果板（下拉面板，可直接改设置 / 跳转） -->
+            <Canvas x:Name="SearchOverlay" Grid.RowSpan="3" Panel.ZIndex="100">
+                <Border x:Name="SearchBoard" Visibility="Collapsed"
+                        IsHitTestVisible="True"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1" CornerRadius="8"
+                        MinWidth="360" MaxWidth="620" MaxHeight="420">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 按模式搜索引导（空输入时显示，点击填入前缀） -->
+                        <StackPanel x:Name="SearchModeHint" Grid.Row="0" Margin="10,8,10,4">
+                            <TextBlock Text="{loc:Loc Zh=按模式搜索（点击填入前缀）：, En=Search by mode (click to fill prefix):}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       FontSize="11" Opacity="0.6"/>
+                            <WrapPanel Margin="0,6,0,0">
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Text: 文字, En=Text: Text}" Tag="Text:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Tag: 标签, En=Tag: Tag}" Tag="Tag:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=File: 文件, En=File: File}" Tag="File:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Date: 日期, En=Date: Date}" Tag="Date:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Setting: 设置, En=Setting: Settings}" Tag="Setting:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Plugins: 插件, En=Plugins: Plugins}" Tag="Plugins:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Expand: 已安装, En=Expand: Installed}" Tag="Expand:" Click="SearchModeChip_Click"/>
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="SearchBoardList" Margin="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource SearchBoardItem}"
+                                                Padding="10,8"
+                                                Click="SearchBoardItem_Click" Tag="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" CornerRadius="4" Padding="7,3"
+                                                        VerticalAlignment="Center"
+                                                        Background="{Binding KindBrush}">
+                                                    <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="11"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="10,0,8,0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Foreground="{DynamicResource ForegroundBrush}"
+                                                               FontSize="13" FontWeight="SemiBold"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Subtitle}"
+                                                               Foreground="{DynamicResource ForegroundBrush}"
+                                                               FontSize="11" Opacity="0.6"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding ActionLabel}"
+                                                           Foreground="{DynamicResource PrimaryBrush}"
+                                                           FontSize="12" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <Border x:Name="SearchBoardEmpty" Grid.Row="1"
+                                Visibility="Collapsed" Padding="16,20">
+                            <TextBlock Text="{loc:Loc Zh=没有匹配结果, En=No results}"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       FontSize="13" Opacity="0.5"
+                                       HorizontalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Canvas>
 
             <!-- 弹窗遮罩 -->
             <Border x:Name="DialogOverlay" Visibility="Collapsed"

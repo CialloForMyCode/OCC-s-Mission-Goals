@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:OCCMissionGoals.Pages"
+      xmlns:loc="clr-namespace:OCCMissionGoals"
       mc:Ignorable="d" 
       d:DesignHeight="758" d:DesignWidth="1240"
       Title="LogPage">
@@ -60,9 +61,9 @@
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <TextBlock Text="{Binding CompletedCount, Mode=OneWay}"
-                               Foreground="#4CAF50" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryBrush}" FontSize="28" FontWeight="Bold"
                                VerticalAlignment="Center"/>
-                        <TextBlock Text=" 已完成"
+                        <TextBlock Text="{loc:Loc Zh= 已完成, En= Completed}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="14" VerticalAlignment="Center"
                                Margin="4,0,0,0"/>
@@ -78,7 +79,7 @@
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="28" FontWeight="Bold"
                                VerticalAlignment="Center"/>
-                        <TextBlock Text=" 总计"
+                        <TextBlock Text="{loc:Loc Zh= 总计, En= Total}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="14" VerticalAlignment="Center"
                                Margin="4,0,0,0"/>
@@ -89,7 +90,7 @@
                 <Border Grid.Row="2" Margin="0,0,0,10"
                     Background="{DynamicResource SearchBackgroundBrush}"
                     CornerRadius="5" Height="14">
-                    <Border Background="#4CAF50" CornerRadius="5"
+                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="5"
                         HorizontalAlignment="Left">
                         <Border.Style>
                             <Style TargetType="Border">
@@ -114,7 +115,7 @@
                 <TextBlock Grid.Row="3"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="13" Opacity="0.6">
-                <Run Text="完成度 "/>
+                <Run Text="{loc:Loc Zh=完成度 , En=Completion }"/>
                 <Run Text="{Binding ProgressPercent, Mode=OneWay}"/>
                 </TextBlock>
             </Grid>
@@ -131,7 +132,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="严重程度分布"
+                <TextBlock Grid.Row="0" Text="{loc:Loc Zh=严重程度分布, En=Severity Distribution}"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="16" FontWeight="SemiBold"
                        Margin="0,0,0,14"/>
@@ -213,7 +214,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="即将到期"
+                <TextBlock Grid.Row="0" Text="{loc:Loc Zh=即将到期, En=Upcoming}"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="16" FontWeight="SemiBold"
                        Margin="0,0,0,14"/>
@@ -247,11 +248,10 @@
                                        FontSize="12" VerticalAlignment="Center">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="{Binding DaysLeft, StringFormat='{}{0}天'}"/>
+                                            <Setter Property="Text" Value="{Binding DaysLeftText}"/>
                                             <Setter Property="Foreground" Value="#E8D43D"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsOverdue}" Value="True">
-                                                    <Setter Property="Text" Value="已过期"/>
                                                     <Setter Property="Foreground" Value="#E83D3D"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -286,7 +286,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="最近活动"
+                <TextBlock Grid.Row="0" Text="{loc:Loc Zh=最近活动, En=Recent Activity}"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="16" FontWeight="SemiBold"
                        Margin="0,0,0,14"/>
@@ -359,7 +359,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="贡献记录"
+                <TextBlock Grid.Row="0" Text="{loc:Loc Zh=贡献记录, En=Contributions}"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="16" FontWeight="SemiBold"
                        Margin="0,0,0,16"/>
@@ -414,7 +414,7 @@
                                 <Border Grid.Column="1" Margin="8,0"
                                     Background="{DynamicResource SearchBackgroundBrush}"
                                     CornerRadius="4" Height="22">
-                                    <Border Background="#4CAF50" CornerRadius="4"
+                                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
                                         HorizontalAlignment="Left">
                                         <Border.Style>
                                             <Style TargetType="Border">
@@ -447,7 +447,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <TextBlock Grid.Row="1" Text="没有动态"
+                <TextBlock Grid.Row="1" Text="{loc:Loc Zh=没有动态, En=No activity}"
                            Foreground="{DynamicResource ForegroundBrush}"
                            FontSize="16" Opacity="0.4"
                            HorizontalAlignment="Center"
@@ -561,7 +561,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="版本标签" Grid.Column="0"
+                        <TextBlock Text="{loc:Loc Zh=版本标签, En=Version}" Grid.Column="0"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    FontSize="12" FontWeight="SemiBold"
                                    VerticalAlignment="Center"
@@ -580,7 +580,7 @@
                                 <Style TargetType="Button">
                                     <Setter Property="FontSize" Value="11"/>
                                     <Setter Property="Foreground" Value="#FFFFFF"/>
-                                    <Setter Property="Background" Value="#4CAF50"/>
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                                     <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="Cursor" Value="Hand"/>
                                     <Setter Property="Template">
@@ -595,10 +595,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#43A047"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
                                                     </Trigger>
                                                     <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#388E3C"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryPressedBrush}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -606,7 +606,7 @@
                                     </Setter>
                                 </Style>
                             </Button.Style>
-                            <TextBlock Text="保存"/>
+                            <TextBlock Text="{loc:Loc Zh=保存, En=Save}"/>
                         </Button>
                     </Grid>
 
@@ -629,7 +629,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="主" Grid.Column="0"
+                            <TextBlock Text="{loc:Loc Zh=主, En=Maj}" Grid.Column="0"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        FontSize="11" FontWeight="SemiBold"
                                        VerticalAlignment="Center"
@@ -661,7 +661,7 @@
                                     </ControlTemplate>
                                 </TextBox.Template>
                             </TextBox>
-                            <TextBlock Text="次" Grid.Column="2"
+                            <TextBlock Text="{loc:Loc Zh=次, En=Min}" Grid.Column="2"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        FontSize="11" FontWeight="SemiBold"
                                        VerticalAlignment="Center"
@@ -693,7 +693,7 @@
                                     </ControlTemplate>
                                 </TextBox.Template>
                             </TextBox>
-                            <TextBlock Text="补" Grid.Column="4"
+                            <TextBlock Text="{loc:Loc Zh=补, En=Pat}" Grid.Column="4"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        FontSize="11" FontWeight="SemiBold"
                                        VerticalAlignment="Center"
@@ -800,7 +800,7 @@
                                     <Setter Property="FontSize" Value="11"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                     <Setter Property="Foreground" Value="#FFFFFF"/>
-                                    <Setter Property="Background" Value="#4CAF50"/>
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                                     <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="Cursor" Value="Hand"/>
                                     <Setter Property="Template">
@@ -815,10 +815,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#43A047"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
                                                     </Trigger>
                                                     <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="Bg" Property="Background" Value="#388E3C"/>
+                                                        <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryPressedBrush}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -826,7 +826,7 @@
                                     </Setter>
                                 </Style>
                             </Button.Style>
-                            <TextBlock Text="迭代标签" FontSize="11"
+                            <TextBlock Text="{loc:Loc Zh=迭代标签, En=Iterate}" FontSize="11"
                                        Foreground="#FFFFFF"/>
                         </Button>
                     </Grid>
@@ -885,22 +885,22 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
-                                   Text="Github设置"
+                                   Text="{loc:Loc Zh=Github设置, En=GitHub Settings}"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    FontSize="12" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Grid.Column="1"
-                                   Text="仓库推送位置"
+                                   Text="{loc:Loc Zh=仓库推送位置, En=Push Location}"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    FontSize="12" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Grid.Column="2"
-                                   Text="推送文件设置"
+                                   Text="{loc:Loc Zh=推送文件设置, En=Push File Settings}"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    FontSize="12" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Grid.Column="3"
-                                   Text="更多推送设置"
+                                   Text="{loc:Loc Zh=更多推送设置, En=More Push Settings}"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    FontSize="12" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"/>

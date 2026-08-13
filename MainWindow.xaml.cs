@@ -23,7 +23,7 @@ namespace OCCMissionGoals
     {
         private bool _isMaximized;
         private bool _justMinimized;
-        private SortMode _currentSortMode = SortMode.SeverityAsc;
+        private SortMode _currentSortMode = LoadSortMode();
 
         // ── 动态页面注册 ──
         private readonly List<PageRegistration> _pageRegs = new();
@@ -49,6 +49,15 @@ namespace OCCMissionGoals
         public event Action<SortMode>? SortModeChanged;
 
         public SortMode CurrentSortMode => _currentSortMode;
+
+        /// <summary>从 config.ini 读取上次保存的排序方式，非法值回退为严重程度升序。</summary>
+        private static SortMode LoadSortMode()
+        {
+            var tag = ConfigManager.Get("Sort", "SortMode", "0");
+            return int.TryParse(tag, out var value) && Enum.IsDefined(typeof(SortMode), value)
+                ? (SortMode)value
+                : SortMode.SeverityAsc;
+        }
 
         public MainWindow()
         {
@@ -77,14 +86,14 @@ namespace OCCMissionGoals
             // ── 注册页面（顺序决定 tab 索引） ──
             RegisterPage(new PageRegistration
             {
-                Key = "log", TabLabel = "更新日志",
+                Key = "log", TabLabel = "更新日志", TabLabelEn = "Update Log",
                 PageFactory = () => new Pages.LogPage(),
                 OnInit = p => ((Pages.LogPage)p).RefreshStats(),
                 OnRefresh = p => ((Pages.LogPage)p).RefreshStats()
             });
             RegisterPage(new PageRegistration
             {
-                Key = "undone", TabLabel = "未完成的条目",
+                Key = "undone", TabLabel = "未完成的条目", TabLabelEn = "Unfinished",
                 PageFactory = () => new Pages.UnDonePage(),
                 OnInit = p => ((Pages.UnDonePage)p).LoadFromData(),
                 OnRefresh = p =>
@@ -96,7 +105,7 @@ namespace OCCMissionGoals
             });
             RegisterPage(new PageRegistration
             {
-                Key = "done", TabLabel = "完成的条目",
+                Key = "done", TabLabel = "完成的条目", TabLabelEn = "Finished",
                 PageFactory = () => new Pages.DonePage(),
                 OnInit = p => ((Pages.DonePage)p).LoadFromData(),
                 OnRefresh = p =>
@@ -108,20 +117,29 @@ namespace OCCMissionGoals
             });
             RegisterPage(new PageRegistration
             {
-                Key = "expand", TabLabel = "扩展",
+                Key = "expand", TabLabel = "扩展", TabLabelEn = "Extensions",
                 PageFactory = () => new Pages.ExpandPage(),
                 OnBeforeNavigate = p => ((Pages.ExpandPage)p).Refresh(),
                 OnRefresh = p => ((Pages.ExpandPage)p).Refresh()
             });
             RegisterPage(new PageRegistration
             {
-                Key = "help", TabLabel = "帮助",
+                Key = "settings", TabLabel = "设置", TabLabelEn = "Settings",
+                PageFactory = () => new Pages.SettingsPage(),
+                OnBeforeNavigate = p => ((Pages.SettingsPage)p).Refresh(),
+                OnRefresh = p => ((Pages.SettingsPage)p).Refresh(),
+                IsOverlayTab = true
+            });
+            RegisterPage(new PageRegistration
+            {
+                Key = "help", TabLabel = "帮助", TabLabelEn = "Help",
                 PageFactory = () => new Pages.HelpPage(),
-                IsHelpTab = true
+                IsOverlayTab = true
             });
 
-            // 向 SwitchPage 注入帮助按钮并订阅事件
-            _switchPage.AddHelpButton("帮助");
+            // 向 SwitchPage 注入隐藏页签按钮并订阅事件
+            _switchPage.AddOverlayTab("settings", LocalizationManager.T("设置", "Settings"));
+            _switchPage.AddOverlayTab("help", LocalizationManager.T("帮助", "Help"));
             _switchPage.TabSelected += OnTabSelected;
 
             // 默认打开第一个页面
@@ -129,8 +147,10 @@ namespace OCCMissionGoals
             SourceInitialized += OnSourceInitialized;
             StateChanged += OnStateChanged;
             PreviewKeyDown += OnPreviewKeyDown;
+            PreviewMouseDown += OnWindowPreviewMouseDown;
             PreviewKeyUp += OnPreviewKeyUp;
             Deactivated += OnWindowDeactivated;
+            LocalizationManager.LanguageChanged += OnLanguageChanged;
             StartFileWatcher();
         }
 
@@ -195,17 +215,387 @@ namespace OCCMissionGoals
 
         public void CloseWindow_Click(object sender, RoutedEventArgs e) => Close();
 
+        private Action? _pendingTopAction;
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var keyword = SearchTextBox.Text;
-            if (_lastTabIndex >= 0 && _lastTabIndex < _pageRegs.Count)
+            ApplySearchToActivePage();
+            UpdateSearchBoard();
+        }
+
+        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+            // 回车执行首条结果（若有）
+            if (_pendingTopAction != null)
             {
-                var key = _pageRegs[_lastTabIndex].Key;
-                if (key == "undone")
-                    (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.ApplyFilter(keyword);
-                else if (key == "done")
-                    (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.ApplyFilter(keyword);
+                var act = _pendingTopAction;
+                _pendingTopAction = null;
+                CloseSearchBoard();
+                act();
             }
+            e.Handled = true;
+        }
+
+        private void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            // 选中（聚焦）搜索框就显示结果板。延迟到本次鼠标/键盘事件处理结束后再打开，
+            // 避免在鼠标按下期间打开面板导致同一次点击被判为「外部点击」而立即关闭。
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+            {
+                if (SearchTextBox == null) return;
+                if (!SearchTextBox.IsKeyboardFocused && !IsFocusInSearchBoard())
+                    return;
+                UpdateSearchBoard();
+            }));
+        }
+
+        private bool IsFocusInSearchBoard()
+        {
+            var focused = Keyboard.FocusedElement as DependencyObject;
+            return focused != null && IsDescendantOf(focused, SearchBoard);
+        }
+
+        private void SearchTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            // 焦点移到结果面板内部时不关闭（让点击项正常触发跳转）
+            if (e.NewFocus is DependencyObject d && IsDescendantOf(d, SearchBoard))
+                return;
+            CloseSearchBoard();
+        }
+
+        /// <summary>把当前输入（支持 "Text:xxx" 等前缀）解析后应用到当前激活的列表页面。</summary>
+        private void ApplySearchToActivePage()
+        {
+            if (SearchTextBox == null) return;
+
+            if (_lastTabIndex >= 0 && _lastTabIndex < _pageRegs.Count)
+                ApplySearch(_pageRegs[_lastTabIndex].Key, SearchTextBox.Text);
+        }
+
+        private void ApplySearch(string key, string rawInput)
+        {
+            var (mode, keyword) = SearchMatcher.Parse(rawInput);
+
+            // 设置 / 插件 / 已安装插件是全局搜索，不作用于条目列表（结果在搜索板中展示）
+            if (mode == SearchMode.Setting || mode == SearchMode.Plugins || mode == SearchMode.Expand)
+                return;
+
+            if (key == "undone")
+                (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.ApplyFilter(keyword, mode);
+            else if (key == "done")
+                (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.ApplyFilter(keyword, mode);
+        }
+
+        // ======================== 搜索结果板 ========================
+
+        private sealed record SettingItem(string Key, string Title, string[] Keywords, Action Action);
+        private sealed record SearchResultItem(
+            string Title, string KindLabel, Brush KindBrush,
+            string Subtitle, string ActionLabel, Action Action);
+
+        private List<SettingItem> GetSettingItems() => new()
+        {
+            new("project", LocalizationManager.T("设置项目", "Project Settings"), new[] { "设置项目", "项目设置", "项目", "设置", "配置", "project", "config", "setting" }, OpenProjectSettings),
+            new("theme", LocalizationManager.T("主题样式", "Theme"), new[] { "主题样式", "主题", "样式", "深浅", "亮色", "暗色", "theme", "dark", "light" }, ToggleTheme),
+            new("push", LocalizationManager.T("推送设置", "Push Settings"), new[] { "推送设置", "推送", "上传", "仓库", "github", "备份", "push", "upload" }, OpenPushSettings),
+        };
+
+        private List<SettingItem> SettingSearchMatches(string keyword)
+        {
+            var q = (keyword ?? string.Empty).Trim().ToLowerInvariant();
+            var items = GetSettingItems();
+            if (q.Length == 0) return items;
+
+            static bool Eq(string s, string q) => s.ToLowerInvariant() == q;
+            bool Sub(string s) => s.ToLowerInvariant().Contains(q) || q.Contains(s.ToLowerInvariant());
+
+            var exact = items.Where(i => Eq(i.Title, q) || i.Keywords.Any(k => Eq(k, q))).ToList();
+            if (exact.Count > 0) return exact;
+
+            return items.Where(i => Sub(i.Title) || i.Keywords.Any(Sub)).ToList();
+        }
+
+        private List<SearchResultItem> BuildSearchResults(string rawInput)
+        {
+            var results = new List<SearchResultItem>();
+
+            // 空输入：只显示「按模式搜索」引导，不列条目
+            if (string.IsNullOrWhiteSpace(rawInput))
+                return results;
+
+            var (mode, keyword) = SearchMatcher.Parse(rawInput);
+
+            if (mode == SearchMode.Setting)
+            {
+                foreach (var s in SettingSearchMatches(keyword))
+                    results.Add(BuildSettingResult(s));
+                return results;
+            }
+
+            if (mode == SearchMode.Plugins || mode == SearchMode.Expand)
+            {
+                AppendPluginResults(results, keyword, mode == SearchMode.Expand);
+                return results;
+            }
+
+            AppendEntryResults(results, keyword, mode);
+            return results;
+        }
+
+        private void AppendEntryResults(List<SearchResultItem> results, string keyword, SearchMode mode)
+        {
+            // 没有实际关键词时不列出条目（例如刚点了「Text:」前缀还没输入内容）
+            if (string.IsNullOrWhiteSpace(keyword)) return;
+
+            var data = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
+            foreach (var entry in data.Unfinished)
+                if (SearchMatcher.Matches(entry, keyword, mode, useCompletedDate: false))
+                    results.Add(BuildEntryResult(entry, finished: false));
+            foreach (var entry in data.Finished)
+                if (SearchMatcher.Matches(entry, keyword, mode, useCompletedDate: true))
+                    results.Add(BuildEntryResult(entry, finished: true));
+        }
+
+        private void AppendPluginResults(List<SearchResultItem> results, string keyword, bool installedOnly)
+        {
+            var source = installedOnly ? Services.PluginCatalog.Installed : Services.PluginCatalog.All;
+            var q = (keyword ?? string.Empty).Trim().ToLowerInvariant();
+
+            IEnumerable<PluginInfo> matches = source;
+            if (q.Length > 0)
+            {
+                matches = source.Where(p =>
+                    p.Name.ToLowerInvariant().Contains(q) ||
+                    p.Description.ToLowerInvariant().Contains(q) ||
+                    p.Author.ToLowerInvariant().Contains(q));
+            }
+
+            foreach (var plugin in matches)
+                results.Add(BuildPluginResult(plugin));
+        }
+
+        private SearchResultItem BuildPluginResult(PluginInfo plugin)
+        {
+            var installed = plugin.IsInstalled;
+            var kindLabel = installed ? LocalizationManager.T("已安装", "Installed") : LocalizationManager.T("未安装", "Not installed");
+            var kindBrush = new SolidColorBrush(installed
+                ? Color.FromRgb(0x4C, 0xAF, 0x50)
+                : Color.FromRgb(0x8D, 0x8D, 0x8D));
+
+            var parts = new List<string>();
+            if (!string.IsNullOrWhiteSpace(plugin.Author)) parts.Add(plugin.Author);
+            if (!string.IsNullOrWhiteSpace(plugin.Version)) parts.Add("v" + plugin.Version);
+            if (!string.IsNullOrWhiteSpace(plugin.Description)) parts.Add(plugin.Description);
+            var subtitle = parts.Count > 0 ? string.Join(" · ", parts) : plugin.Category;
+
+            return new SearchResultItem(
+                plugin.Name, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转", "Go"),
+                () => { SwitchTab("expand"); CloseSearchBoard(); });
+        }
+
+        private SearchResultItem BuildSettingResult(SettingItem s)
+        {
+            var (actionLabel, subtitle) = s.Key switch
+            {
+                "theme" => (ThemeManager.IsDark ? LocalizationManager.T("切换为亮色", "Switch to light") : LocalizationManager.T("切换为深色", "Switch to dark"), LocalizationManager.T("切换深色 / 浅色主题", "Toggle dark / light theme")),
+                "project" => (LocalizationManager.T("打开", "Open"), LocalizationManager.T("打开项目设置对话框", "Open project settings dialog")),
+                "push" => (LocalizationManager.T("跳转", "Go"), LocalizationManager.T("打开推送（上传 / 备份）设置", "Open push (upload / backup) settings")),
+                _ => (LocalizationManager.T("打开", "Open"), s.Title),
+            };
+            return new SearchResultItem(
+                s.Title, LocalizationManager.T("设置", "Settings"),
+                new SolidColorBrush(Color.FromRgb(0x3D, 0x9D, 0xE8)),
+                subtitle, actionLabel,
+                () => { s.Action(); CloseSearchBoard(); });
+        }
+
+        private SearchResultItem BuildEntryResult(GoalEntry entry, bool finished)
+        {
+            var kindLabel = finished ? LocalizationManager.T("已完成", "Finished") : LocalizationManager.T("未完成", "Unfinished");
+            var kindBrush = new SolidColorBrush(finished
+                ? Color.FromRgb(0x4C, 0xAF, 0x50)
+                : Color.FromRgb(0x8D, 0x8D, 0x8D));
+            var subtitle = $"{SeverityHelper.GetText(entry.Severity)} · {entry.Brief}";
+            return new SearchResultItem(
+                entry.Title, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转", "Go"),
+                () => { JumpToEntry(entry, finished); CloseSearchBoard(); });
+        }
+
+        private void UpdateSearchBoard()
+        {
+            var raw = SearchTextBox?.Text ?? string.Empty;
+            var results = BuildSearchResults(raw);
+
+            var (mode, keyword) = SearchMatcher.Parse(raw);
+            // 无实际关键词（空输入，或刚点了「Text:/Tag:…」前缀）→ 显示模式引导，不列条目；
+            // Setting / Plugins / Expand 模式例外：空关键词也列出全部结果（设置快捷项 / 插件）。
+            var isGlobalList = mode is SearchMode.Setting or SearchMode.Plugins or SearchMode.Expand;
+            var showHint = string.IsNullOrWhiteSpace(keyword) && !isGlobalList;
+
+            var hasResults = results.Count > 0;
+            SearchBoardList.ItemsSource = hasResults ? results : null;
+            SearchBoardList.Visibility = hasResults ? Visibility.Visible : Visibility.Collapsed;
+
+            SearchModeHint.Visibility = showHint ? Visibility.Visible : Visibility.Collapsed;
+            SearchBoardEmpty.Visibility = (!showHint && !hasResults) ? Visibility.Visible : Visibility.Collapsed;
+
+            _pendingTopAction = hasResults ? results[0].Action : null;
+            OpenSearchBoard();
+        }
+
+        private void OpenSearchBoard()
+        {
+            // 相对主内容区定位：搜索框正下方，宽度与搜索框一致，随窗口一起移动
+            SearchBoard.Width = SearchHost.ActualWidth;
+            var pos = SearchHost.TranslatePoint(new Point(0, SearchHost.ActualHeight + 4), MainContentGrid);
+            Canvas.SetLeft(SearchBoard, pos.X);
+            Canvas.SetTop(SearchBoard, pos.Y);
+            SearchBoard.Visibility = Visibility.Visible;
+        }
+
+        private void OnWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // 点击搜索板 / 搜索框 / 标题栏（拖动窗口）之外的区域时收起面板
+            if (SearchBoard.Visibility != Visibility.Visible) return;
+            var src = e.OriginalSource as DependencyObject;
+            if (src != null && (IsDescendantOf(src, SearchBoard) ||
+                                IsDescendantOf(src, SearchHost) ||
+                                IsDescendantOf(src, TitleBar)))
+                return;
+            CloseSearchBoard();
+        }
+
+        private static bool IsDescendantOf(DependencyObject? node, DependencyObject ancestor)
+        {
+            while (node != null)
+            {
+                if (ReferenceEquals(node, ancestor)) return true;
+                node = VisualTreeHelper.GetParent(node) ?? LogicalTreeHelper.GetParent(node);
+            }
+            return false;
+        }
+
+        private void SearchBoardItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is SearchResultItem item)
+            {
+                item.Action();
+            }
+        }
+
+        private void SearchModeChip_Click(object sender, RoutedEventArgs e)
+        {
+            // 点击「按模式搜索」引导项 → 在搜索框填入前缀，光标定位到末尾，聚焦继续输入
+            if (sender is Button btn && btn.Tag is string prefix)
+            {
+                SearchTextBox.Text = prefix;
+                SearchTextBox.CaretIndex = SearchTextBox.Text.Length;
+                SearchTextBox.Focus();
+            }
+        }
+
+        private void CloseSearchBoard()
+        {
+            SearchBoard.Visibility = Visibility.Collapsed;
+        }
+
+        private void JumpToEntry(GoalEntry entry, bool finished)
+        {
+            var key = finished ? "done" : "undone";
+            SwitchTab(key);
+            var page = _pageCache.GetValueOrDefault(key);
+            if (finished)
+                (page as Pages.DonePage)?.SelectEntry(entry);
+            else
+                (page as Pages.UnDonePage)?.SelectEntry(entry);
+        }
+
+        private void OpenPushSettings()
+        {
+            // 推送/GitHub 设置入口在「更新日志」页面的侧边栏
+            SwitchTab("log");
+        }
+
+        /// <summary>切换明暗主题并持久化。</summary>
+        public void ToggleTheme() => SetTheme(!ThemeManager.IsDark);
+
+        /// <summary>设置明暗主题（深色/浅色）并持久化、同步控制按钮图标。</summary>
+        public void SetTheme(bool dark)
+        {
+            ThemeManager.ApplyTheme(dark);
+            _controlButtonPage?.SyncThemeIcon();
+            ConfigManager.Set("General", "theme", dark ? "dark" : "light");
+        }
+
+        /// <summary>设置主题色（#RRGGBB）并持久化。</summary>
+        public void SetAccentColor(string hex)
+        {
+            ThemeManager.ApplyAccentColor(hex);
+            ConfigManager.Set("General", "accent", ThemeManager.AccentColorHex);
+        }
+
+        /// <summary>语言切换后重建页签标签并刷新所有已加载视图。</summary>
+        public void ReloadLanguage()
+        {
+            foreach (var reg in _pageRegs)
+                _switchPage?.UpdateTabLabel(reg.Key, LocalizationManager.T(reg.TabLabel, reg.TabLabelEn));
+
+            StatusText.Text = LocalizationManager.T("状态机无更新", "No status update");
+            RefreshAllViews();
+        }
+
+        private void OnLanguageChanged(string lang) => ReloadLanguage();
+
+        /// <summary>打开项目设置弹窗（等价于菜单里的「设置项目」）。</summary>
+        public void OpenProjectSettings()
+        {
+            if (Services.ProjectService.CurrentProject == null)
+            {
+                SetTipText(LocalizationManager.T("没有打开的项目。", "No project is open."));
+                return;
+            }
+
+            var p = Services.ProjectService.CurrentProject;
+            NewProjectDialog.LoadConfig(p.Name, p.Description, p.CurrentVersion);
+            NewProjectDialog.Confirmed += OnProjectSettingsConfirmed;
+            NewProjectDialog.Cancelled += OnProjectSettingsDismissed;
+
+            MainContentGrid.Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 8 };
+            DialogOverlay.Visibility = Visibility.Visible;
+            NewProjectDialog.Visibility = Visibility.Visible;
+        }
+
+        private void OnProjectSettingsConfirmed(object? sender, EventArgs e)
+        {
+            var (isValid, message) = NewProjectDialog.Validate();
+            if (!isValid)
+            {
+                SetTipText(message);
+                return;
+            }
+            if (Services.ProjectService.CurrentProject == null) return;
+
+            Services.ProjectService.CurrentProject.Name = NewProjectDialog.ProjectName;
+            Services.ProjectService.CurrentProject.Description = NewProjectDialog.Description;
+            Services.ProjectService.UpdateProjectConfig(Services.ProjectService.CurrentProject);
+            RefreshAllViews();
+            DismissProjectSettings();
+            SetTipText(LocalizationManager.T("项目设置已保存。", "Project settings saved."));
+        }
+
+        private void OnProjectSettingsDismissed(object? sender, EventArgs e)
+        {
+            DismissProjectSettings();
+        }
+
+        private void DismissProjectSettings()
+        {
+            NewProjectDialog.Confirmed -= OnProjectSettingsConfirmed;
+            NewProjectDialog.Cancelled -= OnProjectSettingsDismissed;
+            NewProjectDialog.Visibility = Visibility.Collapsed;
+            DialogOverlay.Visibility = Visibility.Collapsed;
+            MainContentGrid.Effect = null;
         }
 
         public void MinimizeWindow_Click(object sender, RoutedEventArgs e)
@@ -513,7 +903,7 @@ namespace OCCMissionGoals
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
             };
 
-            fadeOut.Completed += (_, _) => StatusText.Text = "状态机无更新";
+            fadeOut.Completed += (_, _) => StatusText.Text = LocalizationManager.T("状态机无更新", "No status update");
 
             tt.BeginAnimation(TranslateTransform.YProperty, moveUp);
             StatusText.BeginAnimation(OpacityProperty, fadeOut);
@@ -524,10 +914,10 @@ namespace OCCMissionGoals
         private void BellBtn_Click(object sender, RoutedEventArgs e)
         {
             // 点击铃铛显示当前提示
-            if (StatusText.Text != "状态机无更新")
+            if (StatusText.Text != LocalizationManager.T("状态机无更新", "No status update"))
                 SetTipText(StatusText.Text);
             else
-                SetTipText("暂无新消息。");
+                SetTipText(LocalizationManager.T("暂无新消息。", "No new messages."));
         }
 
         private void NotificationBtn_Click(object sender, RoutedEventArgs e)
@@ -536,7 +926,7 @@ namespace OCCMissionGoals
             var proj = Services.ProjectService.CurrentProject;
             if (proj == null)
             {
-                SetTipText("未打开任何项目。");
+                SetTipText(LocalizationManager.T("未打开任何项目。", "No project opened."));
                 return;
             }
             var dataPath = Services.DataService.GetFilePath();
@@ -546,7 +936,7 @@ namespace OCCMissionGoals
             var merged = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
             var unfinished = merged.Unfinished.Count;
             var finished = merged.Finished.Count;
-            SetTipText($"项目：{proj.Name}  |  数据文件：{dataName}  |  未完成 {unfinished}，已完成 {finished}");
+            SetTipText(LocalizationManager.T($"项目：{proj.Name}  |  数据文件：{dataName}  |  未完成 {unfinished}，已完成 {finished}", $"Project: {proj.Name}  |  Data file: {dataName}  |  Unfinished {unfinished}, Finished {finished}"));
         }
 
         private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -559,11 +949,11 @@ namespace OCCMissionGoals
             {
                 Services.ProjectService.SwitchVersion(tag + ".json");
                 RefreshAllViews();
-                SetTipText($"已切换到版本 {tag}。");
+                SetTipText(LocalizationManager.T($"已切换到版本 {tag}。", $"Switched to version {tag}."));
             }
             catch (Exception ex)
             {
-                SetTipText($"切换失败：{ex.Message}");
+                SetTipText(LocalizationManager.T($"切换失败：{ex.Message}", $"Switch failed: {ex.Message}"));
             }
 
             // 重置选中项
@@ -574,7 +964,7 @@ namespace OCCMissionGoals
         public void RefreshVersionCombo()
         {
             VersionComboBox.Items.Clear();
-            VersionComboBox.Items.Add(new ComboBoxItem { Content = "调整目标的文件", Tag = "__placeholder__" });
+            VersionComboBox.Items.Add(new ComboBoxItem { Content = LocalizationManager.T("调整目标的文件", "Adjust target file"), Tag = "__placeholder__" });
 
             var dir = Services.ProjectService.CurrentProjectDir;
             if (dir == null) return;
@@ -614,7 +1004,7 @@ namespace OCCMissionGoals
         {
             (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.ExpandAllDetails();
             (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.ExpandAllDetails();
-            SetTipText("已展开所有条目详情。");
+            SetTipText(LocalizationManager.T("已展开所有条目详情。", "Expanded all entry details."));
         }
 
         /// <summary>收起所有条目详情。</summary>
@@ -622,7 +1012,7 @@ namespace OCCMissionGoals
         {
             (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.CollapseAllDetails();
             (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.CollapseAllDetails();
-            SetTipText("已收起所有条目详情。");
+            SetTipText(LocalizationManager.T("已收起所有条目详情。", "Collapsed all entry details."));
         }
 
         /// <summary>打开帮助页面。</summary>
@@ -695,7 +1085,7 @@ namespace OCCMissionGoals
                     });
                 RefreshAllViews();
                 DismissDialogOverlay();
-                SetTipText($"已更新条目「{title}」。");
+                SetTipText(LocalizationManager.T($"已更新条目「{title}」。", $"Updated entry \"{title}\"."));
             }
             else
             {
@@ -720,7 +1110,7 @@ namespace OCCMissionGoals
                 Services.DataService.Save();
                 RefreshUnDoneList();
                 DismissDialogOverlay();
-                SetTipText($"已添加条目「{entry.Title}」。");
+                SetTipText(LocalizationManager.T($"已添加条目「{entry.Title}」。", $"Added entry \"{entry.Title}\"."));
             }
         }
 
@@ -741,6 +1131,9 @@ namespace OCCMissionGoals
 
             // 每次都触发 OnBeforeNavigate
             reg.OnBeforeNavigate?.Invoke(page);
+
+            // 切换 Tab 时把当前搜索重新应用到目标页
+            ApplySearch(reg.Key, SearchTextBox.Text);
 
             NavigateByKey(idx, reg, page);
         }
@@ -765,27 +1158,24 @@ namespace OCCMissionGoals
 
         private void NavigateByKey(int tabIndex, PageRegistration reg, Page page)
         {
-            if (reg.IsHelpTab)
-                _switchPage?.ShowHelpButton();
+            if (reg.IsOverlayTab)
+                _switchPage?.ShowOverlayTab(reg.Key);
             else
-                _switchPage?.HideHelpButton();
+                _switchPage?.HideOverlayTabs();
 
             ExecuteNavigation(tabIndex, f => f.Navigate(page));
         }
 
-        private void OnTabSelected(int index)
+        private void OnTabSelected(string key)
         {
-            if (index == -1)
-                SwitchTab("help");
-            else if (index >= 0 && index < _pageRegs.Count)
-                SwitchTab(_pageRegs[index].Key);
+            SwitchTab(key);
         }
 
         private void RegisterPage(PageRegistration reg)
         {
             _pageRegs.Add(reg);
-            if (!reg.IsHelpTab)
-                _switchPage?.AddTabButton(reg.TabLabel, _pageRegs.Count - 1);
+            if (!reg.IsOverlayTab)
+                _switchPage?.AddTabButton(reg.Key, reg.TabLabel, _pageRegs.Count - 1);
         }
 
         private void NavigateToPage(int tabIndex, Action<Frame> getPage)

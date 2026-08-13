@@ -1,6 +1,8 @@
 <UserControl x:Class="OCCMissionGoals.Dialogs.NewProjectDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+             xmlns:loc="clr-namespace:OCCMissionGoals"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:OCCMissionGoals.Dialogs"
@@ -25,7 +27,7 @@
                     Padding="0,0,0,10"
                     Margin="0,0,0,12">
                 <Grid>
-                    <TextBlock x:Name="DialogTitle" Text="新建项目"
+                    <TextBlock x:Name="DialogTitle" Text="{loc:Loc Zh=新建项目, En=New Project}"
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
@@ -35,29 +37,55 @@
             <!-- 表单区域 -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
-                    <!-- 项目名称 -->
-                    <TextBlock Text="项目名称" Style="{StaticResource DialogLabel}"/>
-                    <TextBox x:Name="ProjectNameTextBox"
-                             Style="{StaticResource DialogTextBox}"
-                             Margin="0,0,0,14"/>
+                    <!-- 模式切换 -->
+                    <StackPanel x:Name="ModeSwitcher" Orientation="Horizontal" Margin="0,0,0,12">
+                        <RadioButton x:Name="NewModeBtn" Content="{loc:Loc Zh=新建项目, En=New Project}" GroupName="ProjectMode"
+                                     Style="{StaticResource ConsoleTabRadioButton}" Margin="0,0,12,0"
+                                     Checked="NewModeBtn_Checked"/>
+                        <RadioButton x:Name="OpenModeBtn" Content="{loc:Loc Zh=打开项目, En=Open Project}" GroupName="ProjectMode"
+                                     Checked="OpenModeBtn_Checked"
+                                     Style="{StaticResource ConsoleTabRadioButton}"/>
+                    </StackPanel>
 
-                    <!-- 项目描述 -->
-                    <TextBlock Text="项目描述" Style="{StaticResource DialogLabel}"/>
-                    <TextBox x:Name="DescriptionTextBox"
-                             Style="{StaticResource DialogTextBox}"
-                             Height="80"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             VerticalContentAlignment="Top"
-                             Margin="0,0,0,14"/>
+                    <!-- 新建 / 编辑项目 -->
+                    <StackPanel x:Name="NewPanel">
+                        <!-- 项目名称 -->
+                        <TextBlock Text="{loc:Loc Zh=项目名称, En=Project Name}" Style="{StaticResource DialogLabel}"/>
+                        <TextBox x:Name="ProjectNameTextBox"
+                                 Style="{StaticResource DialogTextBox}"
+                                 Margin="0,0,0,14"/>
 
-                    <!-- 初始版本 -->
-                    <TextBlock Text="初始版本" Style="{StaticResource DialogLabel}"/>
-                    <TextBox x:Name="VersionTextBox"
-                             Style="{StaticResource DialogTextBox}"
-                             Text="0.1.0-alpha.0"
-                             Margin="0,0,0,14"/>
+                        <!-- 项目描述 -->
+                        <TextBlock Text="{loc:Loc Zh=项目描述, En=Project Description}" Style="{StaticResource DialogLabel}"/>
+                        <TextBox x:Name="DescriptionTextBox"
+                                 Style="{StaticResource DialogTextBox}"
+                                 Height="80"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 VerticalContentAlignment="Top"
+                                 Margin="0,0,0,14"/>
+
+                        <!-- 初始版本 -->
+                        <TextBlock Text="{loc:Loc Zh=初始版本, En=Initial Version}" Style="{StaticResource DialogLabel}"/>
+                        <TextBox x:Name="VersionTextBox"
+                                 Style="{StaticResource DialogTextBox}"
+                                 Text="0.1.0-alpha.0"
+                                 Margin="0,0,0,14"/>
+                    </StackPanel>
+
+                    <!-- 打开已有项目 -->
+                    <StackPanel x:Name="OpenPanel" Visibility="Collapsed">
+                        <TextBlock Text="{loc:Loc Zh=选择项目, En=Select Project}" Style="{StaticResource DialogLabel}"/>
+                        <ComboBox x:Name="ProjectComboBox"
+                                  Style="{StaticResource DialogComboBox}"
+                                  ItemContainerStyle="{StaticResource DialogComboBoxItem}"
+                                  DisplayMemberPath="Display"
+                                  Margin="0,0,0,10"/>
+                        <TextBlock x:Name="OpenHint" Text=""
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="11" Margin="0,0,0,8"/>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
 
@@ -69,11 +97,11 @@
                     Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button Content="取消"
+                    <Button Content="{loc:Loc Zh=取消, En=Cancel}"
                             Click="CancelButton_Click"
                             Style="{StaticResource DialogCancelButton}"
                             Margin="0,0,10,0"/>
-                    <Button Content="确认"
+                    <Button x:Name="ConfirmBtn" Content="{loc:Loc Zh=确认, En=Confirm}"
                             Click="ConfirmButton_Click"
                             Style="{StaticResource DialogConfirmButton}"/>
                 </StackPanel>

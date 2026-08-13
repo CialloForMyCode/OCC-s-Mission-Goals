@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:OCCMissionGoals.Pages"
+      xmlns:loc="clr-namespace:OCCMissionGoals"
       mc:Ignorable="d" 
       d:DesignHeight="667" d:DesignWidth="1240"
       Title="ExpandPage">
@@ -19,7 +20,7 @@
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                     Padding="16" Margin="0,0,0,5">
-                <TextBlock Text="扩展中心"
+                <TextBlock Text="{loc:Loc Zh=扩展中心, En=Extension Center}"
                            FontSize="22" FontWeight="Bold"
                            Foreground="{DynamicResource ForegroundBrush}"
                            Margin="16,0,0,6"/>
@@ -49,7 +50,7 @@
                         </TextBox.Resources>
                     </TextBox>
                     <TextBlock Grid.Column="0"
-                               Text="搜索扩展..."
+                               Text="{loc:Loc Zh=搜索扩展..., En=Search extensions...}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="13" Opacity="0.4"
                                VerticalAlignment="Center" Margin="12,0,0,0"
@@ -66,7 +67,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                     <Button Grid.Column="1"
-                            Content="刷新" Width="72" Height="32"
+                            Content="{loc:Loc Zh=刷新, En=Refresh}" Width="72" Height="32"
                             Margin="12,0,0,0"
                             Style="{StaticResource CardActionBtn}"
                             Click="RefreshButton_Click"/>
@@ -148,10 +149,10 @@
                                                    FontSize="11" Opacity="0.5"
                                                    VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         <Border CornerRadius="3"
-                                                Background="#4CAF50"
+                                                Background="{DynamicResource PrimaryBrush}"
                                                 Padding="4" Margin="8,0,0,0" VerticalAlignment="Center"
                                                 Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="已安装" FontSize="10"
+                                            <TextBlock Text="{loc:Loc Zh=已安装, En=Installed}" FontSize="10"
                                                        Foreground="White"/>
                                         </Border>
                                     </StackPanel>
@@ -167,14 +168,16 @@
                                     <!-- 底部信息 -->
                                     <StackPanel Grid.Column="1" Grid.Row="2"
                                                 Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Author, StringFormat='作者: {0}'}"
-                                                   Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="11" Opacity="0.4"/>
+                                        <TextBlock Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="11" Opacity="0.4">
+                                            <Run Text="{loc:Loc Zh=作者: , En=Author: }"/>
+                                            <Run Text="{Binding Author}"/>
+                                        </TextBlock>
                                         <TextBlock Text="{Binding Downloads, StringFormat='  |  ⬇ {0}'}"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    FontSize="11" Opacity="0.4"/>
                                         <TextBlock Text="{Binding Category, StringFormat='  |  {0}'}"
-                                                   Foreground="#4CAF50"
+                                                   Foreground="{DynamicResource PrimaryBrush}"
                                                    FontSize="11" Opacity="0.7"/>
                                     </StackPanel>
 
@@ -187,10 +190,10 @@
                                                 Tag="{Binding}">
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
-                                                    <Setter Property="Content" Value="安装"/>
+                                                    <Setter Property="Content" Value="{loc:Loc Zh=安装, En=Install}"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                                            <Setter Property="Content" Value="卸载"/>
+                                                            <Setter Property="Content" Value="{loc:Loc Zh=卸载, En=Uninstall}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -212,7 +215,7 @@
                         Margin="0,0,0,6" Padding="24,20"
                         VerticalAlignment="Top"
                         Visibility="Collapsed">
-                    <TextBlock Text="没有扩展"
+                    <TextBlock Text="{loc:Loc Zh=没有扩展, En=No extensions}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="15" Opacity="0.5"
                                HorizontalAlignment="Center"

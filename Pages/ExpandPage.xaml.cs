@@ -12,12 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using OCCMissionGoals.Models;
+using OCCMissionGoals.Services;
 
 namespace OCCMissionGoals.Pages;
 
 public partial class ExpandPage : Page
 {
-    private readonly List<PluginInfo> _allPlugins = new();
+    private List<PluginInfo> _allPlugins => PluginCatalog.All;
     private string _currentCategory = "全部";
     private string _currentSearch = "";
 
@@ -38,7 +39,7 @@ public partial class ExpandPage : Page
     {
         _allPlugins.Clear();
 
-        // TODO: 从真实数据源加载插件列表
+        // TODO: 从真实数据源加载插件列表（填充 PluginCatalog.All）
         // _allPlugins.AddRange(...);
 
         _currentCategory = "全部";
@@ -118,8 +119,10 @@ public partial class ExpandPage : Page
             {
                 // TODO: 下载安装逻辑
                 MessageBox.Show(
-                    $"正在安装「{plugin.Name}」...\n\n（占位：将来对接真实下载源后，此处将触发下载并安装流程。）",
-                    "安装扩展",
+                    LocalizationManager.T(
+                        $"正在安装「{plugin.Name}」...\n\n（占位：将来对接真实下载源后，此处将触发下载并安装流程。）",
+                        $"Installing \"{plugin.Name}\"...\n\n(Placeholder: once a real download source is wired up, this will trigger the download and install flow.)"),
+                    LocalizationManager.T("安装扩展", "Install Extension"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 plugin.IsInstalled = true;
@@ -135,21 +138,6 @@ public partial class ExpandPage : Page
 }
 
 // ==================== 数据模型 ====================
-
-/// <summary>插件/扩展信息。</summary>
-public class PluginInfo
-{
-    public string Id { get; set; } = "";
-    public string Name { get; set; } = "";
-    /// <summary>图标路径（文件路径、pack URI 或 HTTP URL）。</summary>
-    public string Icon { get; set; } = "";
-    public string Description { get; set; } = "";
-    public string Author { get; set; } = "";
-    public string Version { get; set; } = "";
-    public string Category { get; set; } = "";
-    public int Downloads { get; set; }
-    public bool IsInstalled { get; set; }
-}
 
 /// <summary>分类筛选项。</summary>
 public class CategoryItem

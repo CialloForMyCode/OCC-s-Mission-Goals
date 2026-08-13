@@ -23,6 +23,7 @@ namespace OCCMissionGoals.Pages
         private ObservableCollection<DoneVersionGroupVM> _groups = new();
         private SortMode _currentSort = SortMode.SeverityAsc;
         private string _searchFilter = string.Empty;
+        private SearchMode _searchMode = SearchMode.Text;
 
         public DonePage()
         {
@@ -62,13 +63,7 @@ namespace OCCMissionGoals.Pages
 
             // 搜索过滤
             if (!string.IsNullOrWhiteSpace(_searchFilter))
-            {
-                var kw = _searchFilter.ToLowerInvariant();
-                query = query.Where(i =>
-                    i.Title.ToLowerInvariant().Contains(kw) ||
-                    i.Brief.ToLowerInvariant().Contains(kw) ||
-                    i.Detail.ToLowerInvariant().Contains(kw));
-            }
+                query = query.Where(i => SearchMatcher.Matches(i.Entry, _searchFilter, _searchMode, useCompletedDate: true));
 
             if (_currentSort == SortMode.FavoritesOnly)
                 query = query.Where(i => i.Entry.IsFavorited);
@@ -93,9 +88,10 @@ namespace OCCMissionGoals.Pages
         }
 
         /// <summary>应用搜索过滤。</summary>
-        public void ApplyFilter(string filter)
+        public void ApplyFilter(string filter, SearchMode mode = SearchMode.Text)
         {
             _searchFilter = (filter ?? string.Empty).Trim();
+            _searchMode = mode;
             RebuildGroups();
         }
 
@@ -115,6 +111,85 @@ namespace OCCMissionGoals.Pages
                 item.IsDetailExpanded = false;
         }
 
+        /// <summary>跳转并高亮指定条目（供搜索板跳转使用）。</summary>
+        public void SelectEntry(GoalEntry entry)
+        {
+            var group = _groups.FirstOrDefault(g => g.Items.Any(i => SameEntry(i.Entry, entry)));
+            if (group == null) return;
+            var item = group.Items.First(i => SameEntry(i.Entry, entry));
+            group.IsExpanded = true;
+
+            ScrollToItem(item);
+        }
+
+        private void ScrollToItem(DoneItemVM item)
+        {
+            var timer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(120)
+            };
+            var ticks = 0;
+            timer.Tick += (_, _) =>
+            {
+                ticks++;
+                var container = LocateItemContainer(item);
+                if (container != null)
+                {
+                    timer.Stop();
+                    container.BringIntoView();
+                    FlashEntryCard(container);
+                    return;
+                }
+                if (ticks >= 20) timer.Stop();
+            };
+            timer.Start();
+        }
+
+        private FrameworkElement? LocateItemContainer(DoneItemVM item)
+        {
+            foreach (var group in _groups)
+            {
+                if (!group.Items.Contains(item)) continue;
+                var gc = DoneList.ItemContainerGenerator.ContainerFromItem(group) as FrameworkElement;
+                if (gc == null) continue;
+                var groupItems = FindNameInTree<ItemsControl>(gc, "GroupItems");
+                if (groupItems == null) continue;
+                groupItems.UpdateLayout();
+                return groupItems.ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
+            }
+            return null;
+        }
+
+        private static bool SameEntry(GoalEntry a, GoalEntry b)
+        {
+            if (!string.IsNullOrEmpty(a.Id) && !string.IsNullOrEmpty(b.Id))
+                return a.Id == b.Id;
+            return a.Title == b.Title && a.Version == b.Version;
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T t) return t;
+                var found = FindVisualChild<T>(child);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private static void FlashEntryCard(FrameworkElement container)
+        {
+            var card = container as Border ?? FindVisualChild<Border>(container);
+            if (card == null) return;
+            var original = card.BorderBrush;
+            card.BorderBrush = new SolidColorBrush(Color.FromRgb(0x60, 0xCD, 0xFF));
+            var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(900) };
+            timer.Tick += (_, _) => { timer.Stop(); card.BorderBrush = original; };
+            timer.Start();
+        }
+
         private void RebuildGroups()
         {
             var sorted = GetSortedItems().ToList();
@@ -124,7 +199,7 @@ namespace OCCMissionGoals.Pages
                 oldExpandStates[g.VersionName] = g.IsExpanded;
 
             var grouped = sorted
-                .GroupBy(i => string.IsNullOrEmpty(i.Version) ? "未指定版本" : i.Version)
+                .GroupBy(i => string.IsNullOrEmpty(i.Version) ? string.Empty : i.Version)
                 .OrderBy(g => g.Key);
 
             _groups.Clear();
@@ -148,7 +223,7 @@ namespace OCCMissionGoals.Pages
         private static bool CanArchiveVersion(string versionName)
         {
             // 未指定版本不可归档
-            if (string.IsNullOrEmpty(versionName) || versionName == "未指定版本")
+            if (string.IsNullOrEmpty(versionName))
                 return false;
 
             var projectDir = Services.ProjectService.CurrentProjectDir;
@@ -283,16 +358,16 @@ namespace OCCMissionGoals.Pages
                 var binDir = Path.Combine(exeDir, "bin");
                 Directory.CreateDirectory(binDir);
 
-                var verName = string.IsNullOrEmpty(group.VersionName) ? "未指定版本" : group.VersionName;
+                var verName = string.IsNullOrEmpty(group.VersionName) ? LocalizationManager.T("未指定版本", "No version") : group.VersionName;
                 var safeName = verName.Replace('/', '_').Replace('\\', '_').Replace(':', '_');
                 var fileName = $"archive_{safeName}_{DateTime.Now:yyyyMMdd_HHmmss}.md";
                 var filePath = Path.Combine(binDir, fileName);
 
                 var sb = new StringBuilder();
-                sb.AppendLine($"# 归档 — {verName}");
+                sb.AppendLine(LocalizationManager.T($"# 归档 — {verName}", $"# Archive — {verName}"));
                 sb.AppendLine();
-                sb.AppendLine($"> 导出时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                sb.AppendLine($"> 条目数量: {group.Items.Count}");
+                sb.AppendLine(LocalizationManager.T($"> 导出时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}", $"> Exported at: {DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
+                sb.AppendLine(LocalizationManager.T($"> 条目数量: {group.Items.Count}", $"> Entry count: {group.Items.Count}"));
                 sb.AppendLine();
 
                 foreach (var item in group.Items)
@@ -301,25 +376,25 @@ namespace OCCMissionGoals.Pages
                     sb.AppendLine();
                     sb.AppendLine($"## {EscapeMd(item.Title)}");
                     sb.AppendLine();
-                    sb.AppendLine($"| 字段 | 内容 |");
+                    sb.AppendLine(LocalizationManager.T("| 字段 | 内容 |", "| Field | Content |"));
                     sb.AppendLine($"|------|------|");
-                    sb.AppendLine($"| 严重程度 | {SeverityHelper.GetText(item.Entry.Severity)} |");
-                    sb.AppendLine($"| 详细信息 | {EscapeMd(item.Detail)} |");
-                    sb.AppendLine($"| 截止日期 | {item.Entry.Deadline:yyyy-MM-dd} |");
-                    sb.AppendLine($"| 完成时间 | {item.Entry.CompletedAt:yyyy-MM-dd} |");
+                    sb.AppendLine(LocalizationManager.T($"| 严重程度 | {SeverityHelper.GetText(item.Entry.Severity)} |", $"| Severity | {SeverityHelper.GetText(item.Entry.Severity)} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 详细信息 | {EscapeMd(item.Detail)} |", $"| Details | {EscapeMd(item.Detail)} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 截止日期 | {item.Entry.Deadline:yyyy-MM-dd} |", $"| Deadline | {item.Entry.Deadline:yyyy-MM-dd} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 完成时间 | {item.Entry.CompletedAt:yyyy-MM-dd} |", $"| Completed | {item.Entry.CompletedAt:yyyy-MM-dd} |"));
 
                     if (item.Entry.RelatedFiles.Count > 0)
                     {
-                        var files = string.Join("、", item.Entry.RelatedFiles.Select(f =>
+                        var files = string.Join(LocalizationManager.T("、", ", "), item.Entry.RelatedFiles.Select(f =>
                         {
                             var name = Path.GetFileName(f.Path);
                             return $"{name}[{f.Line}:{f.Column}]";
                         }));
-                        sb.AppendLine($"| 相关文件 | {EscapeMd(files)} |");
+                        sb.AppendLine(LocalizationManager.T($"| 相关文件 | {EscapeMd(files)} |", $"| Related Files | {EscapeMd(files)} |"));
                     }
                     else
                     {
-                        sb.AppendLine($"| 相关文件 | (无) |");
+                        sb.AppendLine(LocalizationManager.T("| 相关文件 | (无) |", "| Related Files | (none) |"));
                     }
 
                     sb.AppendLine();
@@ -330,7 +405,7 @@ namespace OCCMissionGoals.Pages
                 // 安全校验：确认版本内全部条目均已完成
                 if (!CanArchiveVersion(group.VersionName))
                 {
-                    MessageBox.Show("该版本中仍有未完成的条目，无法归档。", "无法归档",
+                    MessageBox.Show(LocalizationManager.T("该版本中仍有未完成的条目，无法归档。", "This version still has unfinished entries and cannot be archived."), LocalizationManager.T("无法归档", "Cannot Archive"),
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
@@ -350,11 +425,11 @@ namespace OCCMissionGoals.Pages
                 RebuildGroups();
 
                 if (Window.GetWindow(this) is MainWindow mw)
-                    mw.SetTipText($"已归档 {group.Items.Count} 条到 bin/{fileName}。");
+                    mw.SetTipText(LocalizationManager.T($"已归档 {group.Items.Count} 条到 bin/{fileName}。", $"Archived {group.Items.Count} entries to bin/{fileName}."));
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"归档失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LocalizationManager.T($"归档失败: {ex.Message}", $"Archive failed: {ex.Message}"), LocalizationManager.T("错误", "Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -485,7 +560,7 @@ namespace OCCMissionGoals.Pages
     public class DoneVersionGroupVM
     {
         public string VersionName { get; set; } = string.Empty;
-        public string DisplayName => string.IsNullOrEmpty(VersionName) ? "未指定版本" : VersionName;
+        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本", "No version") : VersionName;
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<DoneItemVM> Items { get; set; } = new();
         public bool IsExpanded { get; set; } = true;
@@ -511,7 +586,7 @@ namespace OCCMissionGoals.Pages
         }
 
         public bool IsExcerptVisible => !_isDetailExpanded;
-        public string DetailToggleText => _isDetailExpanded ? "收起" : "详情";
+        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起", "Collapse") : LocalizationManager.T("详情", "Details");
 
         public string Title => Entry.Title;
         public string SeverityText => SeverityHelper.GetText(Entry.Severity);
@@ -520,7 +595,8 @@ namespace OCCMissionGoals.Pages
         public string Brief => Entry.Brief;
         public string Detail => Entry.Detail;
         public string Version => Entry.Version;
-        public List<string> Type => Entry.Type;
+        public IEnumerable<TypeTag> TypeTags =>
+            Entry.Type.Select(t => new TypeTag(t, Services.ProjectService.GetTypeColor(t)));
         public bool HasType => Entry.Type.Count > 0;
         public List<FileRef> RelatedFiles => Entry.RelatedFiles;
         public bool HasRelatedFiles => Entry.RelatedFiles.Count > 0;

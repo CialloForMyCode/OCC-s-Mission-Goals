@@ -15,9 +15,16 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // 读取语言
+        LocalizationManager.LoadFromConfig();
+
         // 读取主题
         var theme = ConfigManager.Get("General", "theme", "light");
         ThemeManager.ApplyTheme(theme == "dark");
+
+        // 读取主题色
+        var accent = ConfigManager.Get("General", "accent", "#4CAF50");
+        ThemeManager.ApplyAccentColor(accent);
 
         // CLI 模式：如果第一个参数是已知命令，走 CLI 然后退出
         if (e.Args.Length > 0 && IsCliCommand(e.Args[0]))

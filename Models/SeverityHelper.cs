@@ -10,12 +10,12 @@ public static class SeverityHelper
 {
     public static string GetText(GoalSeverity s) => s switch
     {
-        GoalSeverity.Fatal   => "致命",
-        GoalSeverity.Severe  => "严重",
-        GoalSeverity.General => "一般",
-        GoalSeverity.Patch   => "补丁",
-        GoalSeverity.Update  => "更新",
-        _                    => "未知"
+        GoalSeverity.Fatal   => LocalizationManager.T("致命", "Fatal"),
+        GoalSeverity.Severe  => LocalizationManager.T("严重", "Severe"),
+        GoalSeverity.General => LocalizationManager.T("一般", "General"),
+        GoalSeverity.Patch   => LocalizationManager.T("补丁", "Patch"),
+        GoalSeverity.Update  => LocalizationManager.T("更新", "Update"),
+        _                    => LocalizationManager.T("未知", "Unknown")
     };
 
     public static Color GetColor(GoalSeverity s) => s switch

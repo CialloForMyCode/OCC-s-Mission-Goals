@@ -2,7 +2,10 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      
+
+      xmlns:loc="clr-namespace:OCCMissionGoals"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:OCCMissionGoals.ToolPages"
       mc:Ignorable="d" 
       d:DesignHeight="38" d:DesignWidth="260"
@@ -12,19 +15,19 @@
               VerticalAlignment="Center"
               Margin="5,5,0,5"
               ItemContainerStyle="{StaticResource MenuItemStyle}">
-            <MenuItem x:Name="MenuItemFile"       Header="项目(_P)">
-                <MenuItem x:Name="MenuItemNew"    Header="新建项目(_N)"/>
-                <MenuItem x:Name="MenuItemOpen"   Header="打开项目(_O)"/>
-                <MenuItem x:Name="MenuItemSetting"   Header="设置项目(_S)"/>
+            <MenuItem x:Name="MenuItemFile"       Header="{loc:Loc Zh=项目(_P), En=Project(_P)}">
+                <MenuItem x:Name="MenuItemNew"    Header="{loc:Loc Zh=新建项目(_N), En=New Project(_N)}"/>
+                <MenuItem x:Name="MenuItemOpen"   Header="{loc:Loc Zh=打开项目(_O), En=Open Project(_O)}"/>
+                <MenuItem x:Name="MenuItemSetting"   Header="{loc:Loc Zh=设置项目(_S), En=Project Settings(_S)}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemView"       Header="条目(_V)">
-                <MenuItem x:Name="MenuItemNewEntry" Header="新建条目(_N)"/>
+            <MenuItem x:Name="MenuItemView"       Header="{loc:Loc Zh=条目(_V), En=Entries(_V)}">
+                <MenuItem x:Name="MenuItemNewEntry" Header="{loc:Loc Zh=新建条目(_N), En=New Entry(_N)}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemGit"    Header="文件(_F)">
-                <MenuItem x:Name="MenuItemNewData" Header="新建数据文件(_N)"/>
-                <MenuItem x:Name="MenuItemOpenData" Header="打开数据文件(_O)"/>
+            <MenuItem x:Name="MenuItemGit"    Header="{loc:Loc Zh=文件(_F), En=File(_F)}">
+                <MenuItem x:Name="MenuItemNewData" Header="{loc:Loc Zh=新建数据文件(_N), En=New Data File(_N)}"/>
+                <MenuItem x:Name="MenuItemOpenData" Header="{loc:Loc Zh=打开数据文件(_O), En=Open Data File(_O)}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemHelp"   Header="帮助(_H)"/>
+            <MenuItem x:Name="MenuItemHelp"   Header="{loc:Loc Zh=帮助(_H), En=Help(_H)}"/>
         </Menu>
     </Grid>
 </Page>

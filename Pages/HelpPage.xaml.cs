@@ -33,6 +33,7 @@ public partial class HelpPage : Page
             ["Type"]         = Section_Type,
             ["RelatedFiles"] = Section_RelatedFiles,
             ["Shortcuts"]    = Section_Shortcuts,
+            ["Search"]       = Section_Search,
             ["Project"]      = Section_Project,
             ["CLI"]          = Section_CLI,
         };
@@ -50,6 +51,7 @@ public partial class HelpPage : Page
             ["Type"]         = Nav_Type,
             ["RelatedFiles"] = Nav_RelatedFiles,
             ["Shortcuts"]    = Nav_Shortcuts,
+            ["Search"]       = Nav_Search,
             ["Project"]      = Nav_Project,
             ["CLI"]          = Nav_CLI,
         };

@@ -28,7 +28,7 @@ namespace OCCMissionGoals.Pages
         private string _userName = "OCCO";
         private string _userInitial = "O";
         private string _userAvatarPath = string.Empty;
-        private RepositoryInfo? _selectedRepository;
+        private Models.RepositoryInfo? _selectedRepository;
         private bool _includeAuthor = true;
         private bool _groupByDate = true;
         private string _versionPrefix = "v";
@@ -89,8 +89,8 @@ namespace OCCMissionGoals.Pages
             get => _userAvatarPath;
             set { _userAvatarPath = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<RepositoryInfo> Repositories { get; } = new();
-        public RepositoryInfo? SelectedRepository
+        public ObservableCollection<Models.RepositoryInfo> Repositories { get; } = new();
+        public Models.RepositoryInfo? SelectedRepository
         {
             get => _selectedRepository;
             set { _selectedRepository = value; OnPropertyChanged(); }
@@ -142,7 +142,7 @@ namespace OCCMissionGoals.Pages
         private void RefreshProjectInfo()
         {
             var proj = Services.ProjectService.CurrentProject;
-            ProjectName = proj?.Name ?? "未打开项目";
+            ProjectName = proj?.Name ?? LocalizationManager.T("未打开项目", "No project opened");
             var ver = proj?.CurrentVersion ?? "";
             // 兼容旧格式（带 .json 后缀）
             var cleanVer = ver.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
@@ -335,7 +335,7 @@ namespace OCCMissionGoals.Pages
                     Severity = e.Severity,
                     SeverityBrush = Models.SeverityHelper.GetBrush(e.Severity),
                     CompletedAt = e.CompletedAt,
-                    TypeLabel = "已完成",
+                    TypeLabel = LocalizationManager.T("已完成", "Completed"),
                     TypeBrush = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50))
                 })
                 .ToList();
@@ -352,13 +352,13 @@ namespace OCCMissionGoals.Pages
             UserAvatarPath = string.Empty;
             if (Repositories.Count == 0)
             {
-                Repositories.Add(new RepositoryInfo { Name = "OCC's Mission & Goals", Url = "https://github.com/OCCO/OCC-Mission-Goals" });
-                Repositories.Add(new RepositoryInfo { Name = "Harvest Planner", Url = "https://github.com/OCCO/HarvPlan" });
+                foreach (var repo in Services.PushSettings.LoadRepositories())
+                    Repositories.Add(repo);
             }
-            SelectedRepository ??= Repositories[0];
-            IncludeAuthor = true;
-            GroupByDate = true;
-            VersionPrefix = "v";
+            SelectedRepository ??= Repositories.Count > 0 ? Repositories[0] : null;
+            IncludeAuthor = Services.PushSettings.IncludeAuthor;
+            GroupByDate = Services.PushSettings.GroupByDate;
+            VersionPrefix = Services.PushSettings.VersionPrefix;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -436,6 +436,9 @@ namespace OCCMissionGoals.Pages
             get => _isOverdue;
             set { _isOverdue = value; OnPropertyChanged(); }
         }
+        public string DaysLeftText => IsOverdue
+            ? LocalizationManager.T("已过期", "Overdue")
+            : LocalizationManager.T($"{_daysLeft}天", $"{_daysLeft}d");
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -482,12 +485,12 @@ namespace OCCMissionGoals.Pages
             get
             {
                 var diff = DateTime.Now - _completedAt;
-                if (diff.TotalMinutes < 1) return "刚刚";
-                if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}分钟前";
-                if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}小时前";
-                if (diff.TotalDays < 30) return $"{(int)diff.TotalDays}天前";
-                if (diff.TotalDays < 365) return $"{(int)(diff.TotalDays / 30)}个月前";
-                return $"{(int)(diff.TotalDays / 365)}年前";
+                if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now");
+                if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago");
+                if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago");
+                if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago");
+                if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago");
+                return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago");
             }
         }
         public Brush TypeBrush
@@ -534,6 +537,16 @@ namespace OCCMissionGoals.Pages
     {
         public static string Format(DateTime date, DateTime today)
         {
+            if (LocalizationManager.Instance.IsEnglish)
+            {
+                if (date == today) return "Today";
+                if (date == today.AddDays(-1)) return "Yesterday";
+                if (date == today.AddDays(-2)) return "2 days ago";
+                if (date.Year == today.Year && date.Month == today.Month) return $"Day {date.Day}";
+                if (date.Year == today.Year) return date.ToString("MMM d");
+                return date.ToString("MMM d, yyyy");
+            }
+
             if (date == today) return "今日";
             if (date == today.AddDays(-1)) return "昨日";
             if (date == today.AddDays(-2)) return "前日";
@@ -541,12 +554,6 @@ namespace OCCMissionGoals.Pages
             if (date.Year == today.Year) return $"{date.Month}月{date.Day}日";
             return $"{date.Year}年{date.Month}月{date.Day}日";
         }
-    }
-
-    public class RepositoryInfo
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Url { get; set; } = string.Empty;
     }
 
     public class ProgressWidthConverter : IMultiValueConverter
@@ -570,12 +577,12 @@ namespace OCCMissionGoals.Pages
             if (value is not DateTime dt)
                 return string.Empty;
             var diff = DateTime.Now - dt;
-            if (diff.TotalMinutes < 1) return "刚刚";
-            if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}分钟前";
-            if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}小时前";
-            if (diff.TotalDays < 30) return $"{(int)diff.TotalDays}天前";
-            if (diff.TotalDays < 365) return $"{(int)(diff.TotalDays / 30)}个月前";
-            return $"{(int)(diff.TotalDays / 365)}年前";
+            if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now");
+            if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago");
+            if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago");
+            if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago");
+            if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago");
+            return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -20,7 +20,7 @@ namespace OCCMissionGoals.ToolPages
         }
 
         /// <summary>根据当前主题模式同步图标。</summary>
-        private void SyncThemeIcon()
+        public void SyncThemeIcon()
         {
             ThemeIcon.Data = Geometry.Parse(ThemeManager.IsDark
                 ? ColorPalette.LightIconData
@@ -45,6 +45,13 @@ namespace OCCMissionGoals.ToolPages
             // 切换到未完成页面，方便用户找到要编辑的条目
             if (Window.GetWindow(this) is MainWindow mw)
                 mw.SwitchTab(1);
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            // 打开「设置」页面
+            if (Window.GetWindow(this) is MainWindow mw)
+                mw.SwitchTab("settings");
         }
     }
 }

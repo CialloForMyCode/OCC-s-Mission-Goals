@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:OCCMissionGoals.Pages"
+      xmlns:loc="clr-namespace:OCCMissionGoals"
       mc:Ignorable="d" 
       d:DesignHeight="758" d:DesignWidth="1240"
       Title="DonePage">
@@ -59,7 +60,7 @@
 
                                     <!-- 右侧：归档按钮 -->
                                     <Button Grid.Column="1"
-                                            Content="归档"
+                                            Content="{loc:Loc Zh=归档, En=Archive}"
                                             Style="{StaticResource CardActionBtn}"
                                             Click="Archive_Click"
                                             Tag="{Binding}"
@@ -77,7 +78,7 @@
                                         <Border Background="{DynamicResource CardBackgroundBrush}"
                                                 BorderBrush="{DynamicResource CardBorderBrush}"
                                                 BorderThickness="1" CornerRadius="8"
-                                                Margin="0,0,0,6" Padding="12,8">
+                                                Margin="0,0,0,2" Padding="12,8">
                                             <StackPanel>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
@@ -97,34 +98,9 @@
                                                                    VerticalAlignment="Center"/>
                                                     </Border>
 
-                                                    <ItemsControl Grid.Column="1"
-                                                                  VerticalAlignment="Center"
-                                                                  Visibility="{Binding HasType, Converter={StaticResource BoolToVis}}">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <WrapPanel/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Border CornerRadius="4" Padding="8,3"
-                                                                        Background="{DynamicResource SubtleBackgroundBrush}"
-                                                                        BorderBrush="{DynamicResource CardBorderBrush}"
-                                                                        BorderThickness="1"
-                                                                        Margin="0,0,6,0">
-                                                                    <TextBlock Text="{Binding}"
-                                                                               Foreground="{DynamicResource ForegroundBrush}"
-                                                                               FontSize="12"
-                                                                               VerticalAlignment="Center"
-                                                                               Opacity="0.8"/>
-                                                                </Border>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-
                                                     <Grid Grid.Column="2"
                                                           VerticalAlignment="Center"
-                                                          Margin="16,0,8,0">
+                                                          Margin="10,0,8,0">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" SharedSizeGroup="TitleCol"/>
                                                             <ColumnDefinition Width="*"/>
@@ -141,7 +117,7 @@
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="12"
                                                                    VerticalAlignment="Center"
-                                                                   Margin="10,0,0,0"
+                                                                   Margin="6,0,0,0"
                                                                    TextTrimming="CharacterEllipsis"
                                                                    Visibility="{Binding IsExcerptVisible, Converter={StaticResource BoolToVis}}"/>
                                                         <TextBlock Grid.Column="2"
@@ -164,7 +140,7 @@
                                                               Data="M8 1.5C4.412 1.5 1.5 4.412 1.5 8S4.412 14.5 8 14.5 14.5 11.588 14.5 8 11.588 1.5 8 1.5zM8 2.5c3.036 0 5.5 2.464 5.5 5.5s-2.464 5.5-5.5 5.5S2.5 11.036 2.5 8 4.964 2.5 8 2.5zM11.354 5.646L10.646 4.94 6.5 9.086 4.854 7.44 4.146 8.146 6.146 10.146 6.5 10.5l.354-.354 4.5-4.5z"/>
                                                         <TextBlock Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="12" VerticalAlignment="Center">
-                                                            <Run Text="完成于 "/>
+                                                            <Run Text="{loc:Loc Zh=完成于 , En=Completed on }"/>
                                                             <Run Text="{Binding CompletedAt, StringFormat=yyyy-MM-dd, Mode=OneWay}"/>
                                                         </TextBlock>
                                                     </StackPanel>
@@ -179,12 +155,12 @@
                                                                 <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform"
                                                                       Width="12" Height="12" Margin="0,0,4,0"
                                                                       Data="M14.452 1.548C14.087 1.183 13.608 1 13.13 1C12.652 1 12.173 1.183 11.808 1.548L6.979 6.377C6.697 6.659 6.498 7.011 6.401 7.398L6.027 8.896C5.883 9.473 6.329 10.002 6.886 10.002C6.958 10.002 7.031 9.993 7.106 9.975L8.604 9.601C8.99 9.504 9.343 9.305 9.625 9.023L14.454 4.194C15.184 3.464 15.184 2.28 14.454 1.549L14.452 1.548ZM13.745 3.485L8.916 8.314C8.763 8.467 8.57 8.576 8.36 8.629L7.04 8.962L7.371 7.64C7.424 7.43 7.532 7.237 7.686 7.084L12.516 2.255C12.68 2.091 12.899 2 13.131 2C13.363 2 13.582 2.091 13.746 2.255C14.085 2.594 14.085 3.146 13.746 3.486L13.745 3.485Z"/>
-                                                                <TextBlock Text="编辑" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{loc:Loc Zh=编辑, En=Edit}" VerticalAlignment="Center"/>
                                                             </StackPanel>
                                                         </Button>
-                                                        <Button Content="撤销完成" Style="{StaticResource CardActionBtn}"
+                                                        <Button Content="{loc:Loc Zh=撤销完成, En=Undo Complete}" Style="{StaticResource CardActionBtn}"
                                                                 Click="UndoComplete_Click" Tag="{Binding}"/>
-                                                        <Button Content="删除" Style="{StaticResource CardActionBtn}"
+                                                        <Button Content="{loc:Loc Zh=删除, En=Delete}" Style="{StaticResource CardActionBtn}"
                                                                 Click="Delete_Click" Tag="{Binding}"
                                                                 Foreground="#E86A6A"/>
                                                     </StackPanel>
@@ -195,6 +171,45 @@
                                                                Foreground="{DynamicResource ForegroundBrush}"
                                                                FontSize="12" TextWrapping="Wrap"
                                                                Margin="0,6,0,0"/>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
+                                                                Visibility="{Binding HasType, Converter={StaticResource BoolToVis}}">
+                                                        <TextBlock Text="{loc:Loc Zh=类别, En=Category}"
+                                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                                   FontSize="12" FontWeight="SemiBold"
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="0,0,8,0"/>
+                                                        <ItemsControl ItemsSource="{Binding TypeTags}"
+                                                                      VerticalAlignment="Center">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border x:Name="TagBg" CornerRadius="3" Padding="6,2"
+                                                                            Background="{DynamicResource SubtleBackgroundBrush}"
+                                                                            BorderBrush="{DynamicResource CardBorderBrush}"
+                                                                            BorderThickness="1"
+                                                                            Margin="0,0,5,0">
+                                                                        <TextBlock x:Name="TagText" Text="{Binding Text}"
+                                                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                                                   FontSize="11"
+                                                                                   VerticalAlignment="Center"
+                                                                                   Opacity="0.8"/>
+                                                                    </Border>
+                                                                    <DataTemplate.Triggers>
+                                                                        <DataTrigger Binding="{Binding HasColor}" Value="True">
+                                                                            <Setter TargetName="TagBg" Property="Background" Value="{Binding Background}"/>
+                                                                            <Setter TargetName="TagBg" Property="BorderBrush" Value="{Binding Background}"/>
+                                                                            <Setter TargetName="TagText" Property="Foreground" Value="White"/>
+                                                                            <Setter TargetName="TagText" Property="Opacity" Value="1"/>
+                                                                        </DataTrigger>
+                                                                    </DataTemplate.Triggers>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
                                                     <Grid Margin="0,10,0,0">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" SharedSizeGroup="FileCol"/>
@@ -202,18 +217,18 @@
                                                             <ColumnDefinition Width="Auto" SharedSizeGroup="ColCol"/>
                                                             <ColumnDefinition Width="Auto" SharedSizeGroup="FuncCol"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0" Text="相关文件"
+                                                        <TextBlock Grid.Column="0" Text="{loc:Loc Zh=相关文件, En=Related Files}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="12" FontWeight="SemiBold"/>
-                                                        <TextBlock Grid.Column="1" Text="函数"
+                                                        <TextBlock Grid.Column="1" Text="{loc:Loc Zh=函数, En=Function}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="11" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="16,0,0,0"/>
-                                                        <TextBlock Grid.Column="2" Text="行"
+                                                        <TextBlock Grid.Column="2" Text="{loc:Loc Zh=行, En=Line}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="11" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="24,0,0,0"/>
-                                                        <TextBlock Grid.Column="3" Text="列"
+                                                        <TextBlock Grid.Column="3" Text="{loc:Loc Zh=列, En=Column}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    FontSize="11" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="16,0,0,0"/>
@@ -268,7 +283,7 @@
                     BorderThickness="1" CornerRadius="8"
                     Margin="0,0,0,6" Padding="24,20"
                     VerticalAlignment="Top">
-                <TextBlock Text="没有已完成条目"
+                <TextBlock Text="{loc:Loc Zh=没有已完成条目, En=No completed entries}"
                            Foreground="{DynamicResource ForegroundBrush}"
                            FontSize="15" Opacity="0.5"
                            HorizontalAlignment="Center"

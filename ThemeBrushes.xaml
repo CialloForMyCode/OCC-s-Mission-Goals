@@ -30,10 +30,8 @@
     <SolidColorBrush x:Key="WinControlPressedBrush" Color="#c0c0c0"/>
 
     <!-- ========== 辅助指示器配色 ========== -->
-    <SolidColorBrush x:Key="MenuIndicatorBrush" Color="#a0c8e8"/>
 
     <!-- ========== 菜单弹出层 ========== -->
-    <SolidColorBrush x:Key="AccentBrush"                Color="#0078d4"/>
     <SolidColorBrush x:Key="MenuPopupBackgroundBrush"   Color="#FFFFFF"/>
     <SolidColorBrush x:Key="MenuPopupBorderBrush"       Color="#c8c8c8"/>
     <SolidColorBrush x:Key="DisabledForegroundBrush"    Color="#b0b0b0"/>
@@ -52,5 +50,12 @@
     
     <!-- 启动按钮 -->
     <SolidColorBrush x:Key="RunButton" Color="#8a8a8a"/>
+
+    <!-- ========== 主题色（可配置，运行时由 ThemeManager.ApplyAccentColor 覆盖） ========== -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#4CAF50"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#43A047"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#388E3C"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush"    Color="#2E7D32"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush"   Color="#C8E6C9"/>
 
 </ResourceDictionary>

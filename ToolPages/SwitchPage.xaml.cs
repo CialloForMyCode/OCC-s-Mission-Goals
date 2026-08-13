@@ -7,9 +7,9 @@ namespace OCCMissionGoals.ToolPages;
 public partial class SwitchPage : Page
 {
     private readonly List<RadioButton> _tabButtons = new();
-    private RadioButton? _helpButton;
+    private readonly Dictionary<string, RadioButton> _overlayButtons = new();
+    private readonly List<string> _overlayOrder = new();
     private bool _suppressEvents;
-    private int _helpColumnIndex = -1;
     private int _lastCheckedIndex = 0;
 
     public SwitchPage()
@@ -20,7 +20,7 @@ public partial class SwitchPage : Page
     // ==================== 公开 API ====================
 
     /// <summary>添加一个普通页签按钮（由 MainWindow.RegisterPage 调用）。</summary>
-    public RadioButton AddTabButton(string label, int index)
+    public RadioButton AddTabButton(string key, string label, int index)
     {
         // 插入新列
         var colDef = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
@@ -32,7 +32,8 @@ public partial class SwitchPage : Page
             Height = 27,
             Margin = new Thickness(5, 5, 0, 5),
             Style = (Style)FindResource("ConsoleTabRadioButton"),
-            GroupName = "TabGroup"
+            GroupName = "TabGroup",
+            Tag = key
         };
         btn.SetValue(Grid.ColumnProperty, index);
         btn.Checked += TabButton_Checked;
@@ -41,11 +42,12 @@ public partial class SwitchPage : Page
         TabGrid.Children.Insert(index, btn);
         _tabButtons.Insert(index, btn);
 
-        // 重新编号后续普通按钮和帮助按钮的列
+        // 重新编号后续普通按钮和隐藏页签按钮的列
         for (int i = index + 1; i < _tabButtons.Count; i++)
             _tabButtons[i].SetValue(Grid.ColumnProperty, i);
-        if (_helpButton != null)
-            _helpButton.SetValue(Grid.ColumnProperty, _tabButtons.Count);
+        int col = _tabButtons.Count;
+        foreach (var overlayKey in _overlayOrder)
+            _overlayButtons[overlayKey].SetValue(Grid.ColumnProperty, col++);
 
         // 首次添加时默认选中
         if (_tabButtons.Count == 1)
@@ -58,12 +60,11 @@ public partial class SwitchPage : Page
         return btn;
     }
 
-    /// <summary>添加帮助按钮（始终在最后）。</summary>
-    public RadioButton AddHelpButton(string label)
+    /// <summary>添加一个隐藏页签按钮（如帮助、设置），初始折叠，点击对应入口后才出现。</summary>
+    public RadioButton AddOverlayTab(string key, string label)
     {
-        _helpColumnIndex = _tabButtons.Count;
-
-        // 帮助按钮用 Auto 宽度列
+        // 隐藏页签按钮用 Auto 宽度列，紧随普通页签之后
+        int col = _tabButtons.Count + _overlayOrder.Count;
         TabGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var btn = new RadioButton
@@ -73,34 +74,38 @@ public partial class SwitchPage : Page
             Margin = new Thickness(5, 5, 0, 5),
             Style = (Style)FindResource("ConsoleTabRadioButton"),
             GroupName = "TabGroup",
+            Tag = key,
             Visibility = Visibility.Collapsed
         };
-        btn.SetValue(Grid.ColumnProperty, _helpColumnIndex);
-        btn.Checked += HelpTabBtn_Checked;
-        btn.Unchecked += HelpTabBtn_Unchecked;
+        btn.SetValue(Grid.ColumnProperty, col);
+        btn.Checked += OverlayTab_Checked;
+        btn.Unchecked += OverlayTab_Unchecked;
 
         TabGrid.Children.Add(btn);
-        _helpButton = btn;
+        _overlayButtons[key] = btn;
+        _overlayOrder.Add(key);
         return btn;
     }
 
-    /// <summary>显示帮助按钮并选中。</summary>
-    public void ShowHelpButton()
+    /// <summary>显示指定隐藏页签按钮并选中。</summary>
+    public void ShowOverlayTab(string key)
     {
-        if (_helpButton == null) return;
+        if (!_overlayButtons.TryGetValue(key, out var btn)) return;
         _suppressEvents = true;
-        _helpButton.Visibility = Visibility.Visible;
-        _helpButton.IsChecked = true;
+        btn.Visibility = Visibility.Visible;
+        btn.IsChecked = true;
         _suppressEvents = false;
     }
 
-    /// <summary>隐藏帮助按钮。</summary>
-    public void HideHelpButton()
+    /// <summary>隐藏所有隐藏页签按钮。</summary>
+    public void HideOverlayTabs()
     {
-        if (_helpButton == null) return;
         _suppressEvents = true;
-        _helpButton.IsChecked = false;
-        _helpButton.Visibility = Visibility.Collapsed;
+        foreach (var btn in _overlayButtons.Values)
+        {
+            btn.IsChecked = false;
+            btn.Visibility = Visibility.Collapsed;
+        }
         _suppressEvents = false;
 
         // 恢复选中上一个普通页签
@@ -108,6 +113,21 @@ public partial class SwitchPage : Page
         {
             _tabButtons[_lastCheckedIndex].IsChecked = true;
         }
+    }
+
+    /// <summary>更新指定页签按钮的显示文字（语言切换时由 MainWindow 调用）。</summary>
+    public void UpdateTabLabel(string key, string label)
+    {
+        foreach (var btn in _tabButtons)
+        {
+            if (btn.Tag as string == key)
+            {
+                btn.Content = label;
+                return;
+            }
+        }
+        if (_overlayButtons.TryGetValue(key, out var overlay))
+            overlay.Content = label;
     }
 
     /// <summary>程序化选中某个普通页签（不触发事件）。</summary>
@@ -122,7 +142,7 @@ public partial class SwitchPage : Page
 
     // ==================== 事件 ====================
 
-    public event System.Action<int>? TabSelected;
+    public event System.Action<string>? TabSelected;
 
     private void TabButton_Checked(object sender, RoutedEventArgs e)
     {
@@ -131,20 +151,21 @@ public partial class SwitchPage : Page
         var idx = _tabButtons.IndexOf(btn);
         if (idx < 0) return;
         _lastCheckedIndex = idx;
-        TabSelected?.Invoke(idx);
+        TabSelected?.Invoke((string)btn.Tag);
     }
 
-    private void HelpTabBtn_Checked(object sender, RoutedEventArgs e)
+    private void OverlayTab_Checked(object sender, RoutedEventArgs e)
     {
         if (_suppressEvents) return;
-        // 触发帮助导航由 MainWindow 通过注册表处理
-        TabSelected?.Invoke(-1); // -1 = 帮助页签
+        if (sender is not RadioButton btn) return;
+        // 由 MainWindow 通过注册表处理导航
+        TabSelected?.Invoke((string)btn.Tag);
     }
 
-    private void HelpTabBtn_Unchecked(object sender, RoutedEventArgs e)
+    private void OverlayTab_Unchecked(object sender, RoutedEventArgs e)
     {
         if (_suppressEvents) return;
-        if (_helpButton != null)
-            _helpButton.Visibility = Visibility.Collapsed;
+        if (sender is RadioButton btn)
+            btn.Visibility = Visibility.Collapsed;
     }
 }

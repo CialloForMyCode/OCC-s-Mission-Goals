@@ -19,6 +19,10 @@ public class ProjectConfig
     [JsonPropertyName("Type")]
     public List<string> TypeOptions { get; set; } = new();
 
+    /// <summary>与 Type 数组按索引对齐的可选颜色（hex 或颜色名，空串表示无颜色）。</summary>
+    [JsonPropertyName("TypeColor")]
+    public List<string> TypeColors { get; set; } = new();
+
     [JsonPropertyName("CreatedAt")]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 

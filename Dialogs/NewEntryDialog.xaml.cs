@@ -17,7 +17,8 @@ public partial class NewEntryDialog : UserControl
     public event EventHandler? Cancelled;
 
     private readonly ObservableCollection<FileRef> _files = new();
-    private readonly ObservableCollection<string> _types = new();
+    private readonly ObservableCollection<TypeTag> _types = new();
+    private string? _pendingColorHex;
     private GoalEntry? _editingEntry;
 
     public bool IsEditing => _editingEntry != null;
@@ -40,19 +41,20 @@ public partial class NewEntryDialog : UserControl
             : string.Empty;
 
     public ObservableCollection<FileRef> Files => _files;
-    public List<string> Type => _types.ToList();
+    public List<string> Type => _types.Select(t => t.Text).ToList();
 
     public NewEntryDialog()
     {
         InitializeComponent();
         FileListControl.ItemsSource = _files;
         TypeListControl.ItemsSource = _types;
+        BuildColorSwatches();
     }
 
     public void Reset()
     {
         _editingEntry = null;
-        DialogTitle.Text = "新建条目";
+        DialogTitle.Text = LocalizationManager.T("新建条目", "New Entry");
         SeverityComboBox.SelectedIndex = 2;
         TitleTextBox.Text = string.Empty;
         BriefTextBox.Text = string.Empty;
@@ -64,12 +66,13 @@ public partial class NewEntryDialog : UserControl
         TypeComboBox.Text = string.Empty;
         _types.Clear();
         _files.Clear();
+        ResetColorSelection();
     }
 
     public void LoadEntry(GoalEntry entry)
     {
         _editingEntry = entry;
-        DialogTitle.Text = "编辑条目";
+        DialogTitle.Text = LocalizationManager.T("编辑条目", "Edit Entry");
 
         SeverityComboBox.SelectedIndex = (int)entry.Severity;
         TitleTextBox.Text = entry.Title;
@@ -85,7 +88,7 @@ public partial class NewEntryDialog : UserControl
 
         _types.Clear();
         foreach (var t in entry.Type)
-            _types.Add(t);
+            _types.Add(new TypeTag(t, Services.ProjectService.GetTypeColor(t)));
 
         _files.Clear();
         foreach (var f in entry.RelatedFiles)
@@ -148,13 +151,15 @@ public partial class NewEntryDialog : UserControl
 
         if (cfg?.TypeOptions != null)
         {
-            foreach (var t in cfg.TypeOptions)
+            Services.ProjectService.EnsureTypeColorsAligned();
+            for (var i = 0; i < cfg.TypeOptions.Count; i++)
             {
-                if (string.IsNullOrWhiteSpace(t)) continue;
-                var typeName = t;
+                var typeName = cfg.TypeOptions[i];
+                if (string.IsNullOrWhiteSpace(typeName)) continue;
+                var colorHex = i < cfg.TypeColors.Count ? cfg.TypeColors[i] : string.Empty;
                 var item = new ComboBoxItem
                 {
-                    Content = typeName,
+                    Content = BuildTypeContent(typeName, colorHex),
                     Tag = typeName,
                     Style = (Style)FindResource("DeletableDialogComboBoxItem")
                 };
@@ -204,38 +209,64 @@ public partial class NewEntryDialog : UserControl
         if (string.IsNullOrWhiteSpace(text)) return;
 
         // 去重
-        if (_types.Contains(text, StringComparer.OrdinalIgnoreCase)) return;
+        if (_types.Any(t => string.Equals(t.Text, text, StringComparison.OrdinalIgnoreCase))) return;
 
-        _types.Add(text);
+        // 显式选择的颜色优先，否则回退到该类别已保存的颜色
+        var tagColor = _pendingColorHex ?? Services.ProjectService.GetTypeColor(text);
+        _types.Add(new TypeTag(text, tagColor));
         TypeComboBox.Text = string.Empty;
 
-        // 存到 project.json
+        // 存到 project.json（类别 + 对齐的颜色）
         var cfg = Services.ProjectService.CurrentProject;
-        if (cfg != null && !cfg.TypeOptions.Contains(text, StringComparer.OrdinalIgnoreCase))
+        if (cfg == null) return;
+
+        var idx = cfg.TypeOptions.FindIndex(
+            t => string.Equals(t, text, StringComparison.OrdinalIgnoreCase));
+        if (idx < 0)
         {
             cfg.TypeOptions.Add(text);
-            Services.ProjectService.UpdateProjectConfig(cfg);
-            PopulateTypes(); // 重新填充并自动启用下拉框
+            Services.ProjectService.EnsureTypeColorsAligned();
+            cfg.TypeColors[cfg.TypeOptions.Count - 1] = _pendingColorHex ?? string.Empty;
         }
+        else if (_pendingColorHex != null)
+        {
+            Services.ProjectService.EnsureTypeColorsAligned();
+            cfg.TypeColors[idx] = _pendingColorHex;
+        }
+        else
+        {
+            return; // 已存在且未显式选色：无需更新配置
+        }
+
+        Services.ProjectService.UpdateProjectConfig(cfg);
+        PopulateTypes(); // 重新填充并自动启用下拉框
     }
 
     private void RemoveType_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is string type)
-            _types.Remove(type);
+        if (sender is Button btn && btn.Tag is TypeTag tag)
+            _types.Remove(tag);
     }
 
-    /// <summary>从 project.json 中删除类别选项并刷新下拉框。</summary>
+    /// <summary>从 project.json 中删除类别选项（类别 + 对齐颜色）并刷新下拉框。</summary>
     private void DeleteTypeOption(string typeName)
     {
         var cfg = Services.ProjectService.CurrentProject;
         if (cfg == null) return;
 
-        cfg.TypeOptions.Remove(typeName);
+        var idx = cfg.TypeOptions.FindIndex(
+            t => string.Equals(t, typeName, StringComparison.OrdinalIgnoreCase));
+        if (idx >= 0)
+        {
+            cfg.TypeOptions.RemoveAt(idx);
+            if (idx < cfg.TypeColors.Count) cfg.TypeColors.RemoveAt(idx);
+        }
         Services.ProjectService.UpdateProjectConfig(cfg);
 
         // 如果该类别已被添加到当前条目的 _types 列表，也一并移除
-        _types.Remove(typeName);
+        var existing = _types.FirstOrDefault(
+            t => string.Equals(t.Text, typeName, StringComparison.OrdinalIgnoreCase));
+        if (existing != null) _types.Remove(existing);
 
         // 重新填充并保持下拉框展开
         var wasOpen = TypeComboBox.IsDropDownOpen;
@@ -244,16 +275,107 @@ public partial class NewEntryDialog : UserControl
             TypeComboBox.IsDropDownOpen = true;
     }
 
+    private static readonly string[] PresetTagColors =
+    {
+        "#E83D3D", "#E88D3D", "#E8D43D", "#4CAF50",
+        "#3D9DE8", "#9C27B0", "#E91E63", "#00BCD4",
+        "#795548", "#607D8B", "#FF9800", "#8D8D8D"
+    };
+
+    private void BuildColorSwatches()
+    {
+        ColorSwatchPanel.Children.Clear();
+        ColorSwatchPanel.Children.Add(MakeSwatch(string.Empty, isDefault: true));
+        foreach (var hex in PresetTagColors)
+            ColorSwatchPanel.Children.Add(MakeSwatch(hex, isDefault: false));
+    }
+
+    private void ResetColorSelection()
+    {
+        foreach (var child in ColorSwatchPanel.Children)
+        {
+            if (child is RadioButton rb && string.IsNullOrEmpty(rb.Tag as string))
+            {
+                rb.IsChecked = true;
+                break;
+            }
+        }
+        _pendingColorHex = null;
+    }
+
+    private RadioButton MakeSwatch(string hex, bool isDefault)
+    {
+        var rb = new RadioButton
+        {
+            GroupName = "TypeColor",
+            Tag = hex,
+            IsChecked = isDefault,
+            Style = (Style)FindResource("ColorSwatchRadio"),
+            ToolTip = string.IsNullOrEmpty(hex) ? LocalizationManager.T("无颜色", "No color") : hex
+        };
+
+        var swatch = new Border
+        {
+            Width = 14,
+            Height = 14,
+            CornerRadius = new CornerRadius(3),
+            Background = string.IsNullOrEmpty(hex) ? Brushes.Transparent : (ColorUtil.ParseBrush(hex) ?? Brushes.Transparent),
+            BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
+            BorderThickness = new Thickness(1),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        if (string.IsNullOrEmpty(hex))
+        {
+            swatch.Child = new TextBlock
+            {
+                Text = "✕",
+                FontSize = 9,
+                Foreground = (Brush)Application.Current.FindResource("ForegroundBrush"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+
+        rb.Content = swatch;
+        rb.Checked += (_, _) => _pendingColorHex = hex;
+        return rb;
+    }
+
+    private static UIElement BuildTypeContent(string typeName, string? colorHex)
+    {
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        var swatch = new Border
+        {
+            Width = 12,
+            Height = 12,
+            CornerRadius = new CornerRadius(3),
+            Background = ColorUtil.ParseBrush(colorHex) ?? Brushes.Transparent,
+            BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
+            BorderThickness = new Thickness(1),
+            Margin = new Thickness(0, 0, 6, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        panel.Children.Add(swatch);
+        panel.Children.Add(new TextBlock
+        {
+            Text = typeName,
+            VerticalAlignment = VerticalAlignment.Center
+        });
+        return panel;
+    }
+
     public (bool IsValid, string Message) Validate()
     {
         if (string.IsNullOrWhiteSpace(EntryTitle))
-            return (false, "标题不能为空。");
+            return (false, LocalizationManager.T("标题不能为空。", "Title cannot be empty."));
 
         if (EntryTitle.Length > 200)
-            return (false, "标题不能超过 200 个字符。");
+            return (false, LocalizationManager.T("标题不能超过 200 个字符。", "Title cannot exceed 200 characters."));
 
         if (Brief.Length > 500)
-            return (false, "简介不能超过 500 个字符。");
+            return (false, LocalizationManager.T("简介不能超过 500 个字符。", "Brief cannot exceed 500 characters."));
 
         return (true, string.Empty);
     }
@@ -262,9 +384,9 @@ public partial class NewEntryDialog : UserControl
     {
         var dlg = new OpenFileDialog
         {
-            Title = "选择要关联的文件",
+            Title = LocalizationManager.T("选择要关联的文件", "Select files to associate"),
             Multiselect = true,
-            Filter = "所有文件 (*.*)|*.*"
+            Filter = LocalizationManager.T("所有文件 (*.*)|*.*", "All files (*.*)|*.*")
         };
 
         if (dlg.ShowDialog() == true)

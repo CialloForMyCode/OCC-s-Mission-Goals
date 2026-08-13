@@ -164,6 +164,30 @@ public static class ProjectService
         SaveProjectConfig(CurrentProjectDir, config);
     }
 
+    /// <summary>确保 TypeColors 长度与 TypeOptions 对齐（不足补空串）。</summary>
+    public static void EnsureTypeColorsAligned()
+    {
+        var cfg = CurrentProject;
+        if (cfg == null) return;
+
+        while (cfg.TypeColors.Count < cfg.TypeOptions.Count)
+            cfg.TypeColors.Add(string.Empty);
+    }
+
+    /// <summary>按类别名在 Type/TypeColor 对齐数组中查找颜色；无颜色时返回 null。</summary>
+    public static string? GetTypeColor(string typeName)
+    {
+        var cfg = CurrentProject;
+        if (cfg == null) return null;
+
+        var idx = cfg.TypeOptions.FindIndex(
+            t => string.Equals(t, typeName, StringComparison.OrdinalIgnoreCase));
+        if (idx < 0 || idx >= cfg.TypeColors.Count) return null;
+
+        var color = cfg.TypeColors[idx];
+        return string.IsNullOrWhiteSpace(color) ? null : color;
+    }
+
     // ======================== 版本操作 ========================
 
     /// <summary>在当前项目下新建版本文件。</summary>

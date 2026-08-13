@@ -55,7 +55,7 @@ public partial class VersionDialog : UserControl
         _isNewMode = true;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
-        ConfirmBtn.Content = "创建";
+        ConfirmBtn.Content = LocalizationManager.T("创建", "Create");
     }
 
     private void OpenModeBtn_Checked(object sender, RoutedEventArgs e)
@@ -64,7 +64,7 @@ public partial class VersionDialog : UserControl
         _isNewMode = false;
         NewPanel.Visibility = Visibility.Collapsed;
         OpenPanel.Visibility = Visibility.Visible;
-        ConfirmBtn.Content = "打开";
+        ConfirmBtn.Content = LocalizationManager.T("打开", "Open");
     }
 
     private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
@@ -73,12 +73,12 @@ public partial class VersionDialog : UserControl
         {
             if (string.IsNullOrWhiteSpace(VersionName))
             {
-                NewHint.Text = "请输入版本号。";
+                NewHint.Text = LocalizationManager.T("请输入版本号。", "Please enter a version number.");
                 return;
             }
             if (!IsValidVersionName(VersionName))
             {
-                NewHint.Text = "版本号包含无效字符。";
+                NewHint.Text = LocalizationManager.T("版本号包含无效字符。", "Version number contains invalid characters.");
                 return;
             }
             // 检查是否已存在
@@ -87,7 +87,7 @@ public partial class VersionDialog : UserControl
             var targetFile = VersionName + ".json";
             if (files.Contains(targetFile))
             {
-                NewHint.Text = $"版本 {VersionName} 已存在。";
+                NewHint.Text = LocalizationManager.T($"版本 {VersionName} 已存在。", $"Version {VersionName} already exists.");
                 return;
             }
         }
@@ -95,7 +95,7 @@ public partial class VersionDialog : UserControl
         {
             if (string.IsNullOrEmpty(SelectedVersion))
             {
-                OpenHint.Text = "请选择一个版本。";
+                OpenHint.Text = LocalizationManager.T("请选择一个版本。", "Please select a version.");
                 return;
             }
         }

@@ -6,6 +6,8 @@ namespace OCCMissionGoals.ToolPages
 {
     public partial class SortPage : Page
     {
+        private bool _loading = true;
+
         public SortPage()
         {
             InitializeComponent();
@@ -16,10 +18,13 @@ namespace OCCMissionGoals.ToolPages
             {
                 SortComboBox.SelectedIndex = index;
             }
+
+            _loading = false;
         }
 
         private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_loading) return;
             if (SortComboBox.SelectedItem is ComboBoxItem item && item.Tag != null)
             {
                 var tagString = item.Tag.ToString()!;

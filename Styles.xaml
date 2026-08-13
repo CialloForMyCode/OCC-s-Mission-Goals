@@ -38,7 +38,7 @@
                         <Rectangle x:Name="Indicator"
                                    Grid.Row="1"
                                    Height="2"
-                                   Fill="#4CAF50"
+                                   Fill="{DynamicResource PrimaryBrush}"
                                    RadiusX="1" RadiusY="1"
                                    HorizontalAlignment="Stretch"
                                    RenderTransformOrigin="0.5,0.5">
@@ -94,8 +94,8 @@
 
                         <!-- 子菜单打开 / 选中 -->
                         <Trigger Property="IsSubmenuOpen" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#C8E6C9"/>
-                            <Setter TargetName="Border" Property="TextBlock.Foreground" Value="#2E7D32"/>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                            <Setter TargetName="Border" Property="TextBlock.Foreground" Value="{DynamicResource PrimaryDarkBrush}"/>
                             <Setter TargetName="Indicator" Property="RenderTransform">
                                 <Setter.Value>
                                     <ScaleTransform ScaleX="1"/>
@@ -386,6 +386,77 @@
         </Setter>
     </Style>
 
+    <!-- 搜索板结果项按钮 -->
+    <Style x:Key="SearchBoardItem" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bg"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PressedBackgroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 搜索模式引导按钮 -->
+    <Style x:Key="SearchModeChip" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Margin" Value="0,0,6,6"/>
+        <Setter Property="Padding" Value="9,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bg"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            <Setter TargetName="Bg" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PressedBackgroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- 搜索框输入 -->
     <Style x:Key="SearchTextBox" TargetType="TextBox">
         <Setter Property="Background" Value="Transparent"/>
@@ -519,7 +590,7 @@
                         </MultiTrigger>
                         <!-- 选中态 -->
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="#4CAF50"/>
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                             <Setter Property="Foreground" Value="#FFFFFF"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -754,9 +825,9 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="Background"
-                                    Value="{DynamicResource SelectedBackgroundBrush}"/>
+                                    Value="{DynamicResource PrimaryLightBrush}"/>
                             <Setter Property="Foreground"
-                                    Value="{DynamicResource SelectedForegroundBrush}"/>
+                                    Value="{DynamicResource PrimaryDarkBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1194,7 +1265,7 @@
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="#FFFFFF"/>
-        <Setter Property="Background" Value="#4CAF50"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="16,0"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -1210,10 +1281,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="#43A047"/>
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="#388E3C"/>
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource PrimaryPressedBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="#A0A0A0"/>
@@ -1300,7 +1371,7 @@
                                     Value="{DynamicResource PressedBackgroundBrush}"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="#4CAF50"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
                             <Setter TargetName="Bd" Property="BorderThickness" Value="1.5"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -1359,7 +1430,7 @@
                                     Value="{DynamicResource PressedBackgroundBrush}"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="#4CAF50"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
                             <Setter TargetName="Bd" Property="BorderThickness" Value="1.5"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -1524,7 +1595,7 @@
                                     Value="{DynamicResource PressedBackgroundBrush}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="#4CAF50"/>
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
                             <Setter TargetName="RootBorder" Property="BorderThickness" Value="1.5"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -1557,7 +1628,7 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="Background"
-                                    Value="#C8E6C9"/>
+                                    Value="{DynamicResource PrimaryLightBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1601,7 +1672,7 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="Background"
-                                    Value="#C8E6C9"/>
+                                    Value="{DynamicResource PrimaryLightBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

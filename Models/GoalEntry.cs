@@ -23,6 +23,18 @@ public enum SortMode
     FavoritesOnly
 }
 
+/// <summary>搜索框的匹配模式。</summary>
+public enum SearchMode
+{
+    Text,    // 文字（标题 / 简要 / 详情）
+    Tag,     // 类型标签
+    Setting, // 设置（项目设置 / 主题样式 / 推送设置，全局搜索）
+    File,    // 关联文件
+    Date,    // 日期
+    Plugins, // 插件（扩展中心全部插件，全局搜索）
+    Expand   // 已安装插件（全局搜索）
+}
+
 public class FileRef
 {
     public string Path { get; set; } = string.Empty;

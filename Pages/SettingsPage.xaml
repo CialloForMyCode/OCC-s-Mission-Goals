@@ -1,0 +1,355 @@
+<Page x:Class="OCCMissionGoals.Pages.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:loc="clr-namespace:OCCMissionGoals"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      d:DesignHeight="2800" d:DesignWidth="1240"
+      Title="SettingsPage"
+      Background="Transparent">
+
+    <Page.Resources>
+        <Style x:Key="AccentSwatchRadio" TargetType="RadioButton">
+            <Setter Property="Width" Value="26"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Outer"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="13"
+                                Padding="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Outer" Property="BorderBrush" Value="{DynamicResource ForegroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Outer" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题 -->
+        <Border CornerRadius="8"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                Padding="24,16" Margin="0,0,0,8">
+            <TextBlock Text="{loc:Loc Zh=设置, En=Settings}"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource ForegroundBrush}"
+                       Margin="8,0,0,0"/>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ====== 侧边导航 ====== -->
+            <Border Grid.Column="0"
+                    CornerRadius="8"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                    Padding="10,12"
+                    VerticalAlignment="Top"
+                    Margin="0,0,8,0">
+                <StackPanel>
+                    <Button x:Name="Nav_Appearance"
+                            Content="{loc:Loc Zh=外观主题, En=Appearance}" Tag="Appearance"
+                            Click="NavButton_Click"
+                            Style="{StaticResource CardActionBtn}"
+                            HorizontalContentAlignment="Left"
+                            Height="32" Margin="0,1"
+                            FontSize="12"
+                            FontWeight="Bold"/>
+
+                    <Separator Margin="6,8,6,6" Opacity="0.3"/>
+
+                    <Button x:Name="Nav_Project"
+                            Content="{loc:Loc Zh=项目信息, En=Project Info}" Tag="Project"
+                            Click="NavButton_Click"
+                            Style="{StaticResource CardActionBtn}"
+                            HorizontalContentAlignment="Left"
+                            Height="32" Margin="0,1"
+                            FontSize="12"/>
+                    <Button x:Name="Nav_Push"
+                            Content="{loc:Loc Zh=推送 / 仓库, En=Push / Repos}" Tag="Push"
+                            Click="NavButton_Click"
+                            Style="{StaticResource CardActionBtn}"
+                            HorizontalContentAlignment="Left"
+                            Height="32" Margin="0,1"
+                            FontSize="12"/>
+                </StackPanel>
+            </Border>
+
+            <!-- ====== 内容区 ====== -->
+            <ScrollViewer x:Name="ContentScroll"
+                          Grid.Column="1"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled"
+                          ScrollChanged="ContentScroll_ScrollChanged">
+                <StackPanel>
+
+                <!-- ==================== 外观主题 ==================== -->
+                <Border x:Name="Section_Appearance"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="24,20" Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc Zh=外观主题, En=Appearance}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="{loc:Loc Zh=选择应用的整体明暗风格。更改会立即生效并保存。, En=Choose the app light or dark style. Changes apply and save immediately.}"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="LightThemeRadio"
+                                         Content="{loc:Loc Zh=浅色, En=Light}"
+                                         GroupName="ThemeGroup" Tag="light"
+                                         Checked="ThemeRadio_Checked"
+                                         Foreground="{DynamicResource ForegroundBrush}"
+                                         FontSize="13" Margin="0,0,24,0"
+                                         VerticalContentAlignment="Center"/>
+                            <RadioButton x:Name="DarkThemeRadio"
+                                         Content="{loc:Loc Zh=深色, En=Dark}"
+                                         GroupName="ThemeGroup" Tag="dark"
+                                         Checked="ThemeRadio_Checked"
+                                         Foreground="{DynamicResource ForegroundBrush}"
+                                         FontSize="13" Margin="0,0,0,0"
+                                         VerticalContentAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{loc:Loc Zh=语言, En=Language}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,18,0,8"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="{loc:Loc Zh=选择界面显示语言，更改会立即生效并保存。, En=Choose the interface language. Changes apply and save immediately.}"/>
+
+                        <ComboBox x:Name="LanguageCombo"
+                                  Style="{StaticResource DialogComboBox}"
+                                  HorizontalAlignment="Left" Width="180"
+                                  SelectionChanged="Language_SelectionChanged">
+                            <ComboBoxItem Content="中文" Tag="zh" Style="{StaticResource DialogComboBoxItem}"/>
+                            <ComboBoxItem Content="English" Tag="en" Style="{StaticResource DialogComboBoxItem}"/>
+                        </ComboBox>
+
+                        <TextBlock Text="{loc:Loc Zh=主题色, En=Accent Color}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,18,0,8"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="{loc:Loc Zh=选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。, En=Choose the accent color used for buttons progress and selected states. Changes apply and save immediately.}"/>
+
+                        <WrapPanel x:Name="AccentSwatchPanel" Margin="0,0,0,10"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{loc:Loc Zh=自定义, En=Custom}" Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox x:Name="AccentHexBox" Width="110"
+                                     Style="{StaticResource DialogTextBox}"
+                                     VerticalAlignment="Center"/>
+                            <Button Content="{loc:Loc Zh=应用, En=Apply}" Click="ApplyAccentHex_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="28" MinWidth="0" Width="64" Padding="0"
+                                    Margin="8,0,0,0" FontSize="12"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== 项目信息 ==================== -->
+                <Border x:Name="Section_Project"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="24,20" Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc Zh=项目信息, En=Project Info}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   Text="{loc:Loc Zh=编辑当前打开项目的名称与描述。当前版本号由版本管理维护，此处只读展示。, En=Edit the current project name and description. The version is maintained by version management and shown read-only here.}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc Zh=项目名称, En=Project Name}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center"/>
+                            <TextBox x:Name="ProjectNameBox" Grid.Row="0" Grid.Column="1"
+                                     Style="{StaticResource DialogTextBox}"
+                                     VerticalAlignment="Center" Margin="0,3,0,3"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc Zh=项目描述, En=Project Description}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center"/>
+                            <TextBox x:Name="ProjectDescBox" Grid.Row="1" Grid.Column="1"
+                                     Style="{StaticResource DialogTextBox}"
+                                     VerticalAlignment="Center" Margin="0,3,0,3"
+                                     Height="64" AcceptsReturn="True"
+                                     TextWrapping="Wrap" VerticalContentAlignment="Top"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc Zh=当前版本, En=Current Version}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center"/>
+                            <TextBox x:Name="ProjectVersionBox" Grid.Row="2" Grid.Column="1"
+                                     Style="{StaticResource DialogTextBox}"
+                                     IsReadOnly="True" Opacity="0.7" Margin="0,3,0,3"
+                                     VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Button x:Name="SaveProjectBtn" Content="{loc:Loc Zh=保存项目信息, En=Save Project Info}"
+                                Click="SaveProject_Click"
+                                Style="{StaticResource DialogConfirmButton}"
+                                HorizontalAlignment="Left" MinWidth="120" Height="34"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== 推送 / 仓库 ==================== -->
+                <Border x:Name="Section_Push"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="24,20" Margin="0">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc Zh=推送 / 仓库设置, En=Push / Repo Settings}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   Text="{loc:Loc Zh=管理「更新日志」提交生成时使用的目标仓库与提交选项。更改会自动保存。, En=Manage the target repos and commit options used when generating update log commits. Changes save automatically.}"/>
+
+                        <!-- 仓库列表 -->
+                        <TextBlock Text="{loc:Loc Zh=目标仓库, En=Target Repos}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,6"/>
+
+                        <ItemsControl x:Name="RepoList" Margin="0,0,0,10">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding Name}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="13" FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Url}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   Opacity="0.6" FontSize="12"
+                                                   VerticalAlignment="Center"
+                                                   Margin="12,0,8,0"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <Button Grid.Column="2"
+                                                Content="{loc:Loc Zh=删除, En=Delete}"
+                                                Click="RemoveRepo_Click"
+                                                Style="{StaticResource DialogCancelButton}"
+                                                Height="26" MinWidth="0" Width="56"
+                                                Padding="0" FontSize="11"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- 添加仓库 -->
+                        <Grid Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="RepoNameBox" Grid.Column="0"
+                                     Style="{StaticResource DialogTextBox}"
+                                     Margin="0,0,8,0" ToolTip="{loc:Loc Zh=仓库名称, En=Repo name}"/>
+                            <TextBox x:Name="RepoUrlBox" Grid.Column="1"
+                                     Style="{StaticResource DialogTextBox}"
+                                     Margin="0,0,8,0" ToolTip="{loc:Loc Zh=仓库 URL, En=Repo URL}"/>
+                            <Button Grid.Column="2" Content="{loc:Loc Zh=添加仓库, En=Add Repo}"
+                                    Click="AddRepo_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="30" MinWidth="0" Width="88" Padding="0"/>
+                        </Grid>
+
+                        <Separator Margin="0,4,0,12" Opacity="0.2"/>
+
+                        <!-- 提交选项 -->
+                        <TextBlock Text="{loc:Loc Zh=提交生成选项, En=Commit Generation Options}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,8"/>
+
+                        <CheckBox x:Name="IncludeAuthorCheck"
+                                  Content="{loc:Loc Zh=提交信息包含作者, En=Include author in commit message}"
+                                  Checked="IncludeAuthor_Changed" Unchecked="IncludeAuthor_Changed"
+                                  Foreground="{DynamicResource ForegroundBrush}"
+                                  FontSize="13" Margin="0,0,0,6"/>
+                        <CheckBox x:Name="GroupByDateCheck"
+                                  Content="{loc:Loc Zh=按日期分组, En=Group by date}"
+                                  Checked="GroupByDate_Changed" Unchecked="GroupByDate_Changed"
+                                  Foreground="{DynamicResource ForegroundBrush}"
+                                  FontSize="13" Margin="0,0,0,12"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{loc:Loc Zh=版本号前缀, En=Version prefix}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox x:Name="VersionPrefixBox"
+                                     Style="{StaticResource DialogTextBox}"
+                                     Width="80" HorizontalAlignment="Left"
+                                     LostFocus="VersionPrefix_LostFocus"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>
