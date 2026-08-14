@@ -266,8 +266,8 @@ Entry fields:
 
 | Name | Role | Contribution |
 |------|------|--------------|
-| [OCCO](https://github.com/OCCOCCO) | Author | Design, development, maintenance |
-| [Reasonix](https://github.com/Reasonix) | AI assistant | CLI refactoring, bug fixes, documentation |
+| [I-AM-SOLO](https://github.com/CialloForMyCode) | Author | Design, development, maintenance |
+| [Reasonix](https://github.com/Reasonix) | AI assistant | Talk to me, manage files, documentation |
 
 ---
 
