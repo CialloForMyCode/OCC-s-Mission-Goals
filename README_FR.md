@@ -267,7 +267,7 @@ Champs d'entrée :
 | Nom | Rôle | Contribution |
 |------|------|--------------|
 | [OCCO](https://github.com/OCCOCCO) | Auteur | Conception, développement, maintenance |
-| [Reasonix](https://github.com/Reasonix) | Assistant IA | Refonte CLI, corrections de bugs, documentation |
+| [Reasonix](https://github.com/Reasonix) | Assistant IA | documentation |
 
 ---
 
