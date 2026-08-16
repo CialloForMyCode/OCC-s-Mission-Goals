@@ -1,0 +1,472 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
+    <!-- English (en) -->
+    <s:String x:Key="__lang_code">en</s:String>
+    <s:String x:Key="__lang_name">English</s:String>
+    <s:String xml:space="preserve" x:Key="      例如: 0.1.0-alpha.0">      e.g. 0.1.0-alpha.0</s:String>
+    <s:String xml:space="preserve" x:Key="# 归档 — {0}"># Archive — {0}</s:String>
+    <s:String xml:space="preserve" x:Key="-a 数据格式示例">-a data format example</s:String>
+    <s:String xml:space="preserve" x:Key="-v &lt;版本号&gt;">-v &lt;version&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="-v Archive &lt;版本&gt;">-v Archive &lt;version&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="-v Delete &lt;版本&gt;">-v Delete &lt;version&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="&gt; 导出时间: {0:yyyy-MM-dd HH:mm:ss}">&gt; Exported at: {0:yyyy-MM-dd HH:mm:ss}</s:String>
+    <s:String xml:space="preserve" x:Key="&gt; 条目数量: {0}">&gt; Entry count: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="CLI 命令行模式">CLI mode</s:String>
+    <s:String xml:space="preserve" x:Key="Confirmed 事件未绑定，请通过菜单「项目」打开此弹窗。">Confirmed event is not bound. Open this dialog via the Project menu.</s:String>
+    <s:String xml:space="preserve" x:Key="Date: 日期">Date: Date</s:String>
+    <s:String xml:space="preserve" x:Key="Expand: 已安装">Expand: Installed</s:String>
+    <s:String xml:space="preserve" x:Key="File: 文件">File: File</s:String>
+    <s:String xml:space="preserve" x:Key="GitHub 推送配置">GitHub push settings</s:String>
+    <s:String xml:space="preserve" x:Key="GitHub 集成">GitHub integration</s:String>
+    <s:String xml:space="preserve" x:Key="Github设置">GitHub Settings</s:String>
+    <s:String xml:space="preserve" x:Key="OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、截止日期、版本归属、关联文件追踪以及多项目切换。">OCC's Mission &amp; Goals is a lightweight task-tracking tool for developers and project maintainers. It uses the entry (Mission) as its basic unit; each entry records one independent goal, supporting severity levels, deadlines, version ownership, related-file tracking, and multi-project switching.</s:String>
+    <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe [-p &lt;项目&gt;] &lt;命令&gt; [参数]">OCCMissionGoals.exe [-p &lt;project&gt;] &lt;command&gt; [args]</s:String>
+    <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe 命令行接口">OCCMissionGoals.exe command-line interface</s:String>
+    <s:String xml:space="preserve" x:Key="Plugins: 插件">Plugins: Plugins</s:String>
+    <s:String xml:space="preserve" x:Key="Plugins: 搜索扩展中心全部插件，Expand: 只搜索已安装插件。两者都不筛选条目列表，结果在搜索板中展示，关键词为空时列出全部对应插件；点击结果跳转到扩展中心。">Plugins: searches all plugins in the Extension Center; Expand: searches only installed plugins. Neither filters the entry list — results appear in the board, listing all matching plugins when the keyword is empty; click a result to jump to the Extension Center.</s:String>
+    <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开推送设置。">Setting: mode does not filter the entry list; it lists setting shortcuts in the results board instead, and shows all of them even when the keyword is empty. Click to run directly: toggle dark/light theme, open project settings, or open push settings.</s:String>
+    <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: Settings</s:String>
+    <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: Tag</s:String>
+    <s:String xml:space="preserve" x:Key="Text: 文字">Text: Text</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}个月前">{0} mo ago</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0} min ago</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}天">{0}d</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}天前">{0} d ago</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}小时前">{0} h ago</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}年前">{0} y ago</s:String>
+    <s:String xml:space="preserve" x:Key="| 严重程度 | {0} |">| Severity | {0} |</s:String>
+    <s:String xml:space="preserve" x:Key="| 字段 | 内容 |">| Field | Content |</s:String>
+    <s:String xml:space="preserve" x:Key="| 完成时间 | {0:yyyy-MM-dd} |">| Completed | {0:yyyy-MM-dd} |</s:String>
+    <s:String xml:space="preserve" x:Key="| 截止日期 | {0:yyyy-MM-dd} |">| Deadline | {0:yyyy-MM-dd} |</s:String>
+    <s:String xml:space="preserve" x:Key="| 相关文件 | (无) |">| Related Files | (none) |</s:String>
+    <s:String xml:space="preserve" x:Key="| 相关文件 | {0} |">| Related Files | {0} |</s:String>
+    <s:String xml:space="preserve" x:Key="| 详细信息 | {0} |">| Details | {0} |</s:String>
+    <s:String xml:space="preserve" x:Key="• data.json —— 存储所有条目数据（未完成 + 已完成），JSON 数组格式">• data.json — stores all entry data (unfinished + finished) as a JSON array</s:String>
+    <s:String xml:space="preserve" x:Key="• Date: / 日期: —— 日期（yyyy-MM-dd）">• Date: — date (yyyy-MM-dd)</s:String>
+    <s:String xml:space="preserve" x:Key="• Expand: / 扩展: / 已安装: —— 已安装的插件（全局搜索）">• Expand: — installed plugins (global search)</s:String>
+    <s:String xml:space="preserve" x:Key="• File: / 文件: —— 关联文件路径与函数名">• File: — related-file path and function name</s:String>
+    <s:String xml:space="preserve" x:Key="• Plugins: / 插件: —— 扩展中心插件（全局搜索）">• Plugins: — Extension Center plugins (global search)</s:String>
+    <s:String xml:space="preserve" x:Key="• project.json —— 存储项目元数据：项目名称、类型标签定义、版本号等">• project.json — stores project metadata: project name, type tag definitions, version number, etc.</s:String>
+    <s:String xml:space="preserve" x:Key="• Setting: / 设置: / 配置: —— 设置（全局搜索）">• Setting: / settings: — settings (global search)</s:String>
+    <s:String xml:space="preserve" x:Key="• Tag: / 标签: —— 类型标签">• Tag: — type tags</s:String>
+    <s:String xml:space="preserve" x:Key="• Text: / 文字: —— 标题、简要、详情">• Text: — title, brief, details</s:String>
+    <s:String xml:space="preserve" x:Key="• 典型用法：0 = 无变更 / 1-3 = 小范围调整 / 4-6 = 中等重构 / 7+ = 大规模变更">• Typical usage: 0 = no change / 1-3 = small adjustments / 4-6 = medium refactor / 7+ = large-scale change</s:String>
+    <s:String xml:space="preserve" x:Key="• 分类浏览 —— 按插件类别分组展示可用扩展">• Browse by category — available extensions are grouped and shown by category</s:String>
+    <s:String xml:space="preserve" x:Key="• 删除 —— 移除已完成条目">• Delete — remove a finished entry</s:String>
+    <s:String xml:space="preserve" x:Key="• 删除条目 —— 移除不需要的条目（不可恢复）">• Delete entry — remove an unwanted entry (irreversible)</s:String>
+    <s:String xml:space="preserve" x:Key="• 在仪表盘底部可编辑当前版本号，修改后新条目将归属新版本">• Edit the current version at the bottom of the dashboard; new entries belong to the new version after the change</s:String>
+    <s:String xml:space="preserve" x:Key="• 安装 / 卸载 —— 一键安装或卸载扩展插件">• Install / uninstall — install or remove an extension with one click</s:String>
+    <s:String xml:space="preserve" x:Key="• 完成日期 —— 每条目卡片额外显示「完成于」日期信息">• Completion date — each entry card also shows a Completed-on date</s:String>
+    <s:String xml:space="preserve" x:Key="• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面">• Complete entry — mark an entry as finished, record the completion time automatically, and move it from this page to the Finished page</s:String>
+    <s:String xml:space="preserve" x:Key="• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助">• Navigation      Dashboard / Unfinished / Finished / Extensions / Help</s:String>
+    <s:String xml:space="preserve" x:Key="• 展开详情 —— 点击「详情」按钮展开条目完整信息面板，包括详细描述和关联文件表格">• Expand details — click the Details button to expand the full info panel, including the description and related-file table</s:String>
+    <s:String xml:space="preserve" x:Key="• 工具栏      按住 Ctrl 显示：新建条目 / 搜索 / 排序 / 推送 / CLI 等快捷操作">• Toolbar      Hold Ctrl to show: New Entry / Search / Sort / Push / CLI shortcuts</s:String>
+    <s:String xml:space="preserve" x:Key="• 已完成条目在版本内全部完成后才可归档，保持视图整洁">• Finished entries can only be archived after the whole version is finished, keeping the view tidy</s:String>
+    <s:String xml:space="preserve" x:Key="• 常见标签：bug（缺陷）、feature（新功能）、refactor（重构）、docs（文档）、test（测试）、chore（杂项）">• Common tags: bug, feature, refactor, docs, test, chore</s:String>
+    <s:String xml:space="preserve" x:Key="• 按版本归档 —— 仅当版本内所有条目均已完成时，才显示归档按钮。归档将导出 Markdown 并删除版本数据文件">• Archive by version — the archive button only appears when all entries in a version are finished. Archiving exports Markdown and deletes the version data file</s:String>
+    <s:String xml:space="preserve" x:Key="• 排序 —— 按严重程度（高→低）、截止日期（近→远）、版本号（升/降）以及仅收藏排序">• Sorting — by severity (high→low), deadline (soonest→latest), version (asc/desc), or favorites only</s:String>
+    <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框实时过滤插件列表">• Search filter — the top search box filters the plugin list in real time</s:String>
+    <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框输入关键词实时过滤，支持前缀切换匹配范围：Text:内容、Tag:标签、Setting:设置（项目设置/主题/推送）、File:文件路径、Date:日期；不带前缀时按文字匹配，Setting: 下按回车执行设置项">• Search filter — type keywords in the top search box for real-time filtering, with prefix switches for match scope: Text: content, Tag: tags, Setting: settings (project/theme/push), File: file path, Date: date; without a prefix it matches text, and under Setting: press Enter to run a setting</s:String>
+    <s:String xml:space="preserve" x:Key="• 撤销完成 —— 将已完成条目恢复为未完成状态，条目移回 UnDonePage">• Undo completion — restore a finished entry to unfinished status, moving it back to UnDonePage</s:String>
+    <s:String xml:space="preserve" x:Key="• 支持按变更需求升序或降序排列条目列表">• Entries can be sorted by change demand ascending or descending</s:String>
+    <s:String xml:space="preserve" x:Key="• 收藏加星 —— 点击星标按钮收藏条目，收藏的条目在列表中高亮显示">• Favoriting — click the star button to favorite an entry; favorited entries are highlighted in the list</s:String>
+    <s:String xml:space="preserve" x:Key="• 数值越大表示变更越复杂、影响范围越广">• The larger the value, the more complex and wide-ranging the change</s:String>
+    <s:String xml:space="preserve" x:Key="• 数据存储    所有条目以 JSON 格式保存在各项目目录下">• Storage      All entries are saved as JSON in each project directory</s:String>
+    <s:String xml:space="preserve" x:Key="• 整体结构与未完成页面一致 —— 版本分组、搜索过滤、详情展开等">• Same overall structure as the Unfinished page — version grouping, search filter, detail expansion, etc.</s:String>
+    <s:String xml:space="preserve" x:Key="• 文件均为纯文本 JSON，可直接用 Git 进行版本追踪和团队协作">• All files are plain-text JSON, so they can be tracked with Git and used for team collaboration</s:String>
+    <s:String xml:space="preserve" x:Key="• 条目列表按版本号分组展示，支持折叠和展开各版本">• The entry list is grouped by version, and each version can collapse/expand</s:String>
+    <s:String xml:space="preserve" x:Key="• 条目字段：index, id, title, severity, severityLabel, brief, detail, deadline, completedAt, changeDemand, isFavorited, version, relatedFiles">• Entry fields: index, id, title, severity, severityLabel, brief, detail, deadline, completedAt, changeDemand, isFavorited, version, relatedFiles</s:String>
+    <s:String xml:space="preserve" x:Key="• 条目结果带类型标签（未完成 / 已完成），点击「跳转」定位到对应条目。">• Entry results show a type label (Unfinished / Finished); click Go to locate the entry.</s:String>
+    <s:String xml:space="preserve" x:Key="• 正常输出 JSON（stdout），带缩进便于阅读">• Normal output is JSON (stdout), indented for readability</s:String>
+    <s:String xml:space="preserve" x:Key="• 每个条目可附带一个或多个类型标签（多选）">• Each entry can have one or more type tags (multi-select)</s:String>
+    <s:String xml:space="preserve" x:Key="• 每个条目归属于一个版本，创建时自动设为当前版本">• Each entry belongs to a version and is set to the current version when created</s:String>
+    <s:String xml:space="preserve" x:Key="• 点击「迭代标签」按钮自动将迭代编号 +1（如 alpha.0 → alpha.1）">• Click the Iterate button to increment the iteration number by 1 (e.g. alpha.0 → alpha.1)</s:String>
+    <s:String xml:space="preserve" x:Key="• 点击搜索框外部关闭结果板。">• Click outside the search box to close the results board.</s:String>
+    <s:String xml:space="preserve" x:Key="• 版本分组折叠 —— 条目按版本号分组，每组可折叠 / 展开，标题显示版本名和条目数">• Version grouping — entries are grouped by version; each group can collapse/expand, and its header shows the version name and entry count</s:String>
+    <s:String xml:space="preserve" x:Key="• 状态栏      项目切换下拉框">• Status bar      Project switcher dropdown</s:String>
+    <s:String xml:space="preserve" x:Key="• 空输入时显示「按模式搜索」引导，点击前缀按钮可快速填入前缀。">• With empty input, a search-by-mode guide appears; click a prefix chip to fill it in.</s:String>
+    <s:String xml:space="preserve" x:Key="• 类型标签在条目卡片上以标签形式展示，便于快速识别">• Type tags appear as labels on entry cards for quick identification</s:String>
+    <s:String xml:space="preserve" x:Key="• 类型标签在项目配置（project.json）中统一定义和管理">• Type tags are defined and managed centrally in the project config (project.json)</s:String>
+    <s:String xml:space="preserve" x:Key="• 编辑 —— 与未完成页面相同的编辑功能">• Edit — the same editing as on the Unfinished page</s:String>
+    <s:String xml:space="preserve" x:Key="• 编辑条目 —— 点击编辑按钮打开编辑窗口，可修改所有字段：标题、简要、详情、严重程度、截止日期、变更需求、类型标签、关联文件">• Edit entry — click the edit button to open the editor and modify all fields: title, brief, details, severity, deadline, change demand, type tags, related files</s:String>
+    <s:String xml:space="preserve" x:Key="• 编辑条目时在编辑窗口勾选或取消类型标签">• Check or uncheck type tags in the editor when editing an entry</s:String>
+    <s:String xml:space="preserve" x:Key="• 编辑条目时在编辑窗口设置">• Set it in the editor when editing an entry</s:String>
+    <s:String xml:space="preserve" x:Key="• 详情查看 —— 点击插件卡片查看功能说明和使用方式">• View details — click a plugin card to see its description and usage</s:String>
+    <s:String xml:space="preserve" x:Key="• 返回码：0 = 成功，非 0 = 失败">• Exit code: 0 = success, non-zero = failure</s:String>
+    <s:String xml:space="preserve" x:Key="• 错误信息输出至 stderr">• Errors are written to stderr</s:String>
+    <s:String xml:space="preserve" x:Key="、">, </s:String>
+    <s:String xml:space="preserve" x:Key="一般">General</s:String>
+    <s:String xml:space="preserve" x:Key="一般 General">General</s:String>
+    <s:String xml:space="preserve" x:Key="一键推送数据">Push Data Now</s:String>
+    <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">Download failed. Please retry later or use "Open Download Page".</s:String>
+    <s:String xml:space="preserve" x:Key="下载失败：{0}">Download failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="下载并安装">Download &amp; Install</s:String>
+    <s:String xml:space="preserve" x:Key="下载更新失败。">Downloading the update failed.</s:String>
+    <s:String xml:space="preserve" x:Key="严重">Severe</s:String>
+    <s:String xml:space="preserve" x:Key="严重 Severe">Severe</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度">Severity</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度 —— 致命 / 严重 / 一般 / 补丁 / 更新">Severity — Fatal / Severe / General / Patch / Update</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度从高到低共分五级，每级以对应颜色标识：">There are five severity levels from high to low, each marked by its own color:</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度分布">Severity distribution</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度直接影响列表默认排序（高→低），同时在仪表盘分布图表中可视化。编辑条目时可随时调整。">Severity directly affects the default list sorting (high→low) and is visualized in the dashboard distribution chart. It can be adjusted at any time when editing an entry.</s:String>
+    <s:String xml:space="preserve" x:Key="严重程度（Severity）">Severity</s:String>
+    <s:String xml:space="preserve" x:Key="主">Maj</s:String>
+    <s:String xml:space="preserve" x:Key="主版本.次版本.补丁版本-标签.迭代编号">major.minor.patch-tag.iteration</s:String>
+    <s:String xml:space="preserve" x:Key="主题样式">Theme</s:String>
+    <s:String xml:space="preserve" x:Key="主题色">Accent Color</s:String>
+    <s:String xml:space="preserve" x:Key="从 GitHub Releases 检查新版本，确认后自动下载并运行安装程序。">Check GitHub Releases for new versions then download and run the installer after confirmation.</s:String>
+    <s:String xml:space="preserve" x:Key="从已登录的 GitHub 账号选择目标仓库">Select a target repo from the signed-in GitHub account</s:String>
+    <s:String xml:space="preserve" x:Key="从程序 bin 文件夹中选择要推送的文件">Select the file to push from the app bin folder</s:String>
+    <s:String xml:space="preserve" x:Key="仓库推送位置">Push Location</s:String>
+    <s:String xml:space="preserve" x:Key="代码文件引用追踪">Code file reference tracking</s:String>
+    <s:String xml:space="preserve" x:Key="以可视化图表展示五个严重等级（致命/严重/一般/补丁/更新）各自的条目数量，帮助快速识别项目风险分布。">Visualizes the entry count for each of the five severity levels (Fatal/Severe/General/Patch/Update), helping you quickly identify risk distribution.</s:String>
+    <s:String xml:space="preserve" x:Key="仪表盘">Dashboard</s:String>
+    <s:String xml:space="preserve" x:Key="仪表盘（LogPage）">Dashboard (LogPage)</s:String>
+    <s:String xml:space="preserve" x:Key="任务变更影响度量">Measuring task change impact</s:String>
+    <s:String xml:space="preserve" x:Key="作者:">Author:</s:String>
+    <s:String xml:space="preserve" x:Key="保存">Save</s:String>
+    <s:String xml:space="preserve" x:Key="保存项目信息">Save Project Info</s:String>
+    <s:String xml:space="preserve" x:Key="保存项目设置失败：{0}">Failed to save project settings: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="修复Bug">FixBug</s:String>
+    <s:String xml:space="preserve" x:Key="全局选项">Global options</s:String>
+    <s:String xml:space="preserve" x:Key="关联文件">Related Files</s:String>
+    <s:String xml:space="preserve" x:Key="关联文件 —— 可选多条，每条含路径、函数名、行号、列号">Related files — optional multiple entries, each with path, function name, line, and column</s:String>
+    <s:String xml:space="preserve" x:Key="关联文件（RelatedFiles）">Related Files</s:String>
+    <s:String xml:space="preserve" x:Key="关联的源代码文件路径（必填）">The associated source file path (required)</s:String>
+    <s:String xml:space="preserve" x:Key="函数">Function</s:String>
+    <s:String xml:space="preserve" x:Key="函数 Function">Function</s:String>
+    <s:String xml:space="preserve" x:Key="分支">Branch</s:String>
+    <s:String xml:space="preserve" x:Key="分类标签系统">Category tag system</s:String>
+    <s:String xml:space="preserve" x:Key="切换为亮色">Switch to light</s:String>
+    <s:String xml:space="preserve" x:Key="切换为深色">Switch to dark</s:String>
+    <s:String xml:space="preserve" x:Key="切换到指定版本，后续操作在该版本的数据文件上进行。">Switch to a specified version; subsequent operations run on that version's data file.</s:String>
+    <s:String xml:space="preserve" x:Key="切换失败：{0}">Switch failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="切换深色 / 浅色主题">Toggle dark / light theme</s:String>
+    <s:String xml:space="preserve" x:Key="列">Column</s:String>
+    <s:String xml:space="preserve" x:Key="列出 7 天内截止的未完成条目，按到期日远近排列。点击可直接跳转到对应条目。">Lists unfinished entries due within 7 days, sorted by due date. Click to jump to the corresponding entry.</s:String>
+    <s:String xml:space="preserve" x:Key="列出当前项目的所有条目（未完成 + 已完成），JSON 数组。">List all entries in the current project (unfinished + finished) as a JSON array.</s:String>
+    <s:String xml:space="preserve" x:Key="列号 Column">Column</s:String>
+    <s:String xml:space="preserve" x:Key="刚刚">just now</s:String>
+    <s:String xml:space="preserve" x:Key="创建">Create</s:String>
+    <s:String xml:space="preserve" x:Key="创建项目失败：{0}">Failed to create project: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="初始版本">Initial Version</s:String>
+    <s:String xml:space="preserve" x:Key="删除">Delete</s:String>
+    <s:String xml:space="preserve" x:Key="删除指定版本的数据文件。不能删除当前版本。">Delete the specified version's data file. The current version cannot be deleted.</s:String>
+    <s:String xml:space="preserve" x:Key="删除条目（不可恢复）。">Delete an entry (irreversible).</s:String>
+    <s:String xml:space="preserve" x:Key="刷新">Refresh</s:String>
+    <s:String xml:space="preserve" x:Key="功能更新和体验优化，最低优先级">Feature updates and experience improvements, lowest priority</s:String>
+    <s:String xml:space="preserve" x:Key="加载仓库列表失败：{0}">Failed to load repos: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="即将到期">Upcoming deadlines</s:String>
+    <s:String xml:space="preserve" x:Key="卸载">Uninstall</s:String>
+    <s:String xml:space="preserve" x:Key="发现新版本 {0}，是否下载并安装？">A new version {0} is available. Download and install now?</s:String>
+    <s:String xml:space="preserve" x:Key="发现新版本 {0}，点击「下载并安装」开始更新。">Version {0} is available. Click "Download &amp; Install" to update.</s:String>
+    <s:String xml:space="preserve" x:Key="取消">Cancel</s:String>
+    <s:String xml:space="preserve" x:Key="变更需求">Change Demand</s:String>
+    <s:String xml:space="preserve" x:Key="变更需求 —— 可选整数，表示变更复杂度和影响范围">Change demand — optional integer representing change complexity and impact</s:String>
+    <s:String xml:space="preserve" x:Key="变更需求是一个可选的整数字段，用于量化条目所涉及的变更复杂度和影响范围。">Change demand is an optional integer field that quantifies the complexity and impact of the changes involved in an entry.</s:String>
+    <s:String xml:space="preserve" x:Key="变更需求（ChangeDemand）">Change Demand</s:String>
+    <s:String xml:space="preserve" x:Key="只显示收藏的">Favorites only</s:String>
+    <s:String xml:space="preserve" x:Key="启动时自动检查更新">Check for updates on startup</s:String>
+    <s:String xml:space="preserve" x:Key="命令行">CLI</s:String>
+    <s:String xml:space="preserve" x:Key="命令行（CLI）">CLI</s:String>
+    <s:String xml:space="preserve" x:Key="命名空间.类.方法">Namespace.Class.Method</s:String>
+    <s:String xml:space="preserve" x:Key="在仪表盘底部可直接编辑当前版本号。点击「迭代标签」按钮自动递增迭代编号（末段 +1）。编辑后保存，新条目将自动归属该版本。">Edit the current version directly at the bottom of the dashboard. Click the Iterate button to auto-increment the iteration number (last segment +1). Save after editing, and new entries will belong to that version.</s:String>
+    <s:String xml:space="preserve" x:Key="在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。">In the entry detail panel, the Related Files table shows all linked references. You can add, modify, or delete related files when editing an entry.</s:String>
+    <s:String xml:space="preserve" x:Key="基本用法">Basic usage</s:String>
+    <s:String xml:space="preserve" x:Key="外观主题">Appearance</s:String>
+    <s:String xml:space="preserve" x:Key="多项目目录与数据管理">Multi-project directories and data management</s:String>
+    <s:String xml:space="preserve" x:Key="如何创建令牌？打开 GitHub 令牌页面">How to create a token? Open the GitHub tokens page</s:String>
+    <s:String xml:space="preserve" x:Key="安装">Install</s:String>
+    <s:String xml:space="preserve" x:Key="安装扩展">Install Extension</s:String>
+    <s:String xml:space="preserve" x:Key="完成">Complete</s:String>
+    <s:String xml:space="preserve" x:Key="完成于">Completed on</s:String>
+    <s:String xml:space="preserve" x:Key="完成度">Completion</s:String>
+    <s:String xml:space="preserve" x:Key="完成的条目">Finished</s:String>
+    <s:String xml:space="preserve" x:Key="将已完成条目恢复为未完成状态。">Restore a finished entry to unfinished status.</s:String>
+    <s:String xml:space="preserve" x:Key="将条目标记为已完成，自动记录完成日期。">Mark an entry as finished and record the completion date automatically.</s:String>
+    <s:String xml:space="preserve" x:Key="小幅修改和修复，低优先级">Minor changes and fixes, low priority</s:String>
+    <s:String xml:space="preserve" x:Key="就绪">Ready</s:String>
+    <s:String xml:space="preserve" x:Key="已关闭开机自启动。">Launch at startup disabled.</s:String>
+    <s:String xml:space="preserve" x:Key="已切换到版本 {0}。">Switched to version {0}.</s:String>
+    <s:String xml:space="preserve" x:Key="已创建并切换到版本 {0}。">Created and switched to version {0}.</s:String>
+    <s:String xml:space="preserve" x:Key="已创建项目「{0}」。">Created project "{0}".</s:String>
+    <s:String xml:space="preserve" x:Key="已安装">Installed</s:String>
+    <s:String xml:space="preserve" x:Key="已完成">Finished</s:String>
+    <s:String xml:space="preserve" x:Key="已完成条目">Finished</s:String>
+    <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">Finished (DonePage)</s:String>
+    <s:String xml:space="preserve" x:Key="已展开所有条目详情。">Expanded all entry details.</s:String>
+    <s:String xml:space="preserve" x:Key="已开启开机自启动。">Launch at startup enabled.</s:String>
+    <s:String xml:space="preserve" x:Key="已归档 {0} 条到 bin/{1}。">Archived {0} entries to bin/{1}.</s:String>
+    <s:String xml:space="preserve" x:Key="已打开项目「{0}」。">Opened project "{0}".</s:String>
+    <s:String xml:space="preserve" x:Key="已推送到 {0}（{1}）。">Pushed to {0} ({1}).</s:String>
+    <s:String xml:space="preserve" x:Key="已收起所有条目详情。">Collapsed all entry details.</s:String>
+    <s:String xml:space="preserve" x:Key="已是最新版本。">You are up to date.</s:String>
+    <s:String xml:space="preserve" x:Key="已是最新版本（{0}）。">You are up to date ({0}).</s:String>
+    <s:String xml:space="preserve" x:Key="已更新条目「{0}」。">Updated entry "{0}".</s:String>
+    <s:String xml:space="preserve" x:Key="已添加条目「{0}」。">Added entry "{0}".</s:String>
+    <s:String xml:space="preserve" x:Key="已登录 GitHub：{0}">Signed in to GitHub as {0}</s:String>
+    <s:String xml:space="preserve" x:Key="已过期">Overdue</s:String>
+    <s:String xml:space="preserve" x:Key="已退出 GitHub 登录。">Signed out of GitHub.</s:String>
+    <s:String xml:space="preserve" x:Key="帮助">Help</s:String>
+    <s:String xml:space="preserve" x:Key="帮助 / 使用指南">Help / User Guide</s:String>
+    <s:String xml:space="preserve" x:Key="帮助(_H)">Help(_H)</s:String>
+    <s:String xml:space="preserve" x:Key="常规任务和需求，默认等级">Routine tasks and requirements, the default level</s:String>
+    <s:String xml:space="preserve" x:Key="应用">Apply</s:String>
+    <s:String xml:space="preserve" x:Key="应用结构">App Structure</s:String>
+    <s:String xml:space="preserve" x:Key="底部工具栏提供快速操作入口：新建条目、搜索过滤、排序切换、GitHub 推送、CLI 命令行模式等。按住 Ctrl 键即可查看和使用。">The bottom toolbar provides quick actions: new entry, search filter, sort toggle, GitHub push, CLI mode, etc. Hold Ctrl to view and use them.</s:String>
+    <s:String xml:space="preserve" x:Key="开机自动启动">Start with Windows</s:String>
+    <s:String xml:space="preserve" x:Key="开机自启动">Launch at startup</s:String>
+    <s:String xml:space="preserve" x:Key="归档">Archive</s:String>
+    <s:String xml:space="preserve" x:Key="归档失败: {0}">Archive failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="归档指定版本 → versions/archive/ 目录。需版本内全部条目均已完成，不能归档当前版本。">Archive the specified version to the versions/archive/ directory. Requires all entries in the version to be finished; the current version cannot be archived.</s:String>
+    <s:String xml:space="preserve" x:Key="当前版本">Current Version</s:String>
+    <s:String xml:space="preserve" x:Key="必填字段仅 Title。Severity 默认 General。Type 为字符串数组，RelatedFiles 为路径 → [行, 列, 函数] 的映射。">Only Title is required. Severity defaults to General. Type is a string array; RelatedFiles maps a path → [line, column, function].</s:String>
+    <s:String xml:space="preserve" x:Key="快捷键">Shortcuts</s:String>
+    <s:String xml:space="preserve" x:Key="总计">Total</s:String>
+    <s:String xml:space="preserve" x:Key="总进度卡片">Progress card</s:String>
+    <s:String xml:space="preserve" x:Key="截止">Due</s:String>
+    <s:String xml:space="preserve" x:Key="截止日期">Deadline</s:String>
+    <s:String xml:space="preserve" x:Key="截止日期 —— 可选，过期条目以红色高亮提醒">Deadline — optional; overdue entries are highlighted in red</s:String>
+    <s:String xml:space="preserve" x:Key="所有文件 (*.*)|*.*">All files (*.*)|*.*</s:String>
+    <s:String xml:space="preserve" x:Key="所选项目无效。">The selected project is invalid.</s:String>
+    <s:String xml:space="preserve" x:Key="打印帮助信息。">Print help information.</s:String>
+    <s:String xml:space="preserve" x:Key="打开">Open</s:String>
+    <s:String xml:space="preserve" x:Key="打开下载页">Open Download Page</s:String>
+    <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">Open push (upload / backup) settings</s:String>
+    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">Open Data File(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本">Open Version</s:String>
+    <s:String xml:space="preserve" x:Key="打开项目">Open Project</s:String>
+    <s:String xml:space="preserve" x:Key="打开项目(_O)">Open Project(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开项目失败：{0}">Failed to open project: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="打开项目设置对话框">Open project settings dialog</s:String>
+    <s:String xml:space="preserve" x:Key="扩展">Extensions</s:String>
+    <s:String xml:space="preserve" x:Key="扩展中心">Extension Center</s:String>
+    <s:String xml:space="preserve" x:Key="扩展中心（ExpandPage）">Extensions (ExpandPage)</s:String>
+    <s:String xml:space="preserve" x:Key="找不到要推送的文件。">The file to push was not found.</s:String>
+    <s:String xml:space="preserve" x:Key="指定目标项目（按目录名或 project.json 中的项目名匹配）。">Specify the target project (matched by directory name or project name in project.json).</s:String>
+    <s:String xml:space="preserve" x:Key="按住 Ctrl">Hold Ctrl</s:String>
+    <s:String xml:space="preserve" x:Key="按日期分组">Group by date</s:String>
+    <s:String xml:space="preserve" x:Key="按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。">Aggregates completions by date and shows daily contribution trends as a bar chart, with switchable time ranges and details.</s:String>
+    <s:String xml:space="preserve" x:Key="按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。">Shows recently completed entries in reverse chronological order with completion dates, for tracking the latest progress.</s:String>
+    <s:String xml:space="preserve" x:Key="按模式搜索（点击填入前缀）：">Search by mode (click to fill prefix):</s:String>
+    <s:String xml:space="preserve" x:Key="按照严重程度升序排序">Severity ascending</s:String>
+    <s:String xml:space="preserve" x:Key="按照严重程度降序排序">Severity descending</s:String>
+    <s:String xml:space="preserve" x:Key="按照截止日期升序排序">Deadline ascending</s:String>
+    <s:String xml:space="preserve" x:Key="按照截止日期降序排序">Deadline descending</s:String>
+    <s:String xml:space="preserve" x:Key="按照版本升序排序">Version ascending</s:String>
+    <s:String xml:space="preserve" x:Key="按照版本降序排序">Version descending</s:String>
+    <s:String xml:space="preserve" x:Key="排序方式：">Sort by:</s:String>
+    <s:String xml:space="preserve" x:Key="推送 / 仓库">Push / Repos</s:String>
+    <s:String xml:space="preserve" x:Key="推送 / 仓库设置">Push / Repo Settings</s:String>
+    <s:String xml:space="preserve" x:Key="推送失败：{0}">Push failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="推送文件设置">Push File Settings</s:String>
+    <s:String xml:space="preserve" x:Key="推送设置">Push Settings</s:String>
+    <s:String xml:space="preserve" x:Key="提交信息包含作者">Include author in commit message</s:String>
+    <s:String xml:space="preserve" x:Key="提交生成选项">Commit Generation Options</s:String>
+    <s:String xml:space="preserve" x:Key="提示">Notice</s:String>
+    <s:String xml:space="preserve" x:Key="插件与功能扩展管理">Plugin and feature extension management</s:String>
+    <s:String xml:space="preserve" x:Key="插件搜索">Plugin search</s:String>
+    <s:String xml:space="preserve" x:Key="搜索">Search</s:String>
+    <s:String xml:space="preserve" x:Key="搜索扩展...">Search extensions...</s:String>
+    <s:String xml:space="preserve" x:Key="搜索框位于窗口顶部工具栏中央，始终可见。输入关键词即可实时过滤当前列表页面，同时弹出搜索结果板；点击结果可跳转，或按回车直接执行首条结果。">The search box sits in the center of the top toolbar and is always visible. Type a keyword to filter the current list page in real time and pop up the results board; click a result to jump, or press Enter to run the top result.</s:String>
+    <s:String xml:space="preserve" x:Key="搜索模式">Search modes</s:String>
+    <s:String xml:space="preserve" x:Key="撤销完成">Undo Complete</s:String>
+    <s:String xml:space="preserve" x:Key="操作失败：{0}">Operation failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="支持前缀语法切换匹配范围；不加前缀时默认按文字模式匹配。">Prefix syntax switches the match scope; without a prefix it matches as text by default.</s:String>
+    <s:String xml:space="preserve" x:Key="支持多项目目录，每个项目有独立的 data.json 和 project.json，便于 Git 版本控制与团队协作。">Supports multiple project directories; each project has its own data.json and project.json for Git version control and team collaboration.</s:String>
+    <s:String xml:space="preserve" x:Key="支持多项目目录，每个项目有独立的文件夹。右上角下拉框可随时切换当前项目。各项目之间的条目和版本完全独立，互不影响。">Supports multiple project directories, each with its own folder. Use the top-right dropdown to switch projects at any time. Entries and versions are fully independent between projects.</s:String>
+    <s:String xml:space="preserve" x:Key="支持标准 JSON 或用 = 代替 : 的简化语法（字段名可不加引号）：">Supports standard JSON or simplified syntax using = instead of : (field names can be unquoted):</s:String>
+    <s:String xml:space="preserve" x:Key="支持通过命令行进行脚本化操作，适用于 CI/CD 集成和批量处理场景。点击底部工具栏的 CLI 按钮或使用命令行参数启动。">Supports scripted operations via the command line, for CI/CD integration and batch processing. Click the CLI button in the bottom toolbar or launch with command-line arguments.</s:String>
+    <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">Favorite / unfavorite. Usage: -f &lt;id&gt; true|false</s:String>
+    <s:String xml:space="preserve" x:Key="收起">Collapse</s:String>
+    <s:String xml:space="preserve" x:Key="数据文件">Data files</s:String>
+    <s:String xml:space="preserve" x:Key="文件(_F)">File(_F)</s:String>
+    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">New Data File(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="新建条目">New Entry</s:String>
+    <s:String xml:space="preserve" x:Key="新建条目(_N)">New Entry(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本">New Version</s:String>
+    <s:String xml:space="preserve" x:Key="新建项目">New Project</s:String>
+    <s:String xml:space="preserve" x:Key="新建项目(_N)">New Project(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="无效的颜色值，请输入 #RRGGBB 格式。">Invalid color value. Please enter #RRGGBB format.</s:String>
+    <s:String xml:space="preserve" x:Key="无法归档">Cannot Archive</s:String>
+    <s:String xml:space="preserve" x:Key="无颜色">No color</s:String>
+    <s:String xml:space="preserve" x:Key="显示底部工具栏和侧边栏选项卡标签">Show the bottom toolbar and sidebar tab labels</s:String>
+    <s:String xml:space="preserve" x:Key="显示当前项目的条目完成率：已完成数 / 总数，配百分比进度条。一目了然地反映项目整体推进情况。">Shows the completion rate of the current project: finished / total, with a percentage progress bar. Gives an at-a-glance view of overall project progress.</s:String>
+    <s:String xml:space="preserve" x:Key="暂无新消息。">No new messages.</s:String>
+    <s:String xml:space="preserve" x:Key="更多推送设置">More Push Settings</s:String>
+    <s:String xml:space="preserve" x:Key="更改条目">Edit Entry</s:String>
+    <s:String xml:space="preserve" x:Key="更新">Update</s:String>
+    <s:String xml:space="preserve" x:Key="更新 Update">Update</s:String>
+    <s:String xml:space="preserve" x:Key="更新日志">Update Log</s:String>
+    <s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、详情、严重程度、截止日期、变更需求、类型标签等字段。">The most basic unit of work, containing fields such as title, brief, details, severity, deadline, change demand, and type tags.</s:String>
+    <s:String xml:space="preserve" x:Key="最近活动">Recent Activity</s:String>
+    <s:String xml:space="preserve" x:Key="最近活动时间线">Recent activity timeline</s:String>
+    <s:String xml:space="preserve" x:Key="未安装">Not installed</s:String>
+    <s:String xml:space="preserve" x:Key="未完成">Unfinished</s:String>
+    <s:String xml:space="preserve" x:Key="未完成条目">Unfinished</s:String>
+    <s:String xml:space="preserve" x:Key="未完成条目（UnDonePage）">Unfinished (UnDonePage)</s:String>
+    <s:String xml:space="preserve" x:Key="未完成的条目">Unfinished</s:String>
+    <s:String xml:space="preserve" x:Key="未打开任何项目。">No project opened.</s:String>
+    <s:String xml:space="preserve" x:Key="未打开项目">No project opened</s:String>
+    <s:String xml:space="preserve" x:Key="未指定版本">No version</s:String>
+    <s:String xml:space="preserve" x:Key="未登录 GitHub：请先在账号页登录后点击「刷新」。">Not signed in to GitHub: sign in on the account page then click Refresh.</s:String>
+    <s:String xml:space="preserve" x:Key="未知">Unknown</s:String>
+    <s:String xml:space="preserve" x:Key="条目 (Mission)">Mission</s:String>
+    <s:String xml:space="preserve" x:Key="条目(_V)">Entries(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="条目优先级分级体系">Entry priority and severity system</s:String>
+    <s:String xml:space="preserve" x:Key="条目字段一览">Entry fields</s:String>
+    <s:String xml:space="preserve" x:Key="条目所属版本号">The version this entry belongs to</s:String>
+    <s:String xml:space="preserve" x:Key="条目按版本号分组管理。版本格式为「主.次.补丁-标签.迭代」，如 0.1.0-alpha.0。">Entries are grouped by version number. The version format is major.minor.patch-tag.iteration, e.g. 0.1.0-alpha.0.</s:String>
+    <s:String xml:space="preserve" x:Key="条目操作">Entry operations</s:String>
+    <s:String xml:space="preserve" x:Key="条目类型">Type</s:String>
+    <s:String xml:space="preserve" x:Key="条目类型（Type）">Type</s:String>
+    <s:String xml:space="preserve" x:Key="松开 Ctrl">Release Ctrl</s:String>
+    <s:String xml:space="preserve" x:Key="查找条目与设置的完整指南">A guide to finding entries and settings</s:String>
+    <s:String xml:space="preserve" x:Key="查看和管理已完成的条目">View and manage finished entries</s:String>
+    <s:String xml:space="preserve" x:Key="查看条目详情（如 -c 001000001），返回完整 JSON。">View entry details (e.g. -c 001000001), returns the full JSON.</s:String>
+    <s:String xml:space="preserve" x:Key="标题">Title</s:String>
+    <s:String xml:space="preserve" x:Key="标题 —— 必填，条目的简短名称">Title — required, the entry's short name</s:String>
+    <s:String xml:space="preserve" x:Key="标题不能为空。">Title cannot be empty.</s:String>
+    <s:String xml:space="preserve" x:Key="标题不能超过 200 个字符。">Title cannot exceed 200 characters.</s:String>
+    <s:String xml:space="preserve" x:Key="样式">Theme</s:String>
+    <s:String xml:space="preserve" x:Key="核心功能">Core features</s:String>
+    <s:String xml:space="preserve" x:Key="检查更新">Check for Updates</s:String>
+    <s:String xml:space="preserve" x:Key="检查更新失败：{0}">Update check failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="概述">Overview</s:String>
+    <s:String xml:space="preserve" x:Key="次">Min</s:String>
+    <s:String xml:space="preserve" x:Key="正在下载更新…">Downloading update…</s:String>
+    <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">Downloading update… {0:F0}%</s:String>
+    <s:String xml:space="preserve" x:Key="正在启动安装程序…">Launching installer…</s:String>
+    <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">Installing "{0}"...
+
+(Placeholder: once a real download source is wired up, this will trigger the download and install flow.)</s:String>
+    <s:String xml:space="preserve" x:Key="正在检查更新…">Checking for updates…</s:String>
+    <s:String xml:space="preserve" x:Key="每个条目可关联多条代码文件引用，用于记录与任务相关的源代码位置。每条引用包含以下字段：">Each entry can link to multiple code file references for recording source code locations related to the task. Each reference contains the following fields:</s:String>
+    <s:String xml:space="preserve" x:Key="没有动态">No activity</s:String>
+    <s:String xml:space="preserve" x:Key="没有匹配结果">No results</s:String>
+    <s:String xml:space="preserve" x:Key="没有已完成条目">No completed entries</s:String>
+    <s:String xml:space="preserve" x:Key="没有打开的项目。">No project is open.</s:String>
+    <s:String xml:space="preserve" x:Key="没有打开的项目，无法推送。">No project is open; nothing to push.</s:String>
+    <s:String xml:space="preserve" x:Key="没有扩展">No extensions</s:String>
+    <s:String xml:space="preserve" x:Key="没有未完成条目">No unfinished entries</s:String>
+    <s:String xml:space="preserve" x:Key="浅色">Light</s:String>
+    <s:String xml:space="preserve" x:Key="深色">Dark</s:String>
+    <s:String xml:space="preserve" x:Key="添加">Add</s:String>
+    <s:String xml:space="preserve" x:Key="添加条目。数据格式为 JSON 或简化的 key=value 语法。">Add an entry. The data format is JSON or simplified key=value syntax.</s:String>
+    <s:String xml:space="preserve" x:Key="版本">Version</s:String>
+    <s:String xml:space="preserve" x:Key="版本 (Version)">Version</s:String>
+    <s:String xml:space="preserve" x:Key="版本 {0} 已存在。">Version {0} already exists.</s:String>
+    <s:String xml:space="preserve" x:Key="版本号">Version</s:String>
+    <s:String xml:space="preserve" x:Key="版本号 —— 条目创建时自动归属当前版本，不可手动修改">Version — assigned to the current version at creation and cannot be changed manually</s:String>
+    <s:String xml:space="preserve" x:Key="版本号包含无效字符。">Version number contains invalid characters.</s:String>
+    <s:String xml:space="preserve" x:Key="版本号编辑区">Version editor</s:String>
+    <s:String xml:space="preserve" x:Key="版本号采用五段式语义化格式：">The version number uses a five-segment semantic format:</s:String>
+    <s:String xml:space="preserve" x:Key="版本号（Version）">Version</s:String>
+    <s:String xml:space="preserve" x:Key="版本操作">Version operations</s:String>
+    <s:String xml:space="preserve" x:Key="版本标签">Version</s:String>
+    <s:String xml:space="preserve" x:Key="版本管理">Version Management</s:String>
+    <s:String xml:space="preserve" x:Key="版本管理体系">Version management system</s:String>
+    <s:String xml:space="preserve" x:Key="版本迭代：当前版本号的迭代编号 +1（如 alpha.0 → alpha.1）。">Version iteration: increments the current version's iteration number by 1 (e.g. alpha.0 → alpha.1).</s:String>
+    <s:String xml:space="preserve" x:Key="状态机无更新">No status update</s:String>
+    <s:String xml:space="preserve" x:Key="登录">Sign in</s:String>
+    <s:String xml:space="preserve" x:Key="登录 GitHub">Sign in to GitHub</s:String>
+    <s:String xml:space="preserve" x:Key="登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。">Automatically launch this app when you sign in to Windows. It uses the current user startup registry entry and requires no administrator rights.</s:String>
+    <s:String xml:space="preserve" x:Key="登录失败：{0}">Sign-in failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="目标仓库">Target Repo</s:String>
+    <s:String xml:space="preserve" x:Key="相关文件">Related Files</s:String>
+    <s:String xml:space="preserve" x:Key="相关的函数或方法名（可选）">The related function or method name (optional)</s:String>
+    <s:String xml:space="preserve" x:Key="确定">OK</s:String>
+    <s:String xml:space="preserve" x:Key="确认">Confirm</s:String>
+    <s:String xml:space="preserve" x:Key="程序在启动时检测命令行参数：带参数启动进入 CLI 模式（控制台），无参数启动进入 GUI 模式。CLI 所有输出为标准 JSON，错误输出至 stderr，适合 AI / 脚本 / CI 集成。">The program detects command-line arguments at startup: launching with arguments enters CLI mode (console), and launching without arguments enters GUI mode. All CLI output is standard JSON; errors go to stderr. Suitable for AI / scripts / CI integration.</s:String>
+    <s:String xml:space="preserve" x:Key="简介">Brief</s:String>
+    <s:String xml:space="preserve" x:Key="简介不能超过 500 个字符。">Brief cannot exceed 500 characters.</s:String>
+    <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">Brief — optional, one-line description</s:String>
+    <s:String xml:space="preserve" x:Key="管理「更新日志」提交生成时使用的目标仓库与提交选项。更改会自动保存。">Manage the target repos and commit options used when generating update log commits. Changes save automatically.</s:String>
+    <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">Manage all unfinished goals</s:String>
+    <s:String xml:space="preserve" x:Key="类别">Category</s:String>
+    <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">Type tags — optional multi-select, e.g. bug, feature, refactor</s:String>
+    <s:String xml:space="preserve" x:Key="精确的代码列号（可选）">The exact code column number (optional)</s:String>
+    <s:String xml:space="preserve" x:Key="精确的代码行号（可选）">The exact code line number (optional)</s:String>
+    <s:String xml:space="preserve" x:Key="系统 / 更新">System / Updates</s:String>
+    <s:String xml:space="preserve" x:Key="结果板">Results board</s:String>
+    <s:String xml:space="preserve" x:Key="编辑">Edit</s:String>
+    <s:String xml:space="preserve" x:Key="编辑当前打开项目的名称与描述。当前版本号由版本管理维护，此处只读展示。">Edit the current project name and description. The version is maintained by version management and shown read-only here.</s:String>
+    <s:String xml:space="preserve" x:Key="编辑条目">Edit Entry</s:String>
+    <s:String xml:space="preserve" x:Key="自动收起工具栏和侧边栏，最大化内容视野">Automatically collapse the toolbar and sidebar to maximize the content view</s:String>
+    <s:String xml:space="preserve" x:Key="自动更新">Auto Update</s:String>
+    <s:String xml:space="preserve" x:Key="自定义">Custom</s:String>
+    <s:String xml:space="preserve" x:Key="致命">Fatal</s:String>
+    <s:String xml:space="preserve" x:Key="致命 Fatal">Fatal</s:String>
+    <s:String xml:space="preserve" x:Key="行">Line</s:String>
+    <s:String xml:space="preserve" x:Key="行号 Line">Line</s:String>
+    <s:String xml:space="preserve" x:Key="补">Pat</s:String>
+    <s:String xml:space="preserve" x:Key="补丁">Patch</s:String>
+    <s:String xml:space="preserve" x:Key="补丁 Patch">Patch</s:String>
+    <s:String xml:space="preserve" x:Key="要推送的文件">File to push</s:String>
+    <s:String xml:space="preserve" x:Key="设置">Settings</s:String>
+    <s:String xml:space="preserve" x:Key="设置开机自启动失败：{0}">Failed to set launch at startup: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="设置搜索">Setting search</s:String>
+    <s:String xml:space="preserve" x:Key="设置项目">Project Settings</s:String>
+    <s:String xml:space="preserve" x:Key="设置项目(_S)">Project Settings(_S)</s:String>
+    <s:String xml:space="preserve" x:Key="该版本中仍有未完成的条目，无法归档。">This version still has unfinished entries and cannot be archived.</s:String>
+    <s:String xml:space="preserve" x:Key="详情">Details</s:String>
+    <s:String xml:space="preserve" x:Key="详情 —— 可选，Markdown 格式的完整描述文本">Details — optional, full description in Markdown</s:String>
+    <s:String xml:space="preserve" x:Key="详细信息">Details</s:String>
+    <s:String xml:space="preserve" x:Key="语言">Language</s:String>
+    <s:String xml:space="preserve" x:Key="请先在设置中选择要推送的文件。">Please select a file to push in settings first.</s:String>
+    <s:String xml:space="preserve" x:Key="请先在设置中配置推送仓库。">Please configure a push repo in settings first.</s:String>
+    <s:String xml:space="preserve" x:Key="请先打开一个项目。">Please open a project first.</s:String>
+    <s:String xml:space="preserve" x:Key="请先登录 GitHub。">Please sign in to GitHub first.</s:String>
+    <s:String xml:space="preserve" x:Key="请输入 Personal Access Token。">Please enter a Personal Access Token.</s:String>
+    <s:String xml:space="preserve" x:Key="请输入 Personal Access Token（经典或精细粒度均可），需要 read:user 权限。">Enter a Personal Access Token (classic or fine-grained). The read:user scope is required.</s:String>
+    <s:String xml:space="preserve" x:Key="请输入版本号。">Please enter a version number.</s:String>
+    <s:String xml:space="preserve" x:Key="请选择一个版本。">Please select a version.</s:String>
+    <s:String xml:space="preserve" x:Key="请选择一个项目。">Please select a project.</s:String>
+    <s:String xml:space="preserve" x:Key="调整目标的文件">Adjust target file</s:String>
+    <s:String xml:space="preserve" x:Key="贡献记录">Contributions</s:String>
+    <s:String xml:space="preserve" x:Key="贡献记录柱状图">Contribution chart</s:String>
+    <s:String xml:space="preserve" x:Key="路径 Path">Path</s:String>
+    <s:String xml:space="preserve" x:Key="跳转">Go</s:String>
+    <s:String xml:space="preserve" x:Key="输出格式">Output format</s:String>
+    <s:String xml:space="preserve" x:Key="迭代标签">Iterate</s:String>
+    <s:String xml:space="preserve" x:Key="退出">Log out</s:String>
+    <s:String xml:space="preserve" x:Key="退出登录">Log out</s:String>
+    <s:String xml:space="preserve" x:Key="选择已有分支，或输入新分支名以在推送时自动创建">Select an existing branch or type a new branch name to create it on push</s:String>
+    <s:String xml:space="preserve" x:Key="选择已有类别直接添加，或输入新类别后按回车/点添加">Select an existing category or type a new one and press Enter / click Add</s:String>
+    <s:String xml:space="preserve" x:Key="选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。">Choose the accent color used for buttons progress and selected states. Changes apply and save immediately.</s:String>
+    <s:String xml:space="preserve" x:Key="选择应用的整体明暗风格。更改会立即生效并保存。">Choose the app light or dark style. Changes apply and save immediately.</s:String>
+    <s:String xml:space="preserve" x:Key="选择版本文件">Select Version File</s:String>
+    <s:String xml:space="preserve" x:Key="选择界面显示语言，更改会立即生效并保存。">Choose the interface language. Changes apply and save immediately.</s:String>
+    <s:String xml:space="preserve" x:Key="选择要关联的文件">Select files to associate</s:String>
+    <s:String xml:space="preserve" x:Key="选择项目">Select Project</s:String>
+    <s:String xml:space="preserve" x:Key="配合条目命令时，指定操作的目标版本。">When used with entry commands, specifies the target version.</s:String>
+    <s:String xml:space="preserve" x:Key="配置 GitHub 仓库、分支和 Personal Access Token 后，可一键将 data.json 推送到远程仓库。支持自动生成 commit message（包含版本号和变更摘要），实现数据的自动备份和团队共享。">After configuring the GitHub repository, branch, and Personal Access Token, you can push data.json to the remote repository with one click. It supports auto-generated commit messages (including the version number and change summary) for automatic backup and team sharing.</s:String>
+    <s:String xml:space="preserve" x:Key="配置 GitHub 仓库地址、分支名、Personal Access Token，实现数据文件的一键推送。支持自动生成 commit message。">Configure the GitHub repository URL, branch name, and Personal Access Token for one-click pushing of data files. Supports auto-generated commit messages.</s:String>
+    <s:String xml:space="preserve" x:Key="重要问题，需尽快解决">Important issue, resolve as soon as possible</s:String>
+    <s:String xml:space="preserve" x:Key="错误">Error</s:String>
+    <s:String xml:space="preserve" x:Key="键盘快捷操作">Keyboard shortcuts</s:String>
+    <s:String xml:space="preserve" x:Key="阻断级问题，必须立即处理">Blocker-level issue, must be handled immediately</s:String>
+    <s:String xml:space="preserve" x:Key="项目 (Project)">Project</s:String>
+    <s:String xml:space="preserve" x:Key="项目(_P)">Project(_P)</s:String>
+    <s:String xml:space="preserve" x:Key="项目信息">Project Info</s:String>
+    <s:String xml:space="preserve" x:Key="项目名称">Project Name</s:String>
+    <s:String xml:space="preserve" x:Key="项目名称不能为空。">Project name cannot be empty.</s:String>
+    <s:String xml:space="preserve" x:Key="项目名称不能超过 100 个字符。">Project name cannot exceed 100 characters.</s:String>
+    <s:String xml:space="preserve" x:Key="项目总览与数据统计中心">Project overview and statistics center</s:String>
+    <s:String xml:space="preserve" x:Key="项目描述">Project Description</s:String>
+    <s:String xml:space="preserve" x:Key="项目描述不能超过 500 个字符。">Project description cannot exceed 500 characters.</s:String>
+    <s:String xml:space="preserve" x:Key="项目目录">Project directories</s:String>
+    <s:String xml:space="preserve" x:Key="项目管理">Projects</s:String>
+    <s:String xml:space="preserve" x:Key="项目设置已保存。">Project settings saved.</s:String>
+    <s:String xml:space="preserve" x:Key="项目：{0}  |  数据文件：{1}  |  未完成 {2}，已完成 {3}">Project: {0}  |  Data file: {1}  |  Unfinished {2}, Finished {3}</s:String>
+    <s:String xml:space="preserve" x:Key="颜色（可选）">Color (optional)</s:String>
+    <s:String xml:space="preserve" x:Key="＋ 添加文件">＋ Add File</s:String>
+    <s:String xml:space="preserve" x:Key="🔴 一般">🔴 General</s:String>
+    <s:String xml:space="preserve" x:Key="🔴 严重">🔴 Severe</s:String>
+    <s:String xml:space="preserve" x:Key="🔴 致命">🔴 Fatal</s:String>
+    <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 Patch</s:String>
+    <s:String xml:space="preserve" x:Key="🔵 更新">🔵 Update</s:String>
+</ResourceDictionary>

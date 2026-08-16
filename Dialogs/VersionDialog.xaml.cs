@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -55,7 +55,7 @@ public partial class VersionDialog : UserControl
         _isNewMode = true;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
-        ConfirmBtn.Content = LocalizationManager.T("创建", "Create", "Создать");
+        ConfirmBtn.Content = LocalizationManager.T("创建");
     }
 
     private void OpenModeBtn_Checked(object sender, RoutedEventArgs e)
@@ -64,7 +64,7 @@ public partial class VersionDialog : UserControl
         _isNewMode = false;
         NewPanel.Visibility = Visibility.Collapsed;
         OpenPanel.Visibility = Visibility.Visible;
-        ConfirmBtn.Content = LocalizationManager.T("打开", "Open", "Открыть");
+        ConfirmBtn.Content = LocalizationManager.T("打开");
     }
 
     private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
@@ -73,12 +73,12 @@ public partial class VersionDialog : UserControl
         {
             if (string.IsNullOrWhiteSpace(VersionName))
             {
-                NewHint.Text = LocalizationManager.T("请输入版本号。", "Please enter a version number.", "Введите номер версии.");
+                NewHint.Text = LocalizationManager.T("请输入版本号。");
                 return;
             }
             if (!IsValidVersionName(VersionName))
             {
-                NewHint.Text = LocalizationManager.T("版本号包含无效字符。", "Version number contains invalid characters.", "Номер версии содержит недопустимые символы.");
+                NewHint.Text = LocalizationManager.T("版本号包含无效字符。");
                 return;
             }
             // 检查是否已存在
@@ -87,7 +87,7 @@ public partial class VersionDialog : UserControl
             var targetFile = VersionName + ".json";
             if (files.Contains(targetFile))
             {
-                NewHint.Text = LocalizationManager.T($"版本 {VersionName} 已存在。", $"Version {VersionName} already exists.", $"Версия {VersionName} уже существует.");
+                NewHint.Text = LocalizationManager.T("版本 {0} 已存在。", VersionName);
                 return;
             }
         }
@@ -95,7 +95,7 @@ public partial class VersionDialog : UserControl
         {
             if (string.IsNullOrEmpty(SelectedVersion))
             {
-                OpenHint.Text = LocalizationManager.T("请选择一个版本。", "Please select a version.", "Выберите версию.");
+                OpenHint.Text = LocalizationManager.T("请选择一个版本。");
                 return;
             }
         }

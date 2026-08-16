@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -50,12 +50,12 @@ public partial class NewProjectDialog : UserControl
         NewModeBtn.IsChecked = true;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
-        ConfirmBtn.Content = LocalizationManager.T("创建", "Create", "Создать");
+        ConfirmBtn.Content = LocalizationManager.T("创建");
         ProjectNameTextBox.Text = string.Empty;
         DescriptionTextBox.Text = string.Empty;
         VersionTextBox.Text = "0.1.0-alpha.0";
         OpenHint.Text = string.Empty;
-        DialogTitle.Text = LocalizationManager.T("新建项目", "New Project", "Новый проект");
+        DialogTitle.Text = LocalizationManager.T("新建项目");
     }
 
     /// <summary>切换到「打开项目」模式，并自动读取可选择的项目。</summary>
@@ -66,9 +66,9 @@ public partial class NewProjectDialog : UserControl
         OpenModeBtn.IsChecked = true;
         NewPanel.Visibility = Visibility.Collapsed;
         OpenPanel.Visibility = Visibility.Visible;
-        ConfirmBtn.Content = LocalizationManager.T("打开", "Open", "Открыть");
+        ConfirmBtn.Content = LocalizationManager.T("打开");
         OpenHint.Text = string.Empty;
-        DialogTitle.Text = LocalizationManager.T("打开项目", "Open Project", "Открыть проект");
+        DialogTitle.Text = LocalizationManager.T("打开项目");
         LoadProjects();
     }
 
@@ -81,11 +81,11 @@ public partial class NewProjectDialog : UserControl
         NewModeBtn.IsChecked = true;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
-        ConfirmBtn.Content = LocalizationManager.T("保存", "Save", "Сохранить");
+        ConfirmBtn.Content = LocalizationManager.T("保存");
         ProjectNameTextBox.Text = name;
         DescriptionTextBox.Text = description;
         VersionTextBox.Text = currentVersion;
-        DialogTitle.Text = LocalizationManager.T("设置项目", "Project Settings", "Настройки проекта");
+        DialogTitle.Text = LocalizationManager.T("设置项目");
     }
 
     /// <summary>
@@ -124,13 +124,13 @@ public partial class NewProjectDialog : UserControl
     public (bool IsValid, string Message) Validate()
     {
         if (string.IsNullOrWhiteSpace(ProjectName))
-            return (false, LocalizationManager.T("项目名称不能为空。", "Project name cannot be empty.", "Название проекта не может быть пустым."));
+            return (false, LocalizationManager.T("项目名称不能为空。"));
 
         if (ProjectName.Length > 100)
-            return (false, LocalizationManager.T("项目名称不能超过 100 个字符。", "Project name cannot exceed 100 characters.", "Название проекта не может превышать 100 символов."));
+            return (false, LocalizationManager.T("项目名称不能超过 100 个字符。"));
 
         if (Description.Length > 500)
-            return (false, LocalizationManager.T("项目描述不能超过 500 个字符。", "Project description cannot exceed 500 characters.", "Описание проекта не может превышать 500 символов."));
+            return (false, LocalizationManager.T("项目描述不能超过 500 个字符。"));
 
         return (true, string.Empty);
     }
@@ -141,7 +141,7 @@ public partial class NewProjectDialog : UserControl
         _isOpenMode = false;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
-        ConfirmBtn.Content = LocalizationManager.T("创建", "Create", "Создать");
+        ConfirmBtn.Content = LocalizationManager.T("创建");
     }
 
     private void OpenModeBtn_Checked(object sender, RoutedEventArgs e)
@@ -150,7 +150,7 @@ public partial class NewProjectDialog : UserControl
         _isOpenMode = true;
         NewPanel.Visibility = Visibility.Collapsed;
         OpenPanel.Visibility = Visibility.Visible;
-        ConfirmBtn.Content = LocalizationManager.T("打开", "Open", "Открыть");
+        ConfirmBtn.Content = LocalizationManager.T("打开");
     }
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -162,15 +162,15 @@ public partial class NewProjectDialog : UserControl
     {
         if (Confirmed == null)
         {
-            MessageBox.Show(LocalizationManager.T("Confirmed 事件未绑定，请通过菜单「项目」打开此弹窗。", "Confirmed event is not bound. Open this dialog via the Project menu.", "Событие Confirmed не привязано. Откройте это окно через меню «Проект»."),
-                LocalizationManager.T("提示", "Notice", "Уведомление"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(LocalizationManager.T("Confirmed 事件未绑定，请通过菜单「项目」打开此弹窗。"),
+                LocalizationManager.T("提示"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         // 打开模式：需先选择项目
         if (IsOpenMode && string.IsNullOrEmpty(SelectedProjectDir))
         {
-            OpenHint.Text = LocalizationManager.T("请选择一个项目。", "Please select a project.", "Выберите проект.");
+            OpenHint.Text = LocalizationManager.T("请选择一个项目。");
             return;
         }
 

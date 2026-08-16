@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -54,7 +54,7 @@ public partial class NewEntryDialog : UserControl
     public void Reset()
     {
         _editingEntry = null;
-        DialogTitle.Text = LocalizationManager.T("新建条目", "New Entry", "Новая запись");
+        DialogTitle.Text = LocalizationManager.T("新建条目");
         SeverityComboBox.SelectedIndex = 2;
         TitleTextBox.Text = string.Empty;
         BriefTextBox.Text = string.Empty;
@@ -72,7 +72,7 @@ public partial class NewEntryDialog : UserControl
     public void LoadEntry(GoalEntry entry)
     {
         _editingEntry = entry;
-        DialogTitle.Text = LocalizationManager.T("编辑条目", "Edit Entry", "Изменить запись");
+        DialogTitle.Text = LocalizationManager.T("编辑条目");
 
         SeverityComboBox.SelectedIndex = (int)entry.Severity;
         TitleTextBox.Text = entry.Title;
@@ -311,7 +311,7 @@ public partial class NewEntryDialog : UserControl
             Tag = hex,
             IsChecked = isDefault,
             Style = (Style)FindResource("ColorSwatchRadio"),
-            ToolTip = string.IsNullOrEmpty(hex) ? LocalizationManager.T("无颜色", "No color", "Без цвета") : hex
+            ToolTip = string.IsNullOrEmpty(hex) ? LocalizationManager.T("无颜色") : hex
         };
 
         var swatch = new Border
@@ -369,13 +369,13 @@ public partial class NewEntryDialog : UserControl
     public (bool IsValid, string Message) Validate()
     {
         if (string.IsNullOrWhiteSpace(EntryTitle))
-            return (false, LocalizationManager.T("标题不能为空。", "Title cannot be empty.", "Заголовок не может быть пустым."));
+            return (false, LocalizationManager.T("标题不能为空。"));
 
         if (EntryTitle.Length > 200)
-            return (false, LocalizationManager.T("标题不能超过 200 个字符。", "Title cannot exceed 200 characters.", "Заголовок не может превышать 200 символов."));
+            return (false, LocalizationManager.T("标题不能超过 200 个字符。"));
 
         if (Brief.Length > 500)
-            return (false, LocalizationManager.T("简介不能超过 500 个字符。", "Brief cannot exceed 500 characters.", "Описание не может превышать 500 символов."));
+            return (false, LocalizationManager.T("简介不能超过 500 个字符。"));
 
         return (true, string.Empty);
     }
@@ -384,9 +384,9 @@ public partial class NewEntryDialog : UserControl
     {
         var dlg = new OpenFileDialog
         {
-            Title = LocalizationManager.T("选择要关联的文件", "Select files to associate", "Выберите файлы для привязки"),
+            Title = LocalizationManager.T("选择要关联的文件"),
             Multiselect = true,
-            Filter = LocalizationManager.T("所有文件 (*.*)|*.*", "All files (*.*)|*.*", "Все файлы (*.*)|*.*")
+            Filter = LocalizationManager.T("所有文件 (*.*)|*.*")
         };
 
         if (dlg.ShowDialog() == true)

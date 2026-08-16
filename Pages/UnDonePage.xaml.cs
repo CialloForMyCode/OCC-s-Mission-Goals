@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -459,7 +459,7 @@ namespace OCCMissionGoals.Pages
     public class UnDoneVersionGroupVM
     {
         public string VersionName { get; set; } = string.Empty;
-        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本", "No version", "Без версии") : VersionName;
+        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本") : VersionName;
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<UnDoneItemVM> Items { get; set; } = new();
         public bool IsExpanded { get; set; } = true;
@@ -484,7 +484,7 @@ namespace OCCMissionGoals.Pages
         }
 
         public bool IsExcerptVisible => !_isDetailExpanded;
-        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起", "Collapse", "Свернуть") : LocalizationManager.T("详情", "Details", "Подробнее");
+        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起") : LocalizationManager.T("详情");
 
         public string Title => Entry.Title;
         public string SeverityText => SeverityHelper.GetText(Entry.Severity);

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -70,7 +70,7 @@ public static class UpdateService
                 {
                     Succeeded = true,
                     HasUpdate = false,
-                    Message = LocalizationManager.T("已是最新版本。", "You are up to date.", "У вас последняя версия.")
+                    Message = LocalizationManager.T("已是最新版本。")
                 };
             }
 
@@ -100,10 +100,7 @@ public static class UpdateService
                     HasUpdate = false,
                     LatestVersion = tag,
                     HtmlUrl = htmlUrl,
-                    Message = LocalizationManager.T(
-                        $"已是最新版本（{CurrentVersion}）。",
-                        $"You are up to date ({CurrentVersion}).",
-                        $"У вас последняя версия ({CurrentVersion}).")
+                    Message = LocalizationManager.T("已是最新版本（{0}）。", CurrentVersion)
                 };
             }
 
@@ -122,10 +119,7 @@ public static class UpdateService
             return new UpdateCheckResult
             {
                 Succeeded = false,
-                Message = LocalizationManager.T(
-                    $"检查更新失败：{ex.Message}",
-                    $"Update check failed: {ex.Message}",
-                    $"Не удалось проверить обновления: {ex.Message}")
+                Message = LocalizationManager.T("检查更新失败：{0}", ex.Message)
             };
         }
     }
@@ -142,7 +136,7 @@ public static class UpdateService
     {
         try
         {
-            status?.Report(LocalizationManager.T("正在下载更新…", "Downloading update…", "Загрузка обновления…"));
+            status?.Report(LocalizationManager.T("正在下载更新…"));
 
             using var client = CreateClient();
             using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
@@ -165,10 +159,7 @@ public static class UpdateService
                 if (total is > 0)
                 {
                     var percent = read * 100.0 / total.Value;
-                    status?.Report(LocalizationManager.T(
-                        $"正在下载更新… {percent:F0}%",
-                        $"Downloading update… {percent:F0}%",
-                        $"Загрузка обновления… {percent:F0}%"));
+                    status?.Report(LocalizationManager.T("正在下载更新… {0:F0}%", percent));
                 }
             }
 
@@ -176,10 +167,7 @@ public static class UpdateService
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            status?.Report(LocalizationManager.T(
-                $"下载失败：{ex.Message}",
-                $"Download failed: {ex.Message}",
-                $"Ошибка загрузки: {ex.Message}"));
+            status?.Report(LocalizationManager.T("下载失败：{0}", ex.Message));
             return null;
         }
     }

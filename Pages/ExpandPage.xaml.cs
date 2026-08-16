@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -119,11 +119,8 @@ public partial class ExpandPage : Page
             {
                 // TODO: 下载安装逻辑
                 MessageBox.Show(
-                    LocalizationManager.T(
-                        $"正在安装「{plugin.Name}」...\n\n（占位：将来对接真实下载源后，此处将触发下载并安装流程。）",
-                        $"Installing \"{plugin.Name}\"...\n\n(Placeholder: once a real download source is wired up, this will trigger the download and install flow.)",
-                        $"Установка «{plugin.Name}»...\n\n(Заглушка: после подключения реального источника загрузки здесь запустится загрузка и установка.)"),
-                    LocalizationManager.T("安装扩展", "Install Extension", "Установить расширение"),
+                    LocalizationManager.T("正在安装「{0}」...\n\n（占位：将来对接真实下载源后，此处将触发下载并安装流程。）", plugin.Name),
+                    LocalizationManager.T("安装扩展"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 plugin.IsInstalled = true;

@@ -34,9 +34,10 @@ public static class SearchMatcher
             SearchMode.Date => Contains((useCompletedDate ? entry.CompletedAt : entry.Deadline)
                 .ToString("yyyy-MM-dd"), kw),
 
-            // 插件 / 已安装插件是全局搜索（扩展中心），不按条目字段过滤
+            // 插件 / 已安装插件 / 功能是全局搜索，不按条目字段过滤
             SearchMode.Plugins => false,
             SearchMode.Expand => false,
+            SearchMode.Function => false,
 
             _ => true,
         };
@@ -44,7 +45,7 @@ public static class SearchMatcher
 
     /// <summary>
     /// 从原始输入解析出「模式 + 关键词」。支持前缀语法，例如：
-    /// "Text:崩溃"、"Tag:bug"、"Setting:主题"、"File:parser.c"、"Date:2024-01-01"、
+    /// "Text:崩溃"、"Tag:bug"、"Setting:主题"、"Function:新建"、"File:parser.c"、"Date:2024-01-01"、
     /// "Plugins:备份"、"Expand:已安装插件"。
     /// 无前缀（或前缀无法识别）时，整段按「文字」模式匹配。
     /// </summary>
@@ -60,6 +61,7 @@ public static class SearchMatcher
                 "text" or "文字"                        => SearchMode.Text,
                 "tag" or "标签"                         => SearchMode.Tag,
                 "setting" or "设置" or "settings" or "配置"     => SearchMode.Setting,
+                "function" or "func" or "功能" or "操作"        => SearchMode.Function,
                 "file" or "文件"                        => SearchMode.File,
                 "date" or "日期"                        => SearchMode.Date,
                 "plugins" or "plugin" or "插件"                => SearchMode.Plugins,

@@ -1,4 +1,4 @@
-<UserControl x:Class="OCCMissionGoals.Dialogs.NewEntryDialog"
+﻿<UserControl x:Class="OCCMissionGoals.Dialogs.NewEntryDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
@@ -59,7 +59,7 @@
                     Padding="0,0,0,10"
                     Margin="0,0,0,12">
                 <Grid>
-                    <TextBlock x:Name="DialogTitle" Text="{loc:Loc Zh=新建条目, En=New Entry, Ru=&quot;Новая запись&quot;}"
+                    <TextBlock x:Name="DialogTitle" Text="{loc:Loc &quot;新建条目&quot;}"
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
@@ -70,23 +70,23 @@
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <!-- 严重程度 -->
-                    <TextBlock Text="{loc:Loc Zh=严重程度, En=Severity, Ru=&quot;Важность&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;严重程度&quot;}" Style="{StaticResource DialogLabel}"/>
                     <ComboBox x:Name="SeverityComboBox" 
                               Style="{StaticResource DialogComboBox}"
                               Margin="0,0,0,14">
-                        <ComboBoxItem Content="{loc:Loc Zh=🔴 致命, En=🔴 Fatal, Ru=&quot;🔴 Критический&quot;}" Tag="0"
+                        <ComboBoxItem Content="{loc:Loc &quot;🔴 致命&quot;}" Tag="0"
                                       Foreground="#D32F2F"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="{loc:Loc Zh=🔴 严重, En=🔴 Severe, Ru=&quot;🔴 Серьёзный&quot;}" Tag="1"
+                        <ComboBoxItem Content="{loc:Loc &quot;🔴 严重&quot;}" Tag="1"
                                       Foreground="#E65100"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="{loc:Loc Zh=🔴 一般, En=🔴 General, Ru=&quot;🔴 Обычный&quot;}" Tag="2"
+                        <ComboBoxItem Content="{loc:Loc &quot;🔴 一般&quot;}" Tag="2"
                                       Foreground="#F9A825"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="{loc:Loc Zh=🔴 补丁, En=🔴 Patch, Ru=&quot;🔴 Исправление&quot;}" Tag="3"
+                        <ComboBoxItem Content="{loc:Loc &quot;🔴 补丁&quot;}" Tag="3"
                                       Foreground="#2E7D32"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="{loc:Loc Zh=🔵 更新, En=🔵 Update, Ru=&quot;🔵 Обновление&quot;}" Tag="4"
+                        <ComboBoxItem Content="{loc:Loc &quot;🔵 更新&quot;}" Tag="4"
                                       Foreground="#1565C0"
                                       Style="{StaticResource DialogComboBoxItem}"/>
                     </ComboBox>
@@ -96,7 +96,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{loc:Loc Zh=类别, En=Category, Ru=&quot;Категория&quot;}"
+                        <TextBlock Text="{loc:Loc &quot;类别&quot;}"
                                    Style="{StaticResource DialogLabel}"
                                    VerticalAlignment="Center"/>
                     </Grid>
@@ -113,10 +113,10 @@
                                   SelectionChanged="TypeComboBox_SelectionChanged"
                                   DropDownOpened="TypeComboBox_DropDownOpened"
                                   KeyDown="TypeComboBox_KeyDown"
-                                  ToolTip="{loc:Loc Zh=选择已有类别直接添加，或输入新类别后按回车/点添加, En=Select an existing category or type a new one and press Enter / click Add, Ru=&quot;Выберите существующую категорию или введите новую и нажмите Enter / «Добавить»&quot;}"
+                                  ToolTip="{loc:Loc &quot;选择已有类别直接添加，或输入新类别后按回车/点添加&quot;}"
                                   Margin="0,0,8,0"/>
                         <Button Grid.Column="1"
-                                Content="{loc:Loc Zh=添加, En=Add, Ru=&quot;Добавить&quot;}"
+                                Content="{loc:Loc &quot;添加&quot;}"
                                 Click="AddType_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 Height="30" MinWidth="48"
@@ -130,7 +130,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{loc:Loc Zh=颜色（可选）, En=Color (optional), Ru=&quot;Цвет (необязательно)&quot;}"
+                        <TextBlock Text="{loc:Loc &quot;颜色（可选）&quot;}"
                                    Style="{StaticResource DialogLabel}"
                                    VerticalAlignment="Center"
                                    Margin="0,0,10,0"/>
@@ -192,13 +192,13 @@
                     </ItemsControl>
 
                     <!-- 标题 -->
-                    <TextBlock Text="{loc:Loc Zh=标题, En=Title, Ru=&quot;Заголовок&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;标题&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="TitleTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Margin="0,0,0,14"/>
 
                     <!-- 简介 -->
-                    <TextBlock Text="{loc:Loc Zh=简介, En=Brief, Ru=&quot;Краткое описание&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;简介&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="BriefTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Height="60"
@@ -209,7 +209,7 @@
                              Margin="0,0,0,14"/>
 
                     <!-- 详细信息 -->
-                    <TextBlock Text="{loc:Loc Zh=详细信息, En=Details, Ru=&quot;Подробности&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;详细信息&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="DetailTextBox"
                              Style="{StaticResource DialogTextBox}"
                              Height="80"
@@ -220,17 +220,17 @@
                              Margin="0,0,0,14"/>
 
                     <!-- 截止日期 -->
-                    <TextBlock Text="{loc:Loc Zh=截止日期, En=Deadline, Ru=&quot;Срок&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;截止日期&quot;}" Style="{StaticResource DialogLabel}"/>
                     <DatePicker x:Name="DeadlinePicker"
                                 Style="{StaticResource DialogDatePicker}"
                                 Margin="0,0,0,14"/>
 
                     <!-- 版本 -->
-                    <TextBlock Text="{loc:Loc Zh=版本, En=Version, Ru=&quot;Версия&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;版本&quot;}" Style="{StaticResource DialogLabel}"/>
                     <ComboBox x:Name="VersionComboBox"
                               Style="{StaticResource DialogComboBox}"
                               Margin="0,0,0,14"
-                              ToolTip="{loc:Loc Zh=条目所属版本号, En=The version this entry belongs to, Ru=&quot;Версия данной записи&quot;}"/>
+                              ToolTip="{loc:Loc &quot;条目所属版本号&quot;}"/>
 
                     <!-- 相关文件 -->
                     <Grid Margin="0,0,0,6">
@@ -238,11 +238,11 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{loc:Loc Zh=相关文件, En=Related Files, Ru=&quot;Связанные файлы&quot;}"
+                        <TextBlock Text="{loc:Loc &quot;相关文件&quot;}"
                                    Style="{StaticResource DialogLabel}"
                                    VerticalAlignment="Center"/>
                         <Button Grid.Column="1"
-                                Content="{loc:Loc Zh=＋ 添加文件, En=＋ Add File, Ru=&quot;＋ Добавить файл&quot;}"
+                                Content="{loc:Loc &quot;＋ 添加文件&quot;}"
                                 Click="AddFile_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 Height="28" MinWidth="80"
@@ -306,10 +306,10 @@
                                                      Style="{StaticResource DialogTextBox}"
                                                      FontSize="11" Padding="4,2"
                                                      Margin="0,0,6,0"
-                                                     ToolTip="{loc:Loc Zh=命名空间.类.方法, En=Namespace.Class.Method, Ru=&quot;Пространство имён.Класс.Метод&quot;}"/>
+                                                     ToolTip="{loc:Loc &quot;命名空间.类.方法&quot;}"/>
 
                                             <TextBlock Grid.Column="1"
-                                                       Text="{loc:Loc Zh=行, En=Line, Ru=&quot;Строка&quot;}"
+                                                       Text="{loc:Loc &quot;行&quot;}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        FontSize="11"
                                                        VerticalAlignment="Center"
@@ -323,7 +323,7 @@
                                                      Margin="0,0,6,0"/>
 
                                             <TextBlock Grid.Column="3"
-                                                       Text="{loc:Loc Zh=列, En=Column, Ru=&quot;Столбец&quot;}"
+                                                       Text="{loc:Loc &quot;列&quot;}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        FontSize="11"
                                                        VerticalAlignment="Center"
@@ -351,11 +351,11 @@
                     Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button Content="{loc:Loc Zh=取消, En=Cancel, Ru=&quot;Отмена&quot;}"
+                    <Button Content="{loc:Loc &quot;取消&quot;}"
                             Click="CancelButton_Click"
                             Style="{StaticResource DialogCancelButton}"
                             Margin="0,0,10,0"/>
-                    <Button Content="{loc:Loc Zh=确认, En=Confirm, Ru=&quot;Подтвердить&quot;}"
+                    <Button Content="{loc:Loc &quot;确认&quot;}"
                             Click="ConfirmButton_Click"
                             Style="{StaticResource DialogConfirmButton}"/>
                 </StackPanel>

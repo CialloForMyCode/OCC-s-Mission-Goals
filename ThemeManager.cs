@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -13,6 +14,14 @@ public static class ThemeManager
 
     /// <summary>当前主题色（规范化后的 #RRGGBB）。</summary>
     public static string AccentColorHex => _accentHex;
+
+    /// <summary>预设主题色（#RRGGBB），供设置页与搜索下拉框共用。</summary>
+    public static IReadOnlyList<string> AccentPresets { get; } = new[]
+    {
+        "#4CAF50", "#8BC34A", "#009688", "#00BCD4",
+        "#2196F3", "#3F51B5", "#9C27B0", "#E91E63",
+        "#FF5722", "#FF9800", "#795548", "#607D8B"
+    };
 
     // 亮色
     private static readonly (string Key, string Color)[] LightPalette =

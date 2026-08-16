@@ -1,4 +1,4 @@
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace OCCMissionGoals.Models;
 
@@ -10,12 +10,12 @@ public static class SeverityHelper
 {
     public static string GetText(GoalSeverity s) => s switch
     {
-        GoalSeverity.Fatal   => LocalizationManager.T("致命", "Fatal", "Критический"),
-        GoalSeverity.Severe  => LocalizationManager.T("严重", "Severe", "Серьёзный"),
-        GoalSeverity.General => LocalizationManager.T("一般", "General", "Обычный"),
-        GoalSeverity.Patch   => LocalizationManager.T("补丁", "Patch", "Исправление"),
-        GoalSeverity.Update  => LocalizationManager.T("更新", "Update", "Обновление"),
-        _                    => LocalizationManager.T("未知", "Unknown", "Неизвестно")
+        GoalSeverity.Fatal   => LocalizationManager.T("致命"),
+        GoalSeverity.Severe  => LocalizationManager.T("严重"),
+        GoalSeverity.General => LocalizationManager.T("一般"),
+        GoalSeverity.Patch   => LocalizationManager.T("补丁"),
+        GoalSeverity.Update  => LocalizationManager.T("更新"),
+        _                    => LocalizationManager.T("未知")
     };
 
     public static Color GetColor(GoalSeverity s) => s switch

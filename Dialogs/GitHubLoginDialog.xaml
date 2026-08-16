@@ -1,4 +1,4 @@
-<UserControl x:Class="OCCMissionGoals.Dialogs.GitHubLoginDialog"
+﻿<UserControl x:Class="OCCMissionGoals.Dialogs.GitHubLoginDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:OCCMissionGoals"
@@ -30,7 +30,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="{loc:Loc Zh=登录 GitHub, En=Sign in to GitHub, Ru=&quot;Войти в GitHub&quot;}"
+                               Text="{loc:Loc &quot;登录 GitHub&quot;}"
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
@@ -43,7 +43,7 @@
 
             <!-- 表单区域 -->
             <StackPanel Grid.Row="1">
-                <TextBlock Text="{loc:Loc Zh=请输入 Personal Access Token（经典或精细粒度均可），需要 read:user 权限。, En=Enter a Personal Access Token (classic or fine-grained). The read:user scope is required., Ru=&quot;Введите Personal Access Token (классический или с тонкой настройкой прав). Требуется область read:user.&quot;}"
+                <TextBlock Text="{loc:Loc &quot;请输入 Personal Access Token（经典或精细粒度均可），需要 read:user 权限。&quot;}"
                            Foreground="{DynamicResource ForegroundBrush}"
                            FontSize="12" Opacity="0.75"
                            TextWrapping="Wrap"
@@ -68,7 +68,7 @@
                         Cursor="Hand"
                         Background="Transparent" BorderThickness="0"
                         Padding="0">
-                    <TextBlock Text="{loc:Loc Zh=如何创建令牌？打开 GitHub 令牌页面, En=How to create a token? Open the GitHub tokens page, Ru=&quot;Как создать токен? Открыть страницу токенов GitHub&quot;}"
+                    <TextBlock Text="{loc:Loc &quot;如何创建令牌？打开 GitHub 令牌页面&quot;}"
                                Foreground="{DynamicResource PrimaryBrush}"
                                FontSize="11"
                                TextDecorations="Underline"
@@ -85,11 +85,11 @@
                     Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button x:Name="CancelBtn" Content="{loc:Loc Zh=取消, En=Cancel, Ru=&quot;Отмена&quot;}"
+                    <Button x:Name="CancelBtn" Content="{loc:Loc &quot;取消&quot;}"
                             Click="CancelButton_Click"
                             Style="{StaticResource DialogCancelButton}"
                             Margin="0,0,10,0"/>
-                    <Button x:Name="ConfirmBtn" Content="{loc:Loc Zh=登录, En=Sign in, Ru=&quot;Войти&quot;}"
+                    <Button x:Name="ConfirmBtn" Content="{loc:Loc &quot;登录&quot;}"
                             Click="ConfirmButton_Click"
                             Style="{StaticResource DialogConfirmButton}"/>
                 </StackPanel>

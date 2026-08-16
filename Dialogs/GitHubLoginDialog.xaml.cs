@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using OCCMissionGoals.Services;
@@ -60,7 +60,7 @@ public partial class GitHubLoginDialog : UserControl
     {
         if (string.IsNullOrWhiteSpace(Token))
         {
-            ShowError(LocalizationManager.T("请输入 Personal Access Token。", "Please enter a Personal Access Token.", "Введите Personal Access Token."));
+            ShowError(LocalizationManager.T("请输入 Personal Access Token。"));
             return;
         }
 

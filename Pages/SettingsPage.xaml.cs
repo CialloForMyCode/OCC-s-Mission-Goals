@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,13 +21,6 @@ public partial class SettingsPage : Page
     private readonly List<string> _branchOptions = new();
     private RepositoryInfo? _currentRepo;
     private bool _syncingRepo;
-
-    private static readonly string[] AccentPresets =
-    {
-        "#4CAF50", "#8BC34A", "#009688", "#00BCD4",
-        "#2196F3", "#3F51B5", "#9C27B0", "#E91E63",
-        "#FF5722", "#FF9800", "#795548", "#607D8B"
-    };
 
     public SettingsPage()
     {
@@ -165,9 +158,9 @@ public partial class SettingsPage : Page
             LightThemeRadio.IsChecked = !dark;
             DarkThemeRadio.IsChecked = dark;
 
-            // 语言
-            LanguageCombo.SelectedIndex = LocalizationManager.Instance.IsEnglish ? 1
-                : LocalizationManager.Instance.IsRussian ? 2 : 0;
+            // 语言（由 Languages/*.xml 动态生成）
+            BuildLanguageCombo();
+            SelectCurrentLanguage();
 
             // 主题色
             BuildAccentSwatches();
@@ -217,18 +210,44 @@ public partial class SettingsPage : Page
         if (_loading) return;
         if (LanguageCombo.SelectedItem is not ComboBoxItem item) return;
 
-        var lang = item.Tag as string ?? "zh";
+        var lang = item.Tag as string ?? LocalizationManager.DefaultLanguage;
         if (lang == LocalizationManager.Instance.Language) return;
 
         LocalizationManager.Instance.SetLanguage(lang);
         MainWindow?.ReloadLanguage();
     }
 
+    /// <summary>根据 LocalizationManager.AvailableLanguages 重建语言下拉。</summary>
+    private void BuildLanguageCombo()
+    {
+        var style = TryFindResource("DialogComboBoxItem") as Style;
+        LanguageCombo.Items.Clear();
+        foreach (var (code, name) in LocalizationManager.Instance.AvailableLanguages)
+        {
+            LanguageCombo.Items.Add(new ComboBoxItem { Content = name, Tag = code, Style = style });
+        }
+    }
+
+    private void SelectCurrentLanguage()
+    {
+        var current = LocalizationManager.Instance.Language;
+        for (var i = 0; i < LanguageCombo.Items.Count; i++)
+        {
+            if (LanguageCombo.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, current, StringComparison.OrdinalIgnoreCase))
+            {
+                LanguageCombo.SelectedIndex = i;
+                return;
+            }
+        }
+        LanguageCombo.SelectedIndex = 0;
+    }
+
     private void BuildAccentSwatches()
     {
         AccentSwatchPanel.Children.Clear();
         var current = ThemeManager.AccentColorHex;
-        foreach (var hex in AccentPresets)
+        foreach (var hex in ThemeManager.AccentPresets)
         {
             AccentSwatchPanel.Children.Add(MakeAccentSwatch(hex,
                 string.Equals(hex, current, StringComparison.OrdinalIgnoreCase)));
@@ -283,7 +302,7 @@ public partial class SettingsPage : Page
         var hex = AccentHexBox.Text.Trim();
         if (ColorUtil.ParseBrush(hex) == null)
         {
-            MainWindow?.SetTipText(LocalizationManager.T("无效的颜色值，请输入 #RRGGBB 格式。", "Invalid color value. Please enter #RRGGBB format.", "Недопустимое значение цвета. Введите в формате #RRGGBB."));
+            MainWindow?.SetTipText(LocalizationManager.T("无效的颜色值，请输入 #RRGGBB 格式。"));
             AccentHexBox.Text = ThemeManager.AccentColorHex;
             return;
         }
@@ -299,14 +318,14 @@ public partial class SettingsPage : Page
         var proj = ProjectService.CurrentProject;
         if (proj == null)
         {
-            MainWindow?.SetTipText(LocalizationManager.T("没有打开的项目。", "No project is open.", "Нет открытого проекта."));
+            MainWindow?.SetTipText(LocalizationManager.T("没有打开的项目。"));
             return;
         }
 
         var name = ProjectNameBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(name))
         {
-            MainWindow?.SetTipText(LocalizationManager.T("项目名称不能为空。", "Project name cannot be empty.", "Название проекта не может быть пустым."));
+            MainWindow?.SetTipText(LocalizationManager.T("项目名称不能为空。"));
             return;
         }
 
@@ -315,7 +334,7 @@ public partial class SettingsPage : Page
         ProjectService.UpdateProjectConfig(proj);
 
         MainWindow?.RefreshAllViews();
-        MainWindow?.SetTipText(LocalizationManager.T("项目设置已保存。", "Project settings saved.", "Настройки проекта сохранены."));
+        MainWindow?.SetTipText(LocalizationManager.T("项目设置已保存。"));
     }
 
     // ==================== 推送 / 仓库 ====================
@@ -360,10 +379,7 @@ public partial class SettingsPage : Page
         }
         catch (Exception ex)
         {
-            MainWindow?.SetTipText(LocalizationManager.T(
-                $"加载仓库列表失败：{ex.Message}",
-                $"Failed to load repos: {ex.Message}",
-                $"Не удалось загрузить список репозиториев: {ex.Message}"));
+            MainWindow?.SetTipText(LocalizationManager.T("加载仓库列表失败：{0}", ex.Message));
             return;
         }
 
@@ -494,8 +510,11 @@ public partial class SettingsPage : Page
         PushSettings.RemotePath = file;
     }
 
-    /// <summary>供「更新日志」页跳转：滚动到推送设置的指定子区块（repos / file / options）。</summary>
-    public void NavigateToPush(string anchor = "repos")
+    /// <summary>
+    /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Push / System）。
+    /// anchor 可定位推送区块的子区块（repos / file / options）。
+    /// </summary>
+    public void NavigateTo(string tag, string? anchor = null)
     {
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
         {
@@ -503,17 +522,21 @@ public partial class SettingsPage : Page
             {
                 "file" => RemotePathRow,
                 "options" => CommitOptionsHeader,
-                _ => ReposHeader,
+                "repos" => ReposHeader,
+                _ => _sectionMap.TryGetValue(tag, out var section) ? section : null,
             };
 
             if (target is null || !target.IsLoaded) return;
 
             _isNavigating = true;
             ContentScroll.ScrollToVerticalOffset(Math.Max(0, GetSectionTop(target) - 12));
-            HighlightNav("Push");
+            HighlightNav(tag);
             _isNavigating = false;
         }));
     }
+
+    /// <summary>供「更新日志」页跳转：滚动到推送设置的指定子区块（repos / file / options）。</summary>
+    public void NavigateToPush(string anchor = "repos") => NavigateTo("Push", anchor);
 
     // ==================== 系统 / 更新 ====================
 
@@ -526,18 +549,15 @@ public partial class SettingsPage : Page
         {
             AutoStartService.SetEnabled(enable);
             MainWindow?.SetTipText(enable
-                ? LocalizationManager.T("已开启开机自启动。", "Launch at startup enabled.", "Автозапуск включён.")
-                : LocalizationManager.T("已关闭开机自启动。", "Launch at startup disabled.", "Автозапуск выключен."));
+                ? LocalizationManager.T("已开启开机自启动。")
+                : LocalizationManager.T("已关闭开机自启动。"));
         }
         catch (Exception ex)
         {
             _loading = true;
             AutoStartCheck.IsChecked = AutoStartService.IsEnabled();
             _loading = false;
-            MainWindow?.SetTipText(LocalizationManager.T(
-                $"设置开机自启动失败：{ex.Message}",
-                $"Failed to set launch at startup: {ex.Message}",
-                $"Не удалось настроить автозапуск: {ex.Message}"));
+            MainWindow?.SetTipText(LocalizationManager.T("设置开机自启动失败：{0}", ex.Message));
         }
     }
 
@@ -552,7 +572,7 @@ public partial class SettingsPage : Page
         CheckUpdateBtn.IsEnabled = false;
         DownloadUpdateBtn.Visibility = Visibility.Collapsed;
         OpenReleaseBtn.Visibility = Visibility.Collapsed;
-        UpdateStatusText.Text = LocalizationManager.T("正在检查更新…", "Checking for updates…", "Проверка обновлений…");
+        UpdateStatusText.Text = LocalizationManager.T("正在检查更新…");
         _latestUpdate = null;
 
         try
@@ -570,10 +590,7 @@ public partial class SettingsPage : Page
             }
             else
             {
-                UpdateStatusText.Text = LocalizationManager.T(
-                    $"发现新版本 {result.LatestVersion}，点击「下载并安装」开始更新。",
-                    $"Version {result.LatestVersion} is available. Click \"Download & Install\" to update.",
-                    $"Доступна версия {result.LatestVersion}. Нажмите «Загрузить и установить», чтобы обновиться.");
+                UpdateStatusText.Text = LocalizationManager.T("发现新版本 {0}，点击「下载并安装」开始更新。", result.LatestVersion);
 
                 if (!string.IsNullOrEmpty(result.InstallerDownloadUrl))
                     DownloadUpdateBtn.Visibility = Visibility.Visible;
@@ -603,14 +620,11 @@ public partial class SettingsPage : Page
 
             if (string.IsNullOrEmpty(path))
             {
-                UpdateStatusText.Text = LocalizationManager.T(
-                    "下载失败，请稍后重试或使用「打开下载页」。",
-                    "Download failed. Please retry later or use \"Open Download Page\".",
-                    "Не удалось загрузить. Повторите позже или используйте «Открыть страницу загрузки».");
+                UpdateStatusText.Text = LocalizationManager.T("下载失败，请稍后重试或使用「打开下载页」。");
             }
             else
             {
-                UpdateStatusText.Text = LocalizationManager.T("正在启动安装程序…", "Launching installer…", "Запуск установщика…");
+                UpdateStatusText.Text = LocalizationManager.T("正在启动安装程序…");
                 UpdateService.LaunchInstaller(path);
             }
         }

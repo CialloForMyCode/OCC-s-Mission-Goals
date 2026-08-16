@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
 using OCCMissionGoals.Models;
@@ -138,8 +138,8 @@ namespace OCCMissionGoals
             });
 
             // 向 SwitchPage 注入隐藏页签按钮并订阅事件
-            _switchPage.AddOverlayTab("settings", LocalizationManager.T("设置", "Settings", "Настройки"));
-            _switchPage.AddOverlayTab("help", LocalizationManager.T("帮助", "Help", "Справка"));
+            _switchPage.AddOverlayTab("settings", LocalizationManager.T("设置"));
+            _switchPage.AddOverlayTab("help", LocalizationManager.T("帮助"));
             _switchPage.TabSelected += OnTabSelected;
 
             // 默认打开第一个页面
@@ -279,7 +279,7 @@ namespace OCCMissionGoals
             var (mode, keyword) = SearchMatcher.Parse(rawInput);
 
             // 设置 / 插件 / 已安装插件是全局搜索，不作用于条目列表（结果在搜索板中展示）
-            if (mode == SearchMode.Setting || mode == SearchMode.Plugins || mode == SearchMode.Expand)
+            if (mode == SearchMode.Setting || mode == SearchMode.Function || mode == SearchMode.Plugins || mode == SearchMode.Expand)
                 return;
 
             if (key == "undone")
@@ -290,19 +290,55 @@ namespace OCCMissionGoals
 
         // ======================== 搜索结果板 ========================
 
-        private sealed record SettingItem(string Key, string Title, string[] Keywords, Action Action);
+        private sealed record CommandItem(string Key, string Title, string[] Keywords, Action Action);
         private sealed record SearchResultItem(
             string Title, string KindLabel, Brush KindBrush,
-            string Subtitle, string ActionLabel, Action Action);
-
-        private List<SettingItem> GetSettingItems() => new()
+            string Subtitle, string ActionLabel, Action Action)
         {
-            new("project", LocalizationManager.T("设置项目", "Project Settings", "Настройки проекта"), new[] { "设置项目", "项目设置", "项目", "设置", "配置", "project", "config", "setting" }, OpenProjectSettings),
-            new("theme", LocalizationManager.T("主题样式", "Theme", "Тема"), new[] { "主题样式", "主题", "样式", "深浅", "亮色", "暗色", "theme", "dark", "light" }, ToggleTheme),
-            new("push", LocalizationManager.T("推送设置", "Push Settings", "Настройки отправки"), new[] { "推送设置", "推送", "上传", "仓库", "github", "备份", "push", "upload" }, OpenPushSettings),
+            /// <summary>内嵌下拉选择（语言 / 主题色等）。非空时该项渲染为下拉框而非按钮。</summary>
+            public IReadOnlyList<string>? Options { get; init; }
+            public int SelectedOption { get; init; } = -1;
+            public Action<int>? OnOptionSelected { get; init; }
+            public bool HasOptions => Options is { Count: > 0 };
+        }
+
+        private List<CommandItem> GetSettingItems() => new()
+        {
+            new("theme", LocalizationManager.T("主题样式"), new[] { "主题样式", "主题", "样式", "深浅", "明暗", "亮色", "暗色", "theme", "dark", "light" }, ToggleTheme),
+            new("language", LocalizationManager.T("语言"), new[] { "语言", "中文", "英文", "英语", "俄语", "language", "english", "russian" }, () => { }),
+            new("accent", LocalizationManager.T("主题色"), new[] { "主题色", "强调色", "颜色", "accent", "color" }, () => { }),
+            new("project", LocalizationManager.T("设置项目"), new[] { "设置项目", "项目设置", "项目", "设置", "配置", "project", "config", "setting" }, OpenProjectSettings),
+            new("push", LocalizationManager.T("推送设置"), new[] { "推送设置", "推送", "上传", "仓库", "github", "备份", "push", "upload" }, OpenPushSettings),
+            new("autostart", LocalizationManager.T("开机自启动"), new[] { "开机自启动", "开机", "自启动", "启动", "autostart", "startup" }, ToggleAutoStart),
+            new("update", LocalizationManager.T("检查更新"), new[] { "检查更新", "自动更新", "更新", "版本", "auto update", "update", "upgrade" }, CheckForUpdates),
         };
 
-        private List<SettingItem> SettingSearchMatches(string keyword)
+        private List<CommandItem> GetFunctionItems() => new()
+        {
+            new("newEntry", LocalizationManager.T("新建条目"), new[] { "新建条目", "新建", "添加", "条目", "记录", "new entry", "entry", "add" }, ShowNewEntryDialog),
+            new("newProject", LocalizationManager.T("新建项目"), new[] { "新建项目", "新建", "创建项目", "项目", "new project", "project" }, ShowNewProjectDialog),
+            new("openProject", LocalizationManager.T("打开项目"), new[] { "打开项目", "打开", "项目", "open project", "project" }, ShowOpenProjectDialog),
+            new("newVersion", LocalizationManager.T("新建版本"), new[] { "新建版本", "新建", "版本", "数据", "new version", "version" }, ShowNewVersionDialog),
+            new("openVersion", LocalizationManager.T("打开版本"), new[] { "打开版本", "打开", "版本", "数据", "open version", "version" }, ShowOpenVersionDialog),
+            new("help", LocalizationManager.T("帮助"), new[] { "帮助", "使用说明", "文档", "help", "about" }, ShowHelpPage),
+        };
+
+        private List<CommandItem> FunctionSearchMatches(string keyword)
+        {
+            var q = (keyword ?? string.Empty).Trim().ToLowerInvariant();
+            var items = GetFunctionItems();
+            if (q.Length == 0) return items;
+
+            static bool Eq(string s, string q) => s.ToLowerInvariant() == q;
+            bool Sub(string s) => s.ToLowerInvariant().Contains(q) || q.Contains(s.ToLowerInvariant());
+
+            var exact = items.Where(i => Eq(i.Title, q) || i.Keywords.Any(k => Eq(k, q))).ToList();
+            if (exact.Count > 0) return exact;
+
+            return items.Where(i => Sub(i.Title) || i.Keywords.Any(Sub)).ToList();
+        }
+
+        private List<CommandItem> SettingSearchMatches(string keyword)
         {
             var q = (keyword ?? string.Empty).Trim().ToLowerInvariant();
             var items = GetSettingItems();
@@ -334,14 +370,44 @@ namespace OCCMissionGoals
                 return results;
             }
 
+            if (mode == SearchMode.Function)
+            {
+                foreach (var f in FunctionSearchMatches(keyword))
+                    results.Add(BuildFunctionResult(f));
+                return results;
+            }
+
             if (mode == SearchMode.Plugins || mode == SearchMode.Expand)
             {
                 AppendPluginResults(results, keyword, mode == SearchMode.Expand);
                 return results;
             }
 
+            // 文字模式是全局搜索：条目 + 设置 + 功能 + 插件
+            if (mode == SearchMode.Text)
+            {
+                AppendGlobalTextResults(results, keyword);
+                return results;
+            }
+
+            // Tag / File / Date 仍按条目字段过滤
             AppendEntryResults(results, keyword, mode);
             return results;
+        }
+
+        /// <summary>文字模式全局搜索：命中条目、设置项、功能与插件。</summary>
+        private void AppendGlobalTextResults(List<SearchResultItem> results, string keyword)
+        {
+            // 无关键词（刚输入「Text:」前缀）时保持引导，不列结果
+            if (string.IsNullOrWhiteSpace(keyword)) return;
+
+            AppendEntryResults(results, keyword, SearchMode.Text);
+
+            foreach (var s in SettingSearchMatches(keyword))
+                results.Add(BuildSettingResult(s));
+            foreach (var f in FunctionSearchMatches(keyword))
+                results.Add(BuildFunctionResult(f));
+            AppendPluginResults(results, keyword, installedOnly: false);
         }
 
         private void AppendEntryResults(List<SearchResultItem> results, string keyword, SearchMode mode)
@@ -379,7 +445,7 @@ namespace OCCMissionGoals
         private SearchResultItem BuildPluginResult(PluginInfo plugin)
         {
             var installed = plugin.IsInstalled;
-            var kindLabel = installed ? LocalizationManager.T("已安装", "Installed", "Установлено") : LocalizationManager.T("未安装", "Not installed", "Не установлено");
+            var kindLabel = installed ? LocalizationManager.T("已安装") : LocalizationManager.T("未安装");
             var kindBrush = new SolidColorBrush(installed
                 ? Color.FromRgb(0x4C, 0xAF, 0x50)
                 : Color.FromRgb(0x8D, 0x8D, 0x8D));
@@ -391,35 +457,118 @@ namespace OCCMissionGoals
             var subtitle = parts.Count > 0 ? string.Join(" · ", parts) : plugin.Category;
 
             return new SearchResultItem(
-                plugin.Name, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转", "Go", "Перейти"),
+                plugin.Name, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转"),
                 () => { SwitchTab("expand"); CloseSearchBoard(); });
         }
 
-        private SearchResultItem BuildSettingResult(SettingItem s)
+        private SearchResultItem BuildSettingResult(CommandItem s)
         {
+            // 语言 / 主题色：在结果里直接内嵌下拉框选择，不跳转
+            if (s.Key == "language") return BuildLanguageResult();
+            if (s.Key == "accent") return BuildAccentResult();
+
             var (actionLabel, subtitle) = s.Key switch
             {
-                "theme" => (ThemeManager.IsDark ? LocalizationManager.T("切换为亮色", "Switch to light", "Светлая тема") : LocalizationManager.T("切换为深色", "Switch to dark", "Тёмная тема"), LocalizationManager.T("切换深色 / 浅色主题", "Toggle dark / light theme", "Переключить тёмную / светлую тему")),
-                "project" => (LocalizationManager.T("打开", "Open", "Открыть"), LocalizationManager.T("打开项目设置对话框", "Open project settings dialog", "Открыть окно настроек проекта")),
-                "push" => (LocalizationManager.T("跳转", "Go", "Перейти"), LocalizationManager.T("打开推送（上传 / 备份）设置", "Open push (upload / backup) settings", "Открыть настройки отправки (загрузка / резервное копирование)")),
-                _ => (LocalizationManager.T("打开", "Open", "Открыть"), s.Title),
+                "theme" => (ThemeManager.IsDark ? LocalizationManager.T("切换为亮色") : LocalizationManager.T("切换为深色"), LocalizationManager.T("切换深色 / 浅色主题")),
+                "project" => (LocalizationManager.T("打开"), LocalizationManager.T("打开项目设置对话框")),
+                "push" => (LocalizationManager.T("跳转"), LocalizationManager.T("打开推送（上传 / 备份）设置")),
+                "autostart" => (Services.AutoStartService.IsEnabled() ? LocalizationManager.T("关闭") : LocalizationManager.T("开启"), LocalizationManager.T("登录 Windows 后自动启动本应用")),
+                "update" => (LocalizationManager.T("检查"), LocalizationManager.T("检查并安装新版本")),
+                _ => (LocalizationManager.T("打开"), s.Title),
             };
             return new SearchResultItem(
-                s.Title, LocalizationManager.T("设置", "Settings", "Настройки"),
+                s.Title, LocalizationManager.T("设置"),
                 new SolidColorBrush(Color.FromRgb(0x3D, 0x9D, 0xE8)),
                 subtitle, actionLabel,
                 () => { s.Action(); CloseSearchBoard(); });
         }
 
+        /// <summary>语言：内嵌下拉框，选项由 Languages/*.xml 动态生成。</summary>
+        private SearchResultItem BuildLanguageResult()
+        {
+            var langs = LocalizationManager.Instance.AvailableLanguages;
+            var names = langs.Select(l => l.Name).ToArray();
+            var codes = langs.Select(l => l.Code).ToArray();
+            var current = Array.FindIndex(codes, c =>
+                string.Equals(c, LocalizationManager.Instance.Language, StringComparison.OrdinalIgnoreCase));
+            return new SearchResultItem(
+                LocalizationManager.T("语言"),
+                LocalizationManager.T("设置"),
+                new SolidColorBrush(Color.FromRgb(0x3D, 0x9D, 0xE8)),
+                LocalizationManager.T("选择界面语言"),
+                string.Empty,
+                () => { })
+            {
+                Options = names,
+                SelectedOption = current < 0 ? 0 : current,
+                OnOptionSelected = i =>
+                {
+                    if (i >= 0 && i < codes.Length)
+                        LocalizationManager.Instance.SetLanguage(codes[i]);
+                },
+            };
+        }
+
+        /// <summary>主题色：内嵌下拉框，直接选预设强调色。</summary>
+        private SearchResultItem BuildAccentResult()
+        {
+            var presets = ThemeManager.AccentPresets;
+            var current = Array.FindIndex(presets.ToArray(), p =>
+                string.Equals(p, ThemeManager.AccentColorHex, StringComparison.OrdinalIgnoreCase));
+            return new SearchResultItem(
+                LocalizationManager.T("主题色"),
+                LocalizationManager.T("设置"),
+                new SolidColorBrush(Color.FromRgb(0x3D, 0x9D, 0xE8)),
+                LocalizationManager.T("选择主题强调色"),
+                string.Empty,
+                () => { })
+            {
+                Options = presets,
+                SelectedOption = current,
+                OnOptionSelected = i =>
+                {
+                    if (i >= 0 && i < presets.Count)
+                        SetAccentColor(presets[i]);
+                },
+            };
+        }
+
+        /// <summary>搜索结果里的内嵌下拉框选择变更时直接应用设置。</summary>
+        private void SearchBoardOption_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            // 绑定初始 SelectedIndex 时也会触发一次，此时元素尚未加载，跳过
+            if (sender is ComboBox combo && combo.IsLoaded && combo.Tag is SearchResultItem item && combo.SelectedIndex >= 0)
+                item.OnOptionSelected?.Invoke(combo.SelectedIndex);
+        }
+
+        private SearchResultItem BuildFunctionResult(CommandItem f)
+        {
+            var (actionLabel, subtitle) = f.Key switch
+            {
+                "newEntry" => (LocalizationManager.T("新建"), LocalizationManager.T("打开新建条目对话框")),
+                "newProject" => (LocalizationManager.T("新建"), LocalizationManager.T("打开新建项目对话框")),
+                "openProject" => (LocalizationManager.T("打开"), LocalizationManager.T("打开已有项目")),
+                "newVersion" => (LocalizationManager.T("新建"), LocalizationManager.T("新建并切换数据版本")),
+                "openVersion" => (LocalizationManager.T("打开"), LocalizationManager.T("切换到已有数据版本")),
+                "help" => (LocalizationManager.T("打开"), LocalizationManager.T("打开帮助页面")),
+                _ => (LocalizationManager.T("打开"), f.Title),
+            };
+            return new SearchResultItem(
+                f.Title, LocalizationManager.T("功能"),
+                new SolidColorBrush(Color.FromRgb(0xE8, 0x9C, 0x3D)),
+                subtitle, actionLabel,
+                () => { f.Action(); CloseSearchBoard(); });
+        }
+
         private SearchResultItem BuildEntryResult(GoalEntry entry, bool finished)
         {
-            var kindLabel = finished ? LocalizationManager.T("已完成", "Finished", "Завершено") : LocalizationManager.T("未完成", "Unfinished", "Не завершено");
+            var kindLabel = finished ? LocalizationManager.T("已完成") : LocalizationManager.T("未完成");
             var kindBrush = new SolidColorBrush(finished
                 ? Color.FromRgb(0x4C, 0xAF, 0x50)
                 : Color.FromRgb(0x8D, 0x8D, 0x8D));
             var subtitle = $"{SeverityHelper.GetText(entry.Severity)} · {entry.Brief}";
             return new SearchResultItem(
-                entry.Title, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转", "Go", "Перейти"),
+                entry.Title, kindLabel, kindBrush, subtitle, LocalizationManager.T("跳转"),
                 () => { JumpToEntry(entry, finished); CloseSearchBoard(); });
         }
 
@@ -430,8 +579,8 @@ namespace OCCMissionGoals
 
             var (mode, keyword) = SearchMatcher.Parse(raw);
             // 无实际关键词（空输入，或刚点了「Text:/Tag:…」前缀）→ 显示模式引导，不列条目；
-            // Setting / Plugins / Expand 模式例外：空关键词也列出全部结果（设置快捷项 / 插件）。
-            var isGlobalList = mode is SearchMode.Setting or SearchMode.Plugins or SearchMode.Expand;
+            // Setting / Function / Plugins / Expand 模式例外：空关键词也列出全部结果（设置快捷项 / 插件）。
+            var isGlobalList = mode is SearchMode.Setting or SearchMode.Function or SearchMode.Plugins or SearchMode.Expand;
             var showHint = string.IsNullOrWhiteSpace(keyword) && !isGlobalList;
 
             var hasResults = results.Count > 0;
@@ -552,13 +701,72 @@ namespace OCCMissionGoals
             ConfigManager.Set("General", "accent", ThemeManager.AccentColorHex);
         }
 
+        /// <summary>切换开机自启动状态并提示结果。</summary>
+        private void ToggleAutoStart()
+        {
+            try
+            {
+                var enable = !Services.AutoStartService.IsEnabled();
+                Services.AutoStartService.SetEnabled(enable);
+                SetTipText(enable
+                    ? LocalizationManager.T("已开启开机自启动。")
+                    : LocalizationManager.T("已关闭开机自启动。"));
+            }
+            catch (Exception ex)
+            {
+                SetTipText(LocalizationManager.T("设置失败：{0}", ex.Message));
+            }
+        }
+
+        /// <summary>检查更新：失败/无更新时提示；有更新时询问并下载安装。</summary>
+        private async void CheckForUpdates()
+        {
+            SetTipText(LocalizationManager.T("正在检查更新…"));
+            var result = await Services.UpdateService.CheckAsync();
+            if (!result.Succeeded || !result.HasUpdate)
+            {
+                SetTipText(result.Message);
+                return;
+            }
+
+            var yes = MessageBox.Show(
+                this,
+                LocalizationManager.T("发现新版本 {0}，是否下载并安装？", result.LatestVersion),
+                LocalizationManager.T("更新"),
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
+
+            if (yes != MessageBoxResult.Yes) return;
+
+            if (string.IsNullOrEmpty(result.InstallerDownloadUrl))
+            {
+                if (!string.IsNullOrEmpty(result.HtmlUrl))
+                    Services.UpdateService.OpenUrl(result.HtmlUrl);
+                return;
+            }
+
+            SetTipText(LocalizationManager.T("正在下载更新…"));
+            var progress = new Progress<string>(msg => SetTipText(msg));
+            var path = await Services.UpdateService.DownloadInstallerAsync(
+                result.InstallerDownloadUrl, "OCC-Mission-Goals-setup.exe", progress);
+
+            if (string.IsNullOrEmpty(path))
+            {
+                SetTipText(LocalizationManager.T("下载更新失败。"));
+                return;
+            }
+
+            SetTipText(LocalizationManager.T("正在启动安装程序…"));
+            Services.UpdateService.LaunchInstaller(path);
+        }
+
         /// <summary>语言切换后重建页签标签并刷新所有已加载视图。</summary>
         public void ReloadLanguage()
         {
             foreach (var reg in _pageRegs)
-                _switchPage?.UpdateTabLabel(reg.Key, LocalizationManager.T(reg.TabLabel, reg.TabLabelEn, reg.TabLabelRu));
+                _switchPage?.UpdateTabLabel(reg.Key, LocalizationManager.T(reg.TabLabel));
 
-            StatusText.Text = LocalizationManager.T("状态机无更新", "No status update", "Нет обновлений статуса");
+            StatusText.Text = LocalizationManager.T("状态机无更新");
             RefreshAllViews();
         }
 
@@ -577,11 +785,8 @@ namespace OCCMissionGoals
 
                 var yes = MessageBox.Show(
                     this,
-                    LocalizationManager.T(
-                        $"发现新版本 {result.LatestVersion}，是否下载并安装？",
-                        $"A new version {result.LatestVersion} is available. Download and install now?",
-                        $"Доступна новая версия {result.LatestVersion}. Загрузить и установить?"),
-                    LocalizationManager.T("更新", "Update", "Обновление"),
+                    LocalizationManager.T("发现新版本 {0}，是否下载并安装？", result.LatestVersion),
+                    LocalizationManager.T("更新"),
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
 
@@ -594,18 +799,18 @@ namespace OCCMissionGoals
                     return;
                 }
 
-                SetTipText(LocalizationManager.T("正在下载更新…", "Downloading update…", "Загрузка обновления…"));
+                SetTipText(LocalizationManager.T("正在下载更新…"));
                 var progress = new Progress<string>(msg => SetTipText(msg));
                 var path = await Services.UpdateService.DownloadInstallerAsync(
                     result.InstallerDownloadUrl, "OCC-Mission-Goals-setup.exe", progress);
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    SetTipText(LocalizationManager.T("下载更新失败。", "Downloading the update failed.", "Не удалось загрузить обновление."));
+                    SetTipText(LocalizationManager.T("下载更新失败。"));
                     return;
                 }
 
-                SetTipText(LocalizationManager.T("正在启动安装程序…", "Launching installer…", "Запуск установщика…"));
+                SetTipText(LocalizationManager.T("正在启动安装程序…"));
                 Services.UpdateService.LaunchInstaller(path);
             });
         }
@@ -615,7 +820,7 @@ namespace OCCMissionGoals
         {
             if (Services.ProjectService.CurrentProject == null)
             {
-                SetTipText(LocalizationManager.T("没有打开的项目。", "No project is open.", "Нет открытого проекта."));
+                SetTipText(LocalizationManager.T("没有打开的项目。"));
                 return;
             }
 
@@ -644,7 +849,7 @@ namespace OCCMissionGoals
             Services.ProjectService.UpdateProjectConfig(Services.ProjectService.CurrentProject);
             RefreshAllViews();
             DismissProjectSettings();
-            SetTipText(LocalizationManager.T("项目设置已保存。", "Project settings saved.", "Настройки проекта сохранены."));
+            SetTipText(LocalizationManager.T("项目设置已保存。"));
         }
 
         private void OnProjectSettingsDismissed(object? sender, EventArgs e)
@@ -657,6 +862,182 @@ namespace OCCMissionGoals
             NewProjectDialog.Confirmed -= OnProjectSettingsConfirmed;
             NewProjectDialog.Cancelled -= OnProjectSettingsDismissed;
             NewProjectDialog.Visibility = Visibility.Collapsed;
+            DialogOverlay.Visibility = Visibility.Collapsed;
+            MainContentGrid.Effect = null;
+        }
+
+        // ── 项目 / 数据版本 弹窗（菜单与搜索「Function:」共用） ──
+
+        /// <summary>打开新建项目弹窗。</summary>
+        public void ShowNewProjectDialog()
+        {
+            NewProjectDialog.Reset();
+            NewProjectDialog.Confirmed += OnNewProjectConfirmed;
+            NewProjectDialog.Cancelled += OnProjectDialogDismissed;
+            ShowProjectDialogOverlay();
+        }
+
+        /// <summary>打开「打开项目」弹窗。</summary>
+        public void ShowOpenProjectDialog()
+        {
+            NewProjectDialog.Reset();
+            NewProjectDialog.PrepareOpen();
+            NewProjectDialog.Confirmed += OnOpenProjectConfirmed;
+            NewProjectDialog.Cancelled += OnProjectDialogDismissed;
+            ShowProjectDialogOverlay();
+        }
+
+        private void ShowProjectDialogOverlay()
+        {
+            MainContentGrid.Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 8 };
+            DialogOverlay.Visibility = Visibility.Visible;
+            NewProjectDialog.Visibility = Visibility.Visible;
+        }
+
+        private void OnNewProjectConfirmed(object? sender, EventArgs e)
+        {
+            try
+            {
+                var (isValid, message) = NewProjectDialog.Validate();
+                if (!isValid)
+                {
+                    SetTipText(message);
+                    return;
+                }
+
+                var config = Services.ProjectService.CreateProject(
+                    NewProjectDialog.ProjectName,
+                    NewProjectDialog.Description,
+                    NewProjectDialog.InitialVersion);
+
+                RefreshAllViews();
+                DismissProjectDialog();
+                SetTipText(LocalizationManager.T("已创建项目「{0}」。", config.Name));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(LocalizationManager.T("创建项目失败：{0}", ex.Message), LocalizationManager.T("错误"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OnOpenProjectConfirmed(object? sender, EventArgs e)
+        {
+            try
+            {
+                var dir = NewProjectDialog.SelectedProjectDir;
+                if (string.IsNullOrEmpty(dir))
+                {
+                    SetTipText(LocalizationManager.T("请选择一个项目。"));
+                    return;
+                }
+
+                var config = Services.ProjectService.OpenProject(dir);
+                if (config == null)
+                {
+                    SetTipText(LocalizationManager.T("所选项目无效。"));
+                    return;
+                }
+
+                RefreshAllViews();
+                DismissProjectDialog();
+                SetTipText(LocalizationManager.T("已打开项目「{0}」。", config.Name));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(LocalizationManager.T("打开项目失败：{0}", ex.Message), LocalizationManager.T("错误"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OnProjectDialogDismissed(object? sender, EventArgs e) => DismissProjectDialog();
+
+        private void DismissProjectDialog()
+        {
+            NewProjectDialog.Confirmed -= OnNewProjectConfirmed;
+            NewProjectDialog.Confirmed -= OnOpenProjectConfirmed;
+            NewProjectDialog.Cancelled -= OnProjectDialogDismissed;
+            NewProjectDialog.Visibility = Visibility.Collapsed;
+            DialogOverlay.Visibility = Visibility.Collapsed;
+            MainContentGrid.Effect = null;
+        }
+
+        /// <summary>打开「新建版本」弹窗。</summary>
+        public void ShowNewVersionDialog()
+        {
+            if (Services.ProjectService.CurrentProjectDir == null)
+            {
+                SetTipText(LocalizationManager.T("请先打开一个项目。"));
+                return;
+            }
+
+            VersionDialog.Reset();
+            VersionDialog.LoadVersions(Services.ProjectService.CurrentProjectDir);
+            VersionDialog.Confirmed += OnVersionConfirmed;
+            VersionDialog.Cancelled += OnVersionDismissed;
+            ShowVersionDialogOverlay();
+        }
+
+        /// <summary>打开「打开版本」弹窗。</summary>
+        public void ShowOpenVersionDialog()
+        {
+            if (Services.ProjectService.CurrentProjectDir == null)
+            {
+                SetTipText(LocalizationManager.T("请先打开一个项目。"));
+                return;
+            }
+
+            VersionDialog.Reset();
+            VersionDialog.LoadVersions(Services.ProjectService.CurrentProjectDir);
+            VersionDialog.OpenModeBtn.IsChecked = true;
+            VersionDialog.Confirmed += OnVersionConfirmed;
+            VersionDialog.Cancelled += OnVersionDismissed;
+            ShowVersionDialogOverlay();
+        }
+
+        private void ShowVersionDialogOverlay()
+        {
+            MainContentGrid.Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 8 };
+            DialogOverlay.Visibility = Visibility.Visible;
+            VersionDialog.Visibility = Visibility.Visible;
+        }
+
+        private void OnVersionConfirmed(object? sender, EventArgs e)
+        {
+            try
+            {
+                var versionName = VersionDialog.VersionName;
+                var selectedVersion = VersionDialog.SelectedVersion;
+
+                if (!string.IsNullOrEmpty(selectedVersion))
+                {
+                    Services.ProjectService.SwitchVersion(selectedVersion + ".json");
+                    RefreshAllViews();
+                    SetTipText(LocalizationManager.T("已切换到版本 {0}。", selectedVersion));
+                }
+                else if (!string.IsNullOrEmpty(versionName))
+                {
+                    Services.ProjectService.CreateVersion(versionName + ".json");
+                    Services.ProjectService.SwitchVersion(versionName + ".json");
+                    RefreshAllViews();
+                    SetTipText(LocalizationManager.T("已创建并切换到版本 {0}。", versionName));
+                }
+
+                DismissVersionDialog();
+            }
+            catch (Exception ex)
+            {
+                SetTipText(LocalizationManager.T("操作失败：{0}", ex.Message));
+            }
+        }
+
+        private void OnVersionDismissed(object? sender, EventArgs e) => DismissVersionDialog();
+
+        private void DismissVersionDialog()
+        {
+            VersionDialog.Confirmed -= OnVersionConfirmed;
+            VersionDialog.Cancelled -= OnVersionDismissed;
+            VersionDialog.Visibility = Visibility.Collapsed;
             DialogOverlay.Visibility = Visibility.Collapsed;
             MainContentGrid.Effect = null;
         }
@@ -966,7 +1347,7 @@ namespace OCCMissionGoals
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
             };
 
-            fadeOut.Completed += (_, _) => StatusText.Text = LocalizationManager.T("状态机无更新", "No status update", "Нет обновлений статуса");
+            fadeOut.Completed += (_, _) => StatusText.Text = LocalizationManager.T("状态机无更新");
 
             tt.BeginAnimation(TranslateTransform.YProperty, moveUp);
             StatusText.BeginAnimation(OpacityProperty, fadeOut);
@@ -977,10 +1358,10 @@ namespace OCCMissionGoals
         private void BellBtn_Click(object sender, RoutedEventArgs e)
         {
             // 点击铃铛显示当前提示
-            if (StatusText.Text != LocalizationManager.T("状态机无更新", "No status update", "Нет обновлений статуса"))
+            if (StatusText.Text != LocalizationManager.T("状态机无更新"))
                 SetTipText(StatusText.Text);
             else
-                SetTipText(LocalizationManager.T("暂无新消息。", "No new messages.", "Нет новых сообщений."));
+                SetTipText(LocalizationManager.T("暂无新消息。"));
         }
 
         private void NotificationBtn_Click(object sender, RoutedEventArgs e)
@@ -989,7 +1370,7 @@ namespace OCCMissionGoals
             var proj = Services.ProjectService.CurrentProject;
             if (proj == null)
             {
-                SetTipText(LocalizationManager.T("未打开任何项目。", "No project opened.", "Проект не открыт."));
+                SetTipText(LocalizationManager.T("未打开任何项目。"));
                 return;
             }
             var dataPath = Services.DataService.GetFilePath();
@@ -999,7 +1380,7 @@ namespace OCCMissionGoals
             var merged = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
             var unfinished = merged.Unfinished.Count;
             var finished = merged.Finished.Count;
-            SetTipText(LocalizationManager.T($"项目：{proj.Name}  |  数据文件：{dataName}  |  未完成 {unfinished}，已完成 {finished}", $"Project: {proj.Name}  |  Data file: {dataName}  |  Unfinished {unfinished}, Finished {finished}", $"Проект: {proj.Name}  |  Файл данных: {dataName}  |  Не завершено {unfinished}, Завершено {finished}"));
+            SetTipText(LocalizationManager.T("项目：{0}  |  数据文件：{1}  |  未完成 {2}，已完成 {3}", proj.Name, dataName, unfinished, finished));
         }
 
         private void VersionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1012,11 +1393,11 @@ namespace OCCMissionGoals
             {
                 Services.ProjectService.SwitchVersion(tag + ".json");
                 RefreshAllViews();
-                SetTipText(LocalizationManager.T($"已切换到版本 {tag}。", $"Switched to version {tag}.", $"Переключено на версию {tag}."));
+                SetTipText(LocalizationManager.T("已切换到版本 {0}。", tag));
             }
             catch (Exception ex)
             {
-                SetTipText(LocalizationManager.T($"切换失败：{ex.Message}", $"Switch failed: {ex.Message}", $"Ошибка переключения: {ex.Message}"));
+                SetTipText(LocalizationManager.T("切换失败：{0}", ex.Message));
             }
 
             // 重置选中项
@@ -1027,7 +1408,7 @@ namespace OCCMissionGoals
         public void RefreshVersionCombo()
         {
             VersionComboBox.Items.Clear();
-            VersionComboBox.Items.Add(new ComboBoxItem { Content = LocalizationManager.T("调整目标的文件", "Adjust target file", "Изменить целевой файл"), Tag = "__placeholder__" });
+            VersionComboBox.Items.Add(new ComboBoxItem { Content = LocalizationManager.T("调整目标的文件"), Tag = "__placeholder__" });
 
             var dir = Services.ProjectService.CurrentProjectDir;
             if (dir == null) return;
@@ -1067,7 +1448,7 @@ namespace OCCMissionGoals
         {
             (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.ExpandAllDetails();
             (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.ExpandAllDetails();
-            SetTipText(LocalizationManager.T("已展开所有条目详情。", "Expanded all entry details.", "Развёрнуты все подробности записей."));
+            SetTipText(LocalizationManager.T("已展开所有条目详情。"));
         }
 
         /// <summary>收起所有条目详情。</summary>
@@ -1075,7 +1456,7 @@ namespace OCCMissionGoals
         {
             (_pageCache.GetValueOrDefault("undone") as Pages.UnDonePage)?.CollapseAllDetails();
             (_pageCache.GetValueOrDefault("done") as Pages.DonePage)?.CollapseAllDetails();
-            SetTipText(LocalizationManager.T("已收起所有条目详情。", "Collapsed all entry details.", "Свёрнуты все подробности записей."));
+            SetTipText(LocalizationManager.T("已收起所有条目详情。"));
         }
 
         /// <summary>打开帮助页面。</summary>
@@ -1109,8 +1490,7 @@ namespace OCCMissionGoals
             var token = GitHubLoginDialog.Token;
             if (string.IsNullOrWhiteSpace(token))
             {
-                GitHubLoginDialog.ShowError(LocalizationManager.T(
-                    "请输入 Personal Access Token。", "Please enter a Personal Access Token.", "Введите Personal Access Token."));
+                GitHubLoginDialog.ShowError(LocalizationManager.T("请输入 Personal Access Token。"));
                 return;
             }
 
@@ -1121,15 +1501,13 @@ namespace OCCMissionGoals
                 Services.GitHubService.Token = token;
 
                 DismissGitHubLoginDialog();
-                SetTipText(LocalizationManager.T(
-                    $"已登录 GitHub：{user.Login}", $"Signed in to GitHub as {user.Login}", $"Выполнен вход в GitHub как {user.Login}"));
+                SetTipText(LocalizationManager.T("已登录 GitHub：{0}", user.Login));
                 if (_pageCache.GetValueOrDefault("log") is Pages.LogPage logPage)
                     logPage.ApplyGitHubUser(user);
             }
             catch (Exception ex)
             {
-                GitHubLoginDialog.ShowError(LocalizationManager.T(
-                    $"登录失败：{ex.Message}", $"Sign-in failed: {ex.Message}", $"Ошибка входа: {ex.Message}"));
+                GitHubLoginDialog.ShowError(LocalizationManager.T("登录失败：{0}", ex.Message));
             }
             finally
             {
@@ -1206,7 +1584,7 @@ namespace OCCMissionGoals
                     });
                 RefreshAllViews();
                 DismissDialogOverlay();
-                SetTipText(LocalizationManager.T($"已更新条目「{title}」。", $"Updated entry \"{title}\".", $"Запись «{title}» обновлена."));
+                SetTipText(LocalizationManager.T("已更新条目「{0}」。", title));
             }
             else
             {
@@ -1231,7 +1609,7 @@ namespace OCCMissionGoals
                 Services.DataService.Save();
                 RefreshUnDoneList();
                 DismissDialogOverlay();
-                SetTipText(LocalizationManager.T($"已添加条目「{entry.Title}」。", $"Added entry \"{entry.Title}\".", $"Добавлена запись «{entry.Title}»."));
+                SetTipText(LocalizationManager.T("已添加条目「{0}」。", entry.Title));
             }
         }
 

@@ -9,7 +9,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>OCCMissionGoals</AssemblyName>
     <Title>OCC's Mission &amp; Goals</Title>
-    <Version>0.1.6-alpha</Version>
+    <Version>0.1.7-Beta</Version>
     <Authors>I-AM-SOLO</Authors>
     <Company>Harvnyx</Company>
     <Description>一款为 ONC Compiler Collection 开发的更新/修复管理工具，为了帮助患有健忘症的我更加快速的开发 ONC Compiler Collection。该工具旨在简化在MD中填写错误然后一个个找哪个没完成的流程，提高效率，并治好我的健忘症。</Description>
@@ -27,6 +27,15 @@
   <!-- installer 目录：仅作为项目内容显示，不参与编译/打包 -->
   <ItemGroup>
     <None Include="installer\**" />
+  </ItemGroup>
+
+  <!-- 多语言资源：Languages/*.xaml 作为内容复制到输出目录，新增语言文件即可扩展语言 -->
+  <ItemGroup>
+    <Content Include="Languages\**\*.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>

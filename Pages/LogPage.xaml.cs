@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -164,7 +164,7 @@ namespace OCCMissionGoals.Pages
         private void RefreshProjectInfo()
         {
             var proj = Services.ProjectService.CurrentProject;
-            ProjectName = proj?.Name ?? LocalizationManager.T("未打开项目", "No project opened", "Проект не открыт");
+            ProjectName = proj?.Name ?? LocalizationManager.T("未打开项目");
             var ver = proj?.CurrentVersion ?? "";
             // 兼容旧格式（带 .json 后缀）
             var cleanVer = ver.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
@@ -357,7 +357,7 @@ namespace OCCMissionGoals.Pages
                     Severity = e.Severity,
                     SeverityBrush = Models.SeverityHelper.GetBrush(e.Severity),
                     CompletedAt = e.CompletedAt,
-                    TypeLabel = LocalizationManager.T("已完成", "Completed", "Завершено"),
+                    TypeLabel = LocalizationManager.T("已完成"),
                     TypeBrush = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50))
                 })
                 .ToList();
@@ -443,7 +443,7 @@ namespace OCCMissionGoals.Pages
             Services.GitHubService.Logout();
             SetLoggedOut();
             (Window.GetWindow(this) as MainWindow)?.SetTipText(
-                LocalizationManager.T("已退出 GitHub 登录。", "Signed out of GitHub.", "Вы вышли из GitHub."));
+                LocalizationManager.T("已退出 GitHub 登录。"));
         }
 
         // ======================== 底部推送配置入口 ========================
@@ -457,10 +457,7 @@ namespace OCCMissionGoals.Pages
                 return;
             }
 
-            mw?.SetTipText(LocalizationManager.T(
-                $"已登录 GitHub：{UserLogin}",
-                $"Signed in to GitHub as {UserLogin}",
-                $"Выполнен вход в GitHub как {UserLogin}"));
+            mw?.SetTipText(LocalizationManager.T("已登录 GitHub：{0}", UserLogin));
         }
 
         private void PushLocationButton_Click(object sender, RoutedEventArgs e)
@@ -479,29 +476,20 @@ namespace OCCMissionGoals.Pages
             var proj = Services.ProjectService.CurrentProject;
             if (proj == null)
             {
-                mw?.SetTipText(LocalizationManager.T(
-                    "没有打开的项目，无法推送。",
-                    "No project is open; nothing to push.",
-                    "Нет открытого проекта, нечего отправлять."));
+                mw?.SetTipText(LocalizationManager.T("没有打开的项目，无法推送。"));
                 return;
             }
 
             if (!Services.GitHubService.HasToken)
             {
-                mw?.SetTipText(LocalizationManager.T(
-                    "请先登录 GitHub。",
-                    "Please sign in to GitHub first.",
-                    "Сначала войдите в GitHub."));
+                mw?.SetTipText(LocalizationManager.T("请先登录 GitHub。"));
                 mw?.ShowGitHubLoginDialog();
                 return;
             }
 
             if (SelectedRepository == null)
             {
-                mw?.SetTipText(LocalizationManager.T(
-                    "请先在设置中配置推送仓库。",
-                    "Please configure a push repo in settings first.",
-                    "Сначала настройте репозиторий для отправки в настройках."));
+                mw?.SetTipText(LocalizationManager.T("请先在设置中配置推送仓库。"));
                 mw?.OpenPushSettingsPage("repos");
                 return;
             }
@@ -509,10 +497,7 @@ namespace OCCMissionGoals.Pages
             var remotePath = Services.PushSettings.RemotePath;
             if (string.IsNullOrWhiteSpace(remotePath))
             {
-                mw?.SetTipText(LocalizationManager.T(
-                    "请先在设置中选择要推送的文件。",
-                    "Please select a file to push in settings first.",
-                    "Сначала выберите файл для отправки в настройках."));
+                mw?.SetTipText(LocalizationManager.T("请先在设置中选择要推送的文件。"));
                 mw?.OpenPushSettingsPage("file");
                 return;
             }
@@ -521,10 +506,7 @@ namespace OCCMissionGoals.Pages
             var filePath = Path.Combine(binDir, remotePath);
             if (!File.Exists(filePath))
             {
-                mw?.SetTipText(LocalizationManager.T(
-                    "找不到要推送的文件。",
-                    "The file to push was not found.",
-                    "Файл для отправки не найден."));
+                mw?.SetTipText(LocalizationManager.T("找不到要推送的文件。"));
                 return;
             }
 
@@ -542,17 +524,11 @@ namespace OCCMissionGoals.Pages
 
                 if (error == null)
                 {
-                    mw?.SetTipText(LocalizationManager.T(
-                        $"已推送到 {SelectedRepository.Name}（{branch}）。",
-                        $"Pushed to {SelectedRepository.Name} ({branch}).",
-                        $"Отправлено в {SelectedRepository.Name} ({branch})."));
+                    mw?.SetTipText(LocalizationManager.T("已推送到 {0}（{1}）。", SelectedRepository.Name, branch));
                 }
                 else
                 {
-                    mw?.SetTipText(LocalizationManager.T(
-                        $"推送失败：{error}",
-                        $"Push failed: {error}",
-                        $"Ошибка отправки: {error}"));
+                    mw?.SetTipText(LocalizationManager.T("推送失败：{0}", error));
                 }
             }
             finally
@@ -675,8 +651,8 @@ namespace OCCMissionGoals.Pages
             set { _isOverdue = value; OnPropertyChanged(); }
         }
         public string DaysLeftText => IsOverdue
-            ? LocalizationManager.T("已过期", "Overdue", "Просрочено")
-            : LocalizationManager.T($"{_daysLeft}天", $"{_daysLeft}d", $"{_daysLeft} дн.");
+            ? LocalizationManager.T("已过期")
+            : LocalizationManager.T("{0}天", _daysLeft);
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -723,12 +699,12 @@ namespace OCCMissionGoals.Pages
             get
             {
                 var diff = DateTime.Now - _completedAt;
-                if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now", "только что");
-                if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago", $"{(int)diff.TotalMinutes} мин. назад");
-                if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago", $"{(int)diff.TotalHours} ч. назад");
-                if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago", $"{(int)diff.TotalDays} дн. назад");
-                if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago", $"{(int)(diff.TotalDays / 30)} мес. назад");
-                return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago", $"{(int)(diff.TotalDays / 365)} г. назад");
+                if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚");
+                if (diff.TotalMinutes < 60) return LocalizationManager.T("{0}分钟前", (int)diff.TotalMinutes);
+                if (diff.TotalHours < 24) return LocalizationManager.T("{0}小时前", (int)diff.TotalHours);
+                if (diff.TotalDays < 30) return LocalizationManager.T("{0}天前", (int)diff.TotalDays);
+                if (diff.TotalDays < 365) return LocalizationManager.T("{0}个月前", (int)(diff.TotalDays / 30));
+                return LocalizationManager.T("{0}年前", (int)(diff.TotalDays / 365));
             }
         }
         public Brush TypeBrush
@@ -825,12 +801,12 @@ namespace OCCMissionGoals.Pages
             if (value is not DateTime dt)
                 return string.Empty;
             var diff = DateTime.Now - dt;
-            if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now", "только что");
-            if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago", $"{(int)diff.TotalMinutes} мин. назад");
-            if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago", $"{(int)diff.TotalHours} ч. назад");
-            if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago", $"{(int)diff.TotalDays} дн. назад");
-            if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago", $"{(int)(diff.TotalDays / 30)} мес. назад");
-            return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago", $"{(int)(diff.TotalDays / 365)} г. назад");
+            if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚");
+            if (diff.TotalMinutes < 60) return LocalizationManager.T("{0}分钟前", (int)diff.TotalMinutes);
+            if (diff.TotalHours < 24) return LocalizationManager.T("{0}小时前", (int)diff.TotalHours);
+            if (diff.TotalDays < 30) return LocalizationManager.T("{0}天前", (int)diff.TotalDays);
+            if (diff.TotalDays < 365) return LocalizationManager.T("{0}个月前", (int)(diff.TotalDays / 30));
+            return LocalizationManager.T("{0}年前", (int)(diff.TotalDays / 365));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
