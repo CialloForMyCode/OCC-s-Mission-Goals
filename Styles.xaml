@@ -1380,6 +1380,42 @@
         </Setter>
     </Style>
 
+    <!-- 弹窗内密码输入框 -->
+    <Style x:Key="DialogPasswordBox" TargetType="PasswordBox">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="3,3"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="PART_ContentHost"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush"
+                                    Value="{DynamicResource PressedBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="1.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- 弹窗内 DatePicker -->
     <Style x:Key="DialogDatePicker" TargetType="DatePicker">
         <Setter Property="FontSize" Value="13"/>
@@ -1486,9 +1522,16 @@
                                                               Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
                                                               ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
                                                               ContentStringFormat="{Binding SelectionBoxItemStringFormat, RelativeSource={RelativeSource AncestorType=ComboBox}}"
-                                                              TextBlock.Foreground="{Binding SelectedItem.Foreground, RelativeSource={RelativeSource AncestorType=ComboBox}}"
                                                               Margin="{TemplateBinding Padding}"
-                                                              VerticalAlignment="Center"/>
+                                                              VerticalAlignment="Center">
+                                                <TextBlock.Foreground>
+                                                    <PriorityBinding>
+                                                        <!-- 严重程度等用 ComboBoxItem.Foreground 上色；普通字符串/对象项回退到 ComboBox 自身前景色 -->
+                                                        <Binding Path="SelectedItem.Foreground" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                                        <Binding Path="Foreground" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                                    </PriorityBinding>
+                                                </TextBlock.Foreground>
+                                            </ContentPresenter>
                                             <Path Grid.Column="1"
                                                   Data="M 0,0 L 4,4 L 8,0"
                                                   Stroke="{DynamicResource IconStrokeBrush}"

@@ -93,7 +93,7 @@
                     BorderThickness="0,0,0,1"
                     Padding="0,0,0,10"
                     Margin="0,0,0,12">
-                <TextBlock Text="{loc:Loc Zh=版本管理, En=Version Management}"
+                <TextBlock Text="{loc:Loc Zh=版本管理, En=Version Management, Ru=&quot;Управление версиями&quot;}"
                            FontSize="16" FontWeight="SemiBold"
                            Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
@@ -103,17 +103,17 @@
             <StackPanel Grid.Row="1">
                 <!-- 模式切换 -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                    <RadioButton x:Name="NewModeBtn" Content="{loc:Loc Zh=新建版本, En=New Version}" GroupName="Mode"
+                    <RadioButton x:Name="NewModeBtn" Content="{loc:Loc Zh=新建版本, En=New Version, Ru=&quot;Новая версия&quot;}" GroupName="Mode"
                                  Style="{StaticResource ConsoleTabRadioButton}" Margin="0,0,12,0"
                                  Checked="NewModeBtn_Checked"/>
-                    <RadioButton x:Name="OpenModeBtn" Content="{loc:Loc Zh=打开版本, En=Open Version}" GroupName="Mode"
+                    <RadioButton x:Name="OpenModeBtn" Content="{loc:Loc Zh=打开版本, En=Open Version, Ru=&quot;Открыть версию&quot;}" GroupName="Mode"
                                  Checked="OpenModeBtn_Checked"
                                  Style="{StaticResource ConsoleTabRadioButton}"/>
                 </StackPanel>
 
                 <!-- 新建模式 -->
                 <StackPanel x:Name="NewPanel" Visibility="Visible">
-                    <TextBlock Text="{loc:Loc Zh=版本号, En=Version}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=版本号, En=Version, Ru=&quot;Версия&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="VersionNameBox" Text="0.2.0-alpha.0"
                              Style="{StaticResource DialogTextBox}"
                              Margin="0,0,0,10"/>
@@ -124,7 +124,7 @@
 
                 <!-- 打开模式 -->
                 <StackPanel x:Name="OpenPanel" Visibility="Collapsed">
-                    <TextBlock Text="{loc:Loc Zh=选择版本文件, En=Select Version File}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc Zh=选择版本文件, En=Select Version File, Ru=&quot;Выбрать файл версии&quot;}" Style="{StaticResource DialogLabel}"/>
                     <ListBox x:Name="VersionListBox" MaxHeight="160"
                              Style="{StaticResource VersionListBoxStyle}"
                              ItemContainerStyle="{StaticResource VersionListBoxItemStyle}"
@@ -143,11 +143,11 @@
                     Margin="0,8,0,0">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button x:Name="CancelBtn" Content="{loc:Loc Zh=取消, En=Cancel}"
+                    <Button x:Name="CancelBtn" Content="{loc:Loc Zh=取消, En=Cancel, Ru=&quot;Отмена&quot;}"
                             Click="CancelBtn_Click"
                             Style="{StaticResource DialogCancelButton}"
                             Margin="0,0,10,0"/>
-                    <Button x:Name="ConfirmBtn" Content="{loc:Loc Zh=确定, En=OK}"
+                    <Button x:Name="ConfirmBtn" Content="{loc:Loc Zh=确定, En=OK, Ru=&quot;ОК&quot;}"
                             Click="ConfirmBtn_Click"
                             Style="{StaticResource DialogConfirmButton}"/>
                 </StackPanel>

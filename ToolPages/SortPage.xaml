@@ -16,20 +16,20 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="{loc:Loc Zh=排序方式：, En=Sort by:}" Foreground="{DynamicResource ForegroundBrush}"
+        <TextBlock Text="{loc:Loc Zh=排序方式：, En=Sort by:, Ru=&quot;Сортировка:&quot;}" Foreground="{DynamicResource ForegroundBrush}"
                    VerticalAlignment="Center" HorizontalAlignment="Left"
                    Grid.Column="0" Margin="7,6,0,6"/>
 
         <ComboBox x:Name="SortComboBox" Grid.Column="1" SelectedIndex="0" Margin="0,6.5,5,6.5"
                   SelectionChanged="SortComboBox_SelectionChanged"
                   Style="{StaticResource StatusBarActionComboBox}">
-            <ComboBoxItem Content="{loc:Loc Zh=按照严重程度升序排序, En=Severity ascending}" Tag="0"/>
-            <ComboBoxItem Content="{loc:Loc Zh=按照严重程度降序排序, En=Severity descending}" Tag="1"/>
-            <ComboBoxItem Content="{loc:Loc Zh=按照截止日期升序排序, En=Deadline ascending}" Tag="2"/>
-            <ComboBoxItem Content="{loc:Loc Zh=按照截止日期降序排序, En=Deadline descending}" Tag="3"/>
-            <ComboBoxItem Content="{loc:Loc Zh=按照版本升序排序, En=Version ascending}" Tag="4"/>
-            <ComboBoxItem Content="{loc:Loc Zh=按照版本降序排序, En=Version descending}" Tag="5"/>
-            <ComboBoxItem Content="{loc:Loc Zh=只显示收藏的, En=Favorites only}" Tag="6"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照严重程度升序排序, En=Severity ascending, Ru=&quot;По важности (возрастание)&quot;}" Tag="0"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照严重程度降序排序, En=Severity descending, Ru=&quot;По важности (убывание)&quot;}" Tag="1"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照截止日期升序排序, En=Deadline ascending, Ru=&quot;По сроку (возрастание)&quot;}" Tag="2"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照截止日期降序排序, En=Deadline descending, Ru=&quot;По сроку (убывание)&quot;}" Tag="3"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照版本升序排序, En=Version ascending, Ru=&quot;По версии (возрастание)&quot;}" Tag="4"/>
+            <ComboBoxItem Content="{loc:Loc Zh=按照版本降序排序, En=Version descending, Ru=&quot;По версии (убывание)&quot;}" Tag="5"/>
+            <ComboBoxItem Content="{loc:Loc Zh=只显示收藏的, En=Favorites only, Ru=&quot;Только избранное&quot;}" Tag="6"/>
         </ComboBox>
     </Grid>
 </Page>

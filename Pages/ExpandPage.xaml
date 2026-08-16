@@ -20,7 +20,7 @@
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                     Padding="16" Margin="0,0,0,5">
-                <TextBlock Text="{loc:Loc Zh=扩展中心, En=Extension Center}"
+                <TextBlock Text="{loc:Loc Zh=扩展中心, En=Extension Center, Ru=&quot;Центр расширений&quot;}"
                            FontSize="22" FontWeight="Bold"
                            Foreground="{DynamicResource ForegroundBrush}"
                            Margin="16,0,0,6"/>
@@ -50,7 +50,7 @@
                         </TextBox.Resources>
                     </TextBox>
                     <TextBlock Grid.Column="0"
-                               Text="{loc:Loc Zh=搜索扩展..., En=Search extensions...}"
+                               Text="{loc:Loc Zh=搜索扩展..., En=Search extensions..., Ru=&quot;Поиск расширений...&quot;}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="13" Opacity="0.4"
                                VerticalAlignment="Center" Margin="12,0,0,0"
@@ -67,7 +67,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                     <Button Grid.Column="1"
-                            Content="{loc:Loc Zh=刷新, En=Refresh}" Width="72" Height="32"
+                            Content="{loc:Loc Zh=刷新, En=Refresh, Ru=&quot;Обновить&quot;}" Width="72" Height="32"
                             Margin="12,0,0,0"
                             Style="{StaticResource CardActionBtn}"
                             Click="RefreshButton_Click"/>
@@ -152,7 +152,7 @@
                                                 Background="{DynamicResource PrimaryBrush}"
                                                 Padding="4" Margin="8,0,0,0" VerticalAlignment="Center"
                                                 Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{loc:Loc Zh=已安装, En=Installed}" FontSize="10"
+                                            <TextBlock Text="{loc:Loc Zh=已安装, En=Installed, Ru=&quot;Установлено&quot;}" FontSize="10"
                                                        Foreground="White"/>
                                         </Border>
                                     </StackPanel>
@@ -170,7 +170,7 @@
                                                 Orientation="Horizontal">
                                         <TextBlock Foreground="{DynamicResource ForegroundBrush}"
                                                    FontSize="11" Opacity="0.4">
-                                            <Run Text="{loc:Loc Zh=作者: , En=Author: }"/>
+                                            <Run Text="{loc:Loc Zh=作者: , En=Author: , Ru=&quot;Автор: &quot;}"/>
                                             <Run Text="{Binding Author}"/>
                                         </TextBlock>
                                         <TextBlock Text="{Binding Downloads, StringFormat='  |  ⬇ {0}'}"
@@ -190,10 +190,10 @@
                                                 Tag="{Binding}">
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
-                                                    <Setter Property="Content" Value="{loc:Loc Zh=安装, En=Install}"/>
+                                                    <Setter Property="Content" Value="{loc:Loc Zh=安装, En=Install, Ru=&quot;Установить&quot;}"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                                            <Setter Property="Content" Value="{loc:Loc Zh=卸载, En=Uninstall}"/>
+                                                            <Setter Property="Content" Value="{loc:Loc Zh=卸载, En=Uninstall, Ru=&quot;Удалить&quot;}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -215,7 +215,7 @@
                         Margin="0,0,0,6" Padding="24,20"
                         VerticalAlignment="Top"
                         Visibility="Collapsed">
-                    <TextBlock Text="{loc:Loc Zh=没有扩展, En=No extensions}"
+                    <TextBlock Text="{loc:Loc Zh=没有扩展, En=No extensions, Ru=&quot;Нет расширений&quot;}"
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="15" Opacity="0.5"
                                HorizontalAlignment="Center"

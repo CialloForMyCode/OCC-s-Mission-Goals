@@ -15,19 +15,19 @@
               VerticalAlignment="Center"
               Margin="5,5,0,5"
               ItemContainerStyle="{StaticResource MenuItemStyle}">
-            <MenuItem x:Name="MenuItemFile"       Header="{loc:Loc Zh=项目(_P), En=Project(_P)}">
-                <MenuItem x:Name="MenuItemNew"    Header="{loc:Loc Zh=新建项目(_N), En=New Project(_N)}"/>
-                <MenuItem x:Name="MenuItemOpen"   Header="{loc:Loc Zh=打开项目(_O), En=Open Project(_O)}"/>
-                <MenuItem x:Name="MenuItemSetting"   Header="{loc:Loc Zh=设置项目(_S), En=Project Settings(_S)}"/>
+            <MenuItem x:Name="MenuItemFile"       Header="{loc:Loc Zh=项目(_P), En=Project(_P), Ru=&quot;Проект(_P)&quot;}">
+                <MenuItem x:Name="MenuItemNew"    Header="{loc:Loc Zh=新建项目(_N), En=New Project(_N), Ru=&quot;Новый проект(_N)&quot;}"/>
+                <MenuItem x:Name="MenuItemOpen"   Header="{loc:Loc Zh=打开项目(_O), En=Open Project(_O), Ru=&quot;Открыть проект(_O)&quot;}"/>
+                <MenuItem x:Name="MenuItemSetting"   Header="{loc:Loc Zh=设置项目(_S), En=Project Settings(_S), Ru=&quot;Настройки проекта(_S)&quot;}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemView"       Header="{loc:Loc Zh=条目(_V), En=Entries(_V)}">
-                <MenuItem x:Name="MenuItemNewEntry" Header="{loc:Loc Zh=新建条目(_N), En=New Entry(_N)}"/>
+            <MenuItem x:Name="MenuItemView"       Header="{loc:Loc Zh=条目(_V), En=Entries(_V), Ru=&quot;Записи(_V)&quot;}">
+                <MenuItem x:Name="MenuItemNewEntry" Header="{loc:Loc Zh=新建条目(_N), En=New Entry(_N), Ru=&quot;Новая запись(_N)&quot;}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemGit"    Header="{loc:Loc Zh=文件(_F), En=File(_F)}">
-                <MenuItem x:Name="MenuItemNewData" Header="{loc:Loc Zh=新建数据文件(_N), En=New Data File(_N)}"/>
-                <MenuItem x:Name="MenuItemOpenData" Header="{loc:Loc Zh=打开数据文件(_O), En=Open Data File(_O)}"/>
+            <MenuItem x:Name="MenuItemGit"    Header="{loc:Loc Zh=文件(_F), En=File(_F), Ru=&quot;Файл(_F)&quot;}">
+                <MenuItem x:Name="MenuItemNewData" Header="{loc:Loc Zh=新建数据文件(_N), En=New Data File(_N), Ru=&quot;Новый файл данных(_N)&quot;}"/>
+                <MenuItem x:Name="MenuItemOpenData" Header="{loc:Loc Zh=打开数据文件(_O), En=Open Data File(_O), Ru=&quot;Открыть файл данных(_O)&quot;}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemHelp"   Header="{loc:Loc Zh=帮助(_H), En=Help(_H)}"/>
+            <MenuItem x:Name="MenuItemHelp"   Header="{loc:Loc Zh=帮助(_H), En=Help(_H), Ru=&quot;Справка(_H)&quot;}"/>
         </Menu>
     </Grid>
 </Page>

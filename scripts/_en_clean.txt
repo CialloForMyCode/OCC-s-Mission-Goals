@@ -1,0 +1,338 @@
+TOTAL UNIQUE EN: 337
+unquoted	Dialogs/GitHubLoginDialog.xaml	Sign in to GitHub
+unquoted	Dialogs/GitHubLoginDialog.xaml	Enter a Personal Access Token (classic or fine-grained). The read:user scope is required.
+unquoted	Dialogs/GitHubLoginDialog.xaml	How to create a token? Open the GitHub tokens page
+unquoted	Dialogs/GitHubLoginDialog.xaml	Cancel
+unquoted	Dialogs/GitHubLoginDialog.xaml	Sign in
+unquoted	Dialogs/NewEntryDialog.xaml	New Entry
+unquoted	Dialogs/NewEntryDialog.xaml	Severity
+unquoted	Dialogs/NewEntryDialog.xaml	🔴 Fatal
+unquoted	Dialogs/NewEntryDialog.xaml	🔴 Severe
+unquoted	Dialogs/NewEntryDialog.xaml	🔴 General
+unquoted	Dialogs/NewEntryDialog.xaml	🔴 Patch
+unquoted	Dialogs/NewEntryDialog.xaml	🔵 Update
+unquoted	Dialogs/NewEntryDialog.xaml	Category
+unquoted	Dialogs/NewEntryDialog.xaml	Select an existing category or type a new one and press Enter / click Add
+unquoted	Dialogs/NewEntryDialog.xaml	Add
+unquoted	Dialogs/NewEntryDialog.xaml	Color (optional)
+unquoted	Dialogs/NewEntryDialog.xaml	Title
+unquoted	Dialogs/NewEntryDialog.xaml	Brief
+unquoted	Dialogs/NewEntryDialog.xaml	Details
+unquoted	Dialogs/NewEntryDialog.xaml	Deadline
+unquoted	Dialogs/NewEntryDialog.xaml	Version
+unquoted	Dialogs/NewEntryDialog.xaml	The version this entry belongs to
+unquoted	Dialogs/NewEntryDialog.xaml	Related Files
+unquoted	Dialogs/NewEntryDialog.xaml	＋ Add File
+unquoted	Dialogs/NewEntryDialog.xaml	Namespace.Class.Method
+unquoted	Dialogs/NewEntryDialog.xaml	Line
+unquoted	Dialogs/NewEntryDialog.xaml	Column
+unquoted	Dialogs/NewEntryDialog.xaml	Confirm
+unquoted	Dialogs/NewProjectDialog.xaml	New Project
+unquoted	Dialogs/NewProjectDialog.xaml	Open Project
+unquoted	Dialogs/NewProjectDialog.xaml	Project Name
+unquoted	Dialogs/NewProjectDialog.xaml	Project Description
+unquoted	Dialogs/NewProjectDialog.xaml	Initial Version
+unquoted	Dialogs/NewProjectDialog.xaml	Select Project
+unquoted	Dialogs/VersionDialog.xaml	Version Management
+unquoted	Dialogs/VersionDialog.xaml	New Version
+unquoted	Dialogs/VersionDialog.xaml	Open Version
+unquoted	Dialogs/VersionDialog.xaml	Select Version File
+unquoted	Dialogs/VersionDialog.xaml	OK
+unquoted	MainWindow.xaml	Ready
+unquoted	MainWindow.xaml	No status update
+unquoted	MainWindow.xaml	Adjust target file
+unquoted	MainWindow.xaml	Search by mode (click to fill prefix):
+unquoted	MainWindow.xaml	Text: Text
+unquoted	MainWindow.xaml	Tag: Tag
+unquoted	MainWindow.xaml	File: File
+unquoted	MainWindow.xaml	Date: Date
+unquoted	MainWindow.xaml	Setting: Settings
+unquoted	MainWindow.xaml	Plugins: Plugins
+unquoted	MainWindow.xaml	Expand: Installed
+unquoted	MainWindow.xaml	No results
+unquoted	Pages/DonePage.xaml	Archive
+unquoted	Pages/DonePage.xaml	Completed on
+unquoted	Pages/DonePage.xaml	Edit
+unquoted	Pages/DonePage.xaml	Undo Complete
+unquoted	Pages/DonePage.xaml	Delete
+unquoted	Pages/DonePage.xaml	Function
+unquoted	Pages/DonePage.xaml	No completed entries
+unquoted	Pages/ExpandPage.xaml	Extension Center
+unquoted	Pages/ExpandPage.xaml	Search extensions...
+unquoted	Pages/ExpandPage.xaml	Refresh
+unquoted	Pages/ExpandPage.xaml	Installed
+unquoted	Pages/ExpandPage.xaml	Author:
+unquoted	Pages/ExpandPage.xaml	Install
+unquoted	Pages/ExpandPage.xaml	Uninstall
+unquoted	Pages/ExpandPage.xaml	No extensions
+unquoted	Pages/HelpPage.xaml	"Help / User Guide"
+unquoted	Pages/HelpPage.xaml	"Overview"
+unquoted	Pages/HelpPage.xaml	"Dashboard"
+unquoted	Pages/HelpPage.xaml	"Unfinished"
+unquoted	Pages/HelpPage.xaml	"Finished"
+unquoted	Pages/HelpPage.xaml	"Extensions"
+unquoted	Pages/HelpPage.xaml	"Severity"
+unquoted	Pages/HelpPage.xaml	"Change Demand"
+unquoted	Pages/HelpPage.xaml	"Version"
+unquoted	Pages/HelpPage.xaml	"Type"
+unquoted	Pages/HelpPage.xaml	"Related Files"
+unquoted	Pages/HelpPage.xaml	"Shortcuts"
+unquoted	Pages/HelpPage.xaml	"Search"
+unquoted	Pages/HelpPage.xaml	"Projects"
+unquoted	Pages/HelpPage.xaml	"CLI"
+unquoted	Pages/HelpPage.xaml	"OCC's Mission & Goals is a lightweight task-tracking tool for developers and project maintainers. It uses the entry (Mission) as its basic unit; each entry records one independent goal
+unquoted	Pages/HelpPage.xaml	"Mission"
+unquoted	Pages/HelpPage.xaml	"The most basic unit of work
+unquoted	Pages/HelpPage.xaml	"Entries are grouped by version number. The version format is major.minor.patch-tag.iteration
+unquoted	Pages/HelpPage.xaml	"Project"
+unquoted	Pages/HelpPage.xaml	"Supports multiple project directories; each project has its own data.json and project.json for Git version control and team collaboration."
+unquoted	Pages/HelpPage.xaml	"App Structure"
+unquoted	Pages/HelpPage.xaml	"• Navigation      Dashboard / Unfinished / Finished / Extensions / Help"
+unquoted	Pages/HelpPage.xaml	"• Status bar      Project switcher dropdown"
+unquoted	Pages/HelpPage.xaml	"• Toolbar      Hold Ctrl to show: New Entry / Search / Sort / Push / CLI shortcuts"
+unquoted	Pages/HelpPage.xaml	"• Storage      All entries are saved as JSON in each project directory"
+unquoted	Pages/HelpPage.xaml	"Dashboard (LogPage)"
+unquoted	Pages/HelpPage.xaml	"Project overview and statistics center"
+unquoted	Pages/HelpPage.xaml	"Progress card"
+unquoted	Pages/HelpPage.xaml	"Shows the completion rate of the current project: finished / total
+unquoted	Pages/HelpPage.xaml	"Severity distribution"
+unquoted	Pages/HelpPage.xaml	"Visualizes the entry count for each of the five severity levels (Fatal/Severe/General/Patch/Update)
+unquoted	Pages/HelpPage.xaml	"Upcoming deadlines"
+unquoted	Pages/HelpPage.xaml	"Lists unfinished entries due within 7 days
+unquoted	Pages/HelpPage.xaml	"Recent activity timeline"
+unquoted	Pages/HelpPage.xaml	"Shows recently completed entries in reverse chronological order with completion dates
+unquoted	Pages/HelpPage.xaml	"Contribution chart"
+unquoted	Pages/HelpPage.xaml	"Aggregates completions by date and shows daily contribution trends as a bar chart
+unquoted	Pages/HelpPage.xaml	"Version editor"
+unquoted	Pages/HelpPage.xaml	"Edit the current version directly at the bottom of the dashboard. Click the Iterate button to auto-increment the iteration number (last segment +1). Save after editing
+unquoted	Pages/HelpPage.xaml	"GitHub push settings"
+unquoted	Pages/HelpPage.xaml	"Configure the GitHub repository URL
+unquoted	Pages/HelpPage.xaml	"Unfinished (UnDonePage)"
+unquoted	Pages/HelpPage.xaml	"Manage all unfinished goals"
+unquoted	Pages/HelpPage.xaml	"Core features"
+unquoted	Pages/HelpPage.xaml	"• Version grouping — entries are grouped by version; each group can collapse/expand
+unquoted	Pages/HelpPage.xaml	"• Favoriting — click the star button to favorite an entry; favorited entries are highlighted in the list"
+unquoted	Pages/HelpPage.xaml	"• Sorting — by severity (high→low)
+unquoted	Pages/HelpPage.xaml	"• Search filter — type keywords in the top search box for real-time filtering
+unquoted	Pages/HelpPage.xaml	"• Expand details — click the Details button to expand the full info panel
+unquoted	Pages/HelpPage.xaml	"• Edit entry — click the edit button to open the editor and modify all fields: title
+unquoted	Pages/HelpPage.xaml	"• Complete entry — mark an entry as finished
+unquoted	Pages/HelpPage.xaml	"• Delete entry — remove an unwanted entry (irreversible)"
+unquoted	Pages/HelpPage.xaml	"Entry fields"
+unquoted	Pages/HelpPage.xaml	"Title — required
+unquoted	Pages/HelpPage.xaml	"Brief — optional
+unquoted	Pages/HelpPage.xaml	"Details — optional
+unquoted	Pages/HelpPage.xaml	"Severity — Fatal / Severe / General / Patch / Update"
+unquoted	Pages/HelpPage.xaml	"Deadline — optional; overdue entries are highlighted in red"
+unquoted	Pages/HelpPage.xaml	"Change demand — optional integer representing change complexity and impact"
+unquoted	Pages/HelpPage.xaml	"Type tags — optional multi-select
+unquoted	Pages/HelpPage.xaml	"Related files — optional multiple entries
+unquoted	Pages/HelpPage.xaml	"Version — assigned to the current version at creation and cannot be changed manually"
+unquoted	Pages/HelpPage.xaml	"Finished (DonePage)"
+unquoted	Pages/HelpPage.xaml	"View and manage finished entries"
+unquoted	Pages/HelpPage.xaml	"• Same overall structure as the Unfinished page — version grouping
+unquoted	Pages/HelpPage.xaml	"• Undo completion — restore a finished entry to unfinished status
+unquoted	Pages/HelpPage.xaml	"• Archive by version — the archive button only appears when all entries in a version are finished. Archiving exports Markdown and deletes the version data file"
+unquoted	Pages/HelpPage.xaml	"• Edit — the same editing as on the Unfinished page"
+unquoted	Pages/HelpPage.xaml	"• Delete — remove a finished entry"
+unquoted	Pages/HelpPage.xaml	"• Completion date — each entry card also shows a Completed-on date"
+unquoted	Pages/HelpPage.xaml	"Extensions (ExpandPage)"
+unquoted	Pages/HelpPage.xaml	"Plugin and feature extension management"
+unquoted	Pages/HelpPage.xaml	"• Browse by category — available extensions are grouped and shown by category"
+unquoted	Pages/HelpPage.xaml	"• Search filter — the top search box filters the plugin list in real time"
+unquoted	Pages/HelpPage.xaml	"• Install / uninstall — install or remove an extension with one click"
+unquoted	Pages/HelpPage.xaml	"• View details — click a plugin card to see its description and usage"
+unquoted	Pages/HelpPage.xaml	"Entry priority and severity system"
+unquoted	Pages/HelpPage.xaml	"There are five severity levels from high to low
+unquoted	Pages/HelpPage.xaml	"Fatal"
+unquoted	Pages/HelpPage.xaml	"Blocker-level issue
+unquoted	Pages/HelpPage.xaml	"Severe"
+unquoted	Pages/HelpPage.xaml	"Important issue
+unquoted	Pages/HelpPage.xaml	"General"
+unquoted	Pages/HelpPage.xaml	"Routine tasks and requirements
+unquoted	Pages/HelpPage.xaml	"Patch"
+unquoted	Pages/HelpPage.xaml	"Minor changes and fixes
+unquoted	Pages/HelpPage.xaml	"Update"
+unquoted	Pages/HelpPage.xaml	"Feature updates and experience improvements
+unquoted	Pages/HelpPage.xaml	"Severity directly affects the default list sorting (high→low) and is visualized in the dashboard distribution chart. It can be adjusted at any time when editing an entry."
+unquoted	Pages/HelpPage.xaml	"Measuring task change impact"
+unquoted	Pages/HelpPage.xaml	"Change demand is an optional integer field that quantifies the complexity and impact of the changes involved in an entry."
+unquoted	Pages/HelpPage.xaml	"• The larger the value
+unquoted	Pages/HelpPage.xaml	"• Entries can be sorted by change demand ascending or descending"
+unquoted	Pages/HelpPage.xaml	"• Typical usage: 0 = no change / 1-3 = small adjustments / 4-6 = medium refactor / 7+ = large-scale change"
+unquoted	Pages/HelpPage.xaml	"• Set it in the editor when editing an entry"
+unquoted	Pages/HelpPage.xaml	"Version management system"
+unquoted	Pages/HelpPage.xaml	"The version number uses a five-segment semantic format:"
+unquoted	Pages/HelpPage.xaml	"major.minor.patch-tag.iteration"
+unquoted	Pages/HelpPage.xaml	"      e.g. 0.1.0-alpha.0"
+unquoted	Pages/HelpPage.xaml	"• Each entry belongs to a version and is set to the current version when created"
+unquoted	Pages/HelpPage.xaml	"• Edit the current version at the bottom of the dashboard; new entries belong to the new version after the change"
+unquoted	Pages/HelpPage.xaml	"• Click the Iterate button to increment the iteration number by 1 (e.g. alpha.0 → alpha.1)"
+unquoted	Pages/HelpPage.xaml	"• The entry list is grouped by version
+unquoted	Pages/HelpPage.xaml	"• Finished entries can only be archived after the whole version is finished
+unquoted	Pages/HelpPage.xaml	"Category tag system"
+unquoted	Pages/HelpPage.xaml	"• Each entry can have one or more type tags (multi-select)"
+unquoted	Pages/HelpPage.xaml	"• Type tags are defined and managed centrally in the project config (project.json)"
+unquoted	Pages/HelpPage.xaml	"• Common tags: bug
+unquoted	Pages/HelpPage.xaml	"• Type tags appear as labels on entry cards for quick identification"
+unquoted	Pages/HelpPage.xaml	"• Check or uncheck type tags in the editor when editing an entry"
+unquoted	Pages/HelpPage.xaml	"Code file reference tracking"
+unquoted	Pages/HelpPage.xaml	"Each entry can link to multiple code file references for recording source code locations related to the task. Each reference contains the following fields:"
+unquoted	Pages/HelpPage.xaml	"Path"
+unquoted	Pages/HelpPage.xaml	"The associated source file path (required)"
+unquoted	Pages/HelpPage.xaml	"Function"
+unquoted	Pages/HelpPage.xaml	"The related function or method name (optional)"
+unquoted	Pages/HelpPage.xaml	"Line"
+unquoted	Pages/HelpPage.xaml	"The exact code line number (optional)"
+unquoted	Pages/HelpPage.xaml	"Column"
+unquoted	Pages/HelpPage.xaml	"The exact code column number (optional)"
+unquoted	Pages/HelpPage.xaml	"In the entry detail panel
+unquoted	Pages/HelpPage.xaml	"Keyboard shortcuts"
+unquoted	Pages/HelpPage.xaml	"Hold Ctrl"
+unquoted	Pages/HelpPage.xaml	"Show the bottom toolbar and sidebar tab labels"
+unquoted	Pages/HelpPage.xaml	"Release Ctrl"
+unquoted	Pages/HelpPage.xaml	"Automatically collapse the toolbar and sidebar to maximize the content view"
+unquoted	Pages/HelpPage.xaml	"The bottom toolbar provides quick actions: new entry
+unquoted	Pages/HelpPage.xaml	"A guide to finding entries and settings"
+unquoted	Pages/HelpPage.xaml	"Basic usage"
+unquoted	Pages/HelpPage.xaml	"The search box sits in the center of the top toolbar and is always visible. Type a keyword to filter the current list page in real time and pop up the results board; click a result to jump
+unquoted	Pages/HelpPage.xaml	"Search modes"
+unquoted	Pages/HelpPage.xaml	"Prefix syntax switches the match scope; without a prefix it matches as text by default."
+unquoted	Pages/HelpPage.xaml	"• Text: — title
+unquoted	Pages/HelpPage.xaml	"• Tag: — type tags"
+unquoted	Pages/HelpPage.xaml	"• Setting: / settings: — settings (global search)"
+unquoted	Pages/HelpPage.xaml	"• File: — related-file path and function name"
+unquoted	Pages/HelpPage.xaml	"• Date: — date (yyyy-MM-dd)"
+unquoted	Pages/HelpPage.xaml	"• Plugins: — Extension Center plugins (global search)"
+unquoted	Pages/HelpPage.xaml	"• Expand: — installed plugins (global search)"
+unquoted	Pages/HelpPage.xaml	"Setting search"
+unquoted	Pages/HelpPage.xaml	"Setting: mode does not filter the entry list; it lists setting shortcuts in the results board instead
+unquoted	Pages/HelpPage.xaml	"Plugin search"
+unquoted	Pages/HelpPage.xaml	"Plugins: searches all plugins in the Extension Center; Expand: searches only installed plugins. Neither filters the entry list — results appear in the board
+unquoted	Pages/HelpPage.xaml	"Results board"
+unquoted	Pages/HelpPage.xaml	"• Entry results show a type label (Unfinished / Finished); click Go to locate the entry."
+unquoted	Pages/HelpPage.xaml	"• With empty input
+unquoted	Pages/HelpPage.xaml	"• Click outside the search box to close the results board."
+unquoted	Pages/HelpPage.xaml	"Multi-project directories and data management"
+unquoted	Pages/HelpPage.xaml	"Project directories"
+unquoted	Pages/HelpPage.xaml	"Supports multiple project directories
+unquoted	Pages/HelpPage.xaml	"Data files"
+unquoted	Pages/HelpPage.xaml	"• data.json — stores all entry data (unfinished + finished) as a JSON array"
+unquoted	Pages/HelpPage.xaml	"• project.json — stores project metadata: project name
+unquoted	Pages/HelpPage.xaml	"• All files are plain-text JSON
+unquoted	Pages/HelpPage.xaml	"CLI mode"
+unquoted	Pages/HelpPage.xaml	"Supports scripted operations via the command line
+unquoted	Pages/HelpPage.xaml	"GitHub integration"
+unquoted	Pages/HelpPage.xaml	"After configuring the GitHub repository
+unquoted	Pages/HelpPage.xaml	"OCCMissionGoals.exe command-line interface"
+unquoted	Pages/HelpPage.xaml	"The program detects command-line arguments at startup: launching with arguments enters CLI mode (console)
+unquoted	Pages/HelpPage.xaml	"OCCMissionGoals.exe [-p <project>] <command> [args]"
+unquoted	Pages/HelpPage.xaml	"Entry operations"
+unquoted	Pages/HelpPage.xaml	"Add an entry. The data format is JSON or simplified key=value syntax."
+unquoted	Pages/HelpPage.xaml	"View entry details (e.g. -c 001000001)
+unquoted	Pages/HelpPage.xaml	"Mark an entry as finished and record the completion date automatically."
+unquoted	Pages/HelpPage.xaml	"Restore a finished entry to unfinished status."
+unquoted	Pages/HelpPage.xaml	"Delete an entry (irreversible)."
+unquoted	Pages/HelpPage.xaml	"Favorite / unfavorite. Usage: -f <id> true|false"
+unquoted	Pages/HelpPage.xaml	"List all entries in the current project (unfinished + finished) as a JSON array."
+unquoted	Pages/HelpPage.xaml	"Version operations"
+unquoted	Pages/HelpPage.xaml	"-v <version>"
+unquoted	Pages/HelpPage.xaml	"Switch to a specified version; subsequent operations run on that version's data file."
+unquoted	Pages/HelpPage.xaml	"Version iteration: increments the current version's iteration number by 1 (e.g. alpha.0 → alpha.1)."
+unquoted	Pages/HelpPage.xaml	"-v Delete <version>"
+unquoted	Pages/HelpPage.xaml	"Delete the specified version's data file. The current version cannot be deleted."
+unquoted	Pages/HelpPage.xaml	"-v Archive <version>"
+unquoted	Pages/HelpPage.xaml	"Archive the specified version to the versions/archive/ directory. Requires all entries in the version to be finished; the current version cannot be archived."
+unquoted	Pages/HelpPage.xaml	"Global options"
+unquoted	Pages/HelpPage.xaml	"Specify the target project (matched by directory name or project name in project.json)."
+unquoted	Pages/HelpPage.xaml	"When used with entry commands
+unquoted	Pages/HelpPage.xaml	"Print help information."
+unquoted	Pages/HelpPage.xaml	"-a data format example"
+unquoted	Pages/HelpPage.xaml	"Supports standard JSON or simplified syntax using = instead of : (field names can be unquoted):"
+unquoted	Pages/HelpPage.xaml	"FixBug"
+unquoted	Pages/HelpPage.xaml	"Only Title is required. Severity defaults to General. Type is a string array; RelatedFiles maps a path → [line
+unquoted	Pages/HelpPage.xaml	"Output format"
+unquoted	Pages/HelpPage.xaml	"• Normal output is JSON (stdout)
+unquoted	Pages/HelpPage.xaml	"• Errors are written to stderr"
+unquoted	Pages/HelpPage.xaml	"• Exit code: 0 = success
+unquoted	Pages/HelpPage.xaml	"• Entry fields: index
+unquoted	Pages/LogPage.xaml	Completed
+unquoted	Pages/LogPage.xaml	Total
+unquoted	Pages/LogPage.xaml	Completion
+unquoted	Pages/LogPage.xaml	Severity Distribution
+unquoted	Pages/LogPage.xaml	Upcoming
+unquoted	Pages/LogPage.xaml	Recent Activity
+unquoted	Pages/LogPage.xaml	Contributions
+unquoted	Pages/LogPage.xaml	No activity
+unquoted	Pages/LogPage.xaml	Log out
+unquoted	Pages/LogPage.xaml	Save
+unquoted	Pages/LogPage.xaml	Maj
+unquoted	Pages/LogPage.xaml	Min
+unquoted	Pages/LogPage.xaml	Pat
+unquoted	Pages/LogPage.xaml	Iterate
+unquoted	Pages/LogPage.xaml	Push Data Now
+unquoted	Pages/LogPage.xaml	GitHub Settings
+unquoted	Pages/LogPage.xaml	Push Location
+unquoted	Pages/LogPage.xaml	Push File Settings
+unquoted	Pages/LogPage.xaml	More Push Settings
+unquoted	Pages/SettingsPage.xaml	Settings
+unquoted	Pages/SettingsPage.xaml	Appearance
+unquoted	Pages/SettingsPage.xaml	Project Info
+unquoted	Pages/SettingsPage.xaml	Push / Repos
+unquoted	Pages/SettingsPage.xaml	System / Updates
+unquoted	Pages/SettingsPage.xaml	Choose the app light or dark style. Changes apply and save immediately.
+unquoted	Pages/SettingsPage.xaml	Light
+unquoted	Pages/SettingsPage.xaml	Dark
+unquoted	Pages/SettingsPage.xaml	Language
+unquoted	Pages/SettingsPage.xaml	Choose the interface language. Changes apply and save immediately.
+unquoted	Pages/SettingsPage.xaml	Accent Color
+unquoted	Pages/SettingsPage.xaml	Choose the accent color used for buttons progress and selected states. Changes apply and save immediately.
+unquoted	Pages/SettingsPage.xaml	Custom
+unquoted	Pages/SettingsPage.xaml	Apply
+unquoted	Pages/SettingsPage.xaml	Edit the current project name and description. The version is maintained by version management and shown read-only here.
+unquoted	Pages/SettingsPage.xaml	Current Version
+unquoted	Pages/SettingsPage.xaml	Save Project Info
+unquoted	Pages/SettingsPage.xaml	Push / Repo Settings
+unquoted	Pages/SettingsPage.xaml	Manage the target repos and commit options used when generating update log commits. Changes save automatically.
+unquoted	Pages/SettingsPage.xaml	Target Repo
+unquoted	Pages/SettingsPage.xaml	Select a target repo from the signed-in GitHub account
+unquoted	Pages/SettingsPage.xaml	Not signed in to GitHub: sign in on the account page then click Refresh.
+unquoted	Pages/SettingsPage.xaml	Branch
+unquoted	Pages/SettingsPage.xaml	Select an existing branch or type a new branch name to create it on push
+unquoted	Pages/SettingsPage.xaml	File to push
+unquoted	Pages/SettingsPage.xaml	Select the file to push from the app bin folder
+unquoted	Pages/SettingsPage.xaml	Commit Generation Options
+unquoted	Pages/SettingsPage.xaml	Include author in commit message
+unquoted	Pages/SettingsPage.xaml	Group by date
+unquoted	Pages/SettingsPage.xaml	Launch at startup
+unquoted	Pages/SettingsPage.xaml	Automatically launch this app when you sign in to Windows. It uses the current user startup registry entry and requires no administrator rights.
+unquoted	Pages/SettingsPage.xaml	Start with Windows
+unquoted	Pages/SettingsPage.xaml	Auto Update
+unquoted	Pages/SettingsPage.xaml	Check GitHub Releases for new versions then download and run the installer after confirmation.
+unquoted	Pages/SettingsPage.xaml	Check for updates on startup
+unquoted	Pages/SettingsPage.xaml	Check for Updates
+unquoted	Pages/SettingsPage.xaml	Download & Install
+unquoted	Pages/SettingsPage.xaml	Open Download Page
+unquoted	Pages/UnDonePage.xaml	Due
+unquoted	Pages/UnDonePage.xaml	Complete
+unquoted	Pages/UnDonePage.xaml	No unfinished entries
+unquoted	ToolPages/ControlButtonPage.xaml	Edit Entry
+unquoted	ToolPages/ControlButtonPage.xaml	Theme
+unquoted	ToolPages/MenuPage.xaml	Project(_P)
+unquoted	ToolPages/MenuPage.xaml	New Project(_N)
+unquoted	ToolPages/MenuPage.xaml	Open Project(_O)
+unquoted	ToolPages/MenuPage.xaml	Project Settings(_S)
+unquoted	ToolPages/MenuPage.xaml	Entries(_V)
+unquoted	ToolPages/MenuPage.xaml	New Entry(_N)
+unquoted	ToolPages/MenuPage.xaml	File(_F)
+unquoted	ToolPages/MenuPage.xaml	New Data File(_N)
+unquoted	ToolPages/MenuPage.xaml	Open Data File(_O)
+unquoted	ToolPages/MenuPage.xaml	Help(_H)
+unquoted	ToolPages/SortPage.xaml	Sort by:
+unquoted	ToolPages/SortPage.xaml	Severity ascending
+unquoted	ToolPages/SortPage.xaml	Severity descending
+unquoted	ToolPages/SortPage.xaml	Deadline ascending
+unquoted	ToolPages/SortPage.xaml	Deadline descending
+unquoted	ToolPages/SortPage.xaml	Version ascending
+unquoted	ToolPages/SortPage.xaml	Version descending
+unquoted	ToolPages/SortPage.xaml	Favorites only

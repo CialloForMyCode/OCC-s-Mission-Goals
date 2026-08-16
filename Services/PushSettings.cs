@@ -1,44 +1,42 @@
-using System.Collections.Generic;
-using System.Text.Json;
+using System.IO;
 using OCCMissionGoals.Models;
 
 namespace OCCMissionGoals.Services;
 
 /// <summary>
-/// 推送 / 仓库设置的持久化存储，写入 config.ini 的 [Push] 节。
-/// 由「设置」页面读写，「更新日志」页面读取。
+/// 推送 / 仓库设置的持久化存储，写入当前项目文件夹下的 project.json 的 Push 节点。
+/// 由「设置」页面读写，「更新日志」页面读取。未打开项目时返回默认值且不写入。
 /// </summary>
 public static class PushSettings
 {
-    private const string Section = "Push";
-
-    private static readonly JsonSerializerOptions JsonOptions = new();
+    private static PushConfig? Current => ProjectService.CurrentProject?.Push;
 
     // ======================== 仓库列表 ========================
 
-    /// <summary>读取仓库列表；无配置或损坏时返回默认列表。</summary>
+    /// <summary>读取仓库列表；无项目或未配置时返回空列表。</summary>
     public static List<RepositoryInfo> LoadRepositories()
     {
-        var raw = ConfigManager.Get(Section, "Repositories", "");
-        if (string.IsNullOrWhiteSpace(raw))
-            return DefaultRepositories();
+        var cfg = Current;
+        if (cfg?.Repositories == null) return new List<RepositoryInfo>();
 
-        try
+        // 旧数据可能没有分支字段，统一补为默认值，保证界面显示与推送一致。
+        foreach (var repo in cfg.Repositories)
         {
-            var list = JsonSerializer.Deserialize<List<RepositoryInfo>>(raw, JsonOptions);
-            return list is { Count: > 0 } ? list : DefaultRepositories();
+            if (string.IsNullOrWhiteSpace(repo.Branch))
+                repo.Branch = "main";
         }
-        catch
-        {
-            return DefaultRepositories();
-        }
+
+        return new List<RepositoryInfo>(cfg.Repositories);
     }
 
-    /// <summary>保存仓库列表（覆盖原有内容）。</summary>
+    /// <summary>保存仓库列表（覆盖原有内容）。未打开项目时忽略。</summary>
     public static void SaveRepositories(IEnumerable<RepositoryInfo> repositories)
     {
-        ConfigManager.Set(Section, "Repositories",
-            JsonSerializer.Serialize(new List<RepositoryInfo>(repositories), JsonOptions));
+        var cfg = Current;
+        if (cfg == null) return;
+
+        cfg.Repositories = new List<RepositoryInfo>(repositories);
+        ProjectService.SaveCurrentProject();
     }
 
     // ======================== 提交生成选项 ========================
@@ -46,34 +44,57 @@ public static class PushSettings
     /// <summary>提交信息是否包含作者。</summary>
     public static bool IncludeAuthor
     {
-        get => ConfigManager.Get(Section, "IncludeAuthor", "1") == "1";
-        set => ConfigManager.Set(Section, "IncludeAuthor", value ? "1" : "0");
+        get => Current?.IncludeAuthor ?? true;
+        set
+        {
+            if (Current is not { } cfg) return;
+            cfg.IncludeAuthor = value;
+            ProjectService.SaveCurrentProject();
+        }
     }
 
     /// <summary>提交信息是否按日期分组。</summary>
     public static bool GroupByDate
     {
-        get => ConfigManager.Get(Section, "GroupByDate", "1") == "1";
-        set => ConfigManager.Set(Section, "GroupByDate", value ? "1" : "0");
+        get => Current?.GroupByDate ?? true;
+        set
+        {
+            if (Current is not { } cfg) return;
+            cfg.GroupByDate = value;
+            ProjectService.SaveCurrentProject();
+        }
     }
 
-    /// <summary>版本号前缀（默认 v）。</summary>
-    public static string VersionPrefix
+    /// <summary>程序目录下的 bin 文件夹（存放待推送/归档的文件）。</summary>
+    public static string BinDirectory =>
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+
+    /// <summary>列出 bin 文件夹内的文件名（仅文件名，按名称排序）。</summary>
+    public static List<string> ListBinFiles()
+    {
+        var list = new List<string>();
+        if (!Directory.Exists(BinDirectory)) return list;
+
+        foreach (var file in Directory.GetFiles(BinDirectory))
+            list.Add(Path.GetFileName(file));
+
+        list.Sort(StringComparer.OrdinalIgnoreCase);
+        return list;
+    }
+
+    /// <summary>要推送的 bin 文件（文件名，空表示未选择）。</summary>
+    public static string RemotePath
     {
         get
         {
-            var v = ConfigManager.Get(Section, "VersionPrefix", "v");
-            return string.IsNullOrEmpty(v) ? "v" : v;
+            var v = Current?.RemotePath;
+            return string.IsNullOrWhiteSpace(v) ? string.Empty : v.Trim();
         }
-        set => ConfigManager.Set(Section, "VersionPrefix",
-            string.IsNullOrEmpty(value) ? "v" : value);
+        set
+        {
+            if (Current is not { } cfg) return;
+            cfg.RemotePath = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+            ProjectService.SaveCurrentProject();
+        }
     }
-
-    // ======================== 默认值 ========================
-
-    private static List<RepositoryInfo> DefaultRepositories() => new()
-    {
-        new() { Name = "OCC's Mission & Goals", Url = "https://github.com/OCCO/OCC-Mission-Goals" },
-        new() { Name = "Harvest Planner", Url = "https://github.com/OCCO/HarvPlan" }
-    };
 }

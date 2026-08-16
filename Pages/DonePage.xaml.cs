@@ -358,16 +358,16 @@ namespace OCCMissionGoals.Pages
                 var binDir = Path.Combine(exeDir, "bin");
                 Directory.CreateDirectory(binDir);
 
-                var verName = string.IsNullOrEmpty(group.VersionName) ? LocalizationManager.T("未指定版本", "No version") : group.VersionName;
+                var verName = string.IsNullOrEmpty(group.VersionName) ? LocalizationManager.T("未指定版本", "No version", "Без версии") : group.VersionName;
                 var safeName = verName.Replace('/', '_').Replace('\\', '_').Replace(':', '_');
                 var fileName = $"archive_{safeName}_{DateTime.Now:yyyyMMdd_HHmmss}.md";
                 var filePath = Path.Combine(binDir, fileName);
 
                 var sb = new StringBuilder();
-                sb.AppendLine(LocalizationManager.T($"# 归档 — {verName}", $"# Archive — {verName}"));
+                sb.AppendLine(LocalizationManager.T($"# 归档 — {verName}", $"# Archive — {verName}", $"# Архив — {verName}"));
                 sb.AppendLine();
-                sb.AppendLine(LocalizationManager.T($"> 导出时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}", $"> Exported at: {DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
-                sb.AppendLine(LocalizationManager.T($"> 条目数量: {group.Items.Count}", $"> Entry count: {group.Items.Count}"));
+                sb.AppendLine(LocalizationManager.T($"> 导出时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}", $"> Exported at: {DateTime.Now:yyyy-MM-dd HH:mm:ss}", $"> Экспортировано: {DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
+                sb.AppendLine(LocalizationManager.T($"> 条目数量: {group.Items.Count}", $"> Entry count: {group.Items.Count}", $"> Количество записей: {group.Items.Count}"));
                 sb.AppendLine();
 
                 foreach (var item in group.Items)
@@ -376,25 +376,25 @@ namespace OCCMissionGoals.Pages
                     sb.AppendLine();
                     sb.AppendLine($"## {EscapeMd(item.Title)}");
                     sb.AppendLine();
-                    sb.AppendLine(LocalizationManager.T("| 字段 | 内容 |", "| Field | Content |"));
+                    sb.AppendLine(LocalizationManager.T("| 字段 | 内容 |", "| Field | Content |", "| Поле | Содержимое |"));
                     sb.AppendLine($"|------|------|");
-                    sb.AppendLine(LocalizationManager.T($"| 严重程度 | {SeverityHelper.GetText(item.Entry.Severity)} |", $"| Severity | {SeverityHelper.GetText(item.Entry.Severity)} |"));
-                    sb.AppendLine(LocalizationManager.T($"| 详细信息 | {EscapeMd(item.Detail)} |", $"| Details | {EscapeMd(item.Detail)} |"));
-                    sb.AppendLine(LocalizationManager.T($"| 截止日期 | {item.Entry.Deadline:yyyy-MM-dd} |", $"| Deadline | {item.Entry.Deadline:yyyy-MM-dd} |"));
-                    sb.AppendLine(LocalizationManager.T($"| 完成时间 | {item.Entry.CompletedAt:yyyy-MM-dd} |", $"| Completed | {item.Entry.CompletedAt:yyyy-MM-dd} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 严重程度 | {SeverityHelper.GetText(item.Entry.Severity)} |", $"| Severity | {SeverityHelper.GetText(item.Entry.Severity)} |", $"| Важность | {SeverityHelper.GetText(item.Entry.Severity)} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 详细信息 | {EscapeMd(item.Detail)} |", $"| Details | {EscapeMd(item.Detail)} |", $"| Подробности | {EscapeMd(item.Detail)} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 截止日期 | {item.Entry.Deadline:yyyy-MM-dd} |", $"| Deadline | {item.Entry.Deadline:yyyy-MM-dd} |", $"| Срок | {item.Entry.Deadline:yyyy-MM-dd} |"));
+                    sb.AppendLine(LocalizationManager.T($"| 完成时间 | {item.Entry.CompletedAt:yyyy-MM-dd} |", $"| Completed | {item.Entry.CompletedAt:yyyy-MM-dd} |", $"| Завершено | {item.Entry.CompletedAt:yyyy-MM-dd} |"));
 
                     if (item.Entry.RelatedFiles.Count > 0)
                     {
-                        var files = string.Join(LocalizationManager.T("、", ", "), item.Entry.RelatedFiles.Select(f =>
+                        var files = string.Join(LocalizationManager.T("、", ", ", ", "), item.Entry.RelatedFiles.Select(f =>
                         {
                             var name = Path.GetFileName(f.Path);
                             return $"{name}[{f.Line}:{f.Column}]";
                         }));
-                        sb.AppendLine(LocalizationManager.T($"| 相关文件 | {EscapeMd(files)} |", $"| Related Files | {EscapeMd(files)} |"));
+                        sb.AppendLine(LocalizationManager.T($"| 相关文件 | {EscapeMd(files)} |", $"| Related Files | {EscapeMd(files)} |", $"| Связанные файлы | {EscapeMd(files)} |"));
                     }
                     else
                     {
-                        sb.AppendLine(LocalizationManager.T("| 相关文件 | (无) |", "| Related Files | (none) |"));
+                        sb.AppendLine(LocalizationManager.T("| 相关文件 | (无) |", "| Related Files | (none) |", "| Связанные файлы | (нет) |"));
                     }
 
                     sb.AppendLine();
@@ -405,7 +405,7 @@ namespace OCCMissionGoals.Pages
                 // 安全校验：确认版本内全部条目均已完成
                 if (!CanArchiveVersion(group.VersionName))
                 {
-                    MessageBox.Show(LocalizationManager.T("该版本中仍有未完成的条目，无法归档。", "This version still has unfinished entries and cannot be archived."), LocalizationManager.T("无法归档", "Cannot Archive"),
+                    MessageBox.Show(LocalizationManager.T("该版本中仍有未完成的条目，无法归档。", "This version still has unfinished entries and cannot be archived.", "В этой версии остались незавершённые записи, архивация невозможна."), LocalizationManager.T("无法归档", "Cannot Archive", "Нельзя архивировать"),
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
@@ -425,11 +425,11 @@ namespace OCCMissionGoals.Pages
                 RebuildGroups();
 
                 if (Window.GetWindow(this) is MainWindow mw)
-                    mw.SetTipText(LocalizationManager.T($"已归档 {group.Items.Count} 条到 bin/{fileName}。", $"Archived {group.Items.Count} entries to bin/{fileName}."));
+                    mw.SetTipText(LocalizationManager.T($"已归档 {group.Items.Count} 条到 bin/{fileName}。", $"Archived {group.Items.Count} entries to bin/{fileName}.", $"Архивировано {group.Items.Count} записей в bin/{fileName}."));
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LocalizationManager.T($"归档失败: {ex.Message}", $"Archive failed: {ex.Message}"), LocalizationManager.T("错误", "Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(LocalizationManager.T($"归档失败: {ex.Message}", $"Archive failed: {ex.Message}", $"Ошибка архивации: {ex.Message}"), LocalizationManager.T("错误", "Error", "Ошибка"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -560,7 +560,7 @@ namespace OCCMissionGoals.Pages
     public class DoneVersionGroupVM
     {
         public string VersionName { get; set; } = string.Empty;
-        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本", "No version") : VersionName;
+        public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本", "No version", "Без версии") : VersionName;
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<DoneItemVM> Items { get; set; } = new();
         public bool IsExpanded { get; set; } = true;
@@ -586,7 +586,7 @@ namespace OCCMissionGoals.Pages
         }
 
         public bool IsExcerptVisible => !_isDetailExpanded;
-        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起", "Collapse") : LocalizationManager.T("详情", "Details");
+        public string DetailToggleText => _isDetailExpanded ? LocalizationManager.T("收起", "Collapse", "Свернуть") : LocalizationManager.T("详情", "Details", "Подробнее");
 
         public string Title => Entry.Title;
         public string SeverityText => SeverityHelper.GetText(Entry.Severity);

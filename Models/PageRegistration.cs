@@ -17,6 +17,9 @@ public class PageRegistration
     /// <summary>页签按钮的英文标签（切换语言后显示）。</summary>
     public string TabLabelEn { get; init; } = "";
 
+    /// <summary>页签按钮的俄语标签（切换语言后显示）。</summary>
+    public string TabLabelRu { get; init; } = "";
+
     /// <summary>页面工厂，每次导航时按需创建（首次后会被缓存）。</summary>
     public Func<Page> PageFactory { get; init; } = () => new Page();
 

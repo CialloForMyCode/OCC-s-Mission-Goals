@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace OCCMissionGoals.Pages
 {
@@ -24,14 +27,17 @@ namespace OCCMissionGoals.Pages
         private bool _hasUpcomingDeadlines;
         private bool _hasRecentActivity;
 
-        // 开发者信息
-        private string _userName = "OCCO";
-        private string _userInitial = "O";
-        private string _userAvatarPath = string.Empty;
+        // 开发者信息（GitHub 登录）
+        private bool _isLoggedIn;
+        private string _userName = string.Empty;
+        private string _userLogin = string.Empty;
+        private string _userBio = string.Empty;
+        private string _userCompany = string.Empty;
+        private string _userLocation = string.Empty;
+        private ImageSource? _userAvatar;
         private Models.RepositoryInfo? _selectedRepository;
         private bool _includeAuthor = true;
         private bool _groupByDate = true;
-        private string _versionPrefix = "v";
         private string _projectName = string.Empty;
         private string _currentVersionDisplay = string.Empty;
 
@@ -74,20 +80,40 @@ namespace OCCMissionGoals.Pages
             set { _hasRecentActivity = value; OnPropertyChanged(); }
         }
 
+        public bool IsLoggedIn
+        {
+            get => _isLoggedIn;
+            set { _isLoggedIn = value; OnPropertyChanged(); }
+        }
         public string UserName
         {
             get => _userName;
             set { _userName = value; OnPropertyChanged(); }
         }
-        public string UserInitial
+        public string UserLogin
         {
-            get => _userInitial;
-            set { _userInitial = value; OnPropertyChanged(); }
+            get => _userLogin;
+            set { _userLogin = value; OnPropertyChanged(); }
         }
-        public string UserAvatarPath
+        public string UserBio
         {
-            get => _userAvatarPath;
-            set { _userAvatarPath = value; OnPropertyChanged(); }
+            get => _userBio;
+            set { _userBio = value; OnPropertyChanged(); }
+        }
+        public string UserCompany
+        {
+            get => _userCompany;
+            set { _userCompany = value; OnPropertyChanged(); }
+        }
+        public string UserLocation
+        {
+            get => _userLocation;
+            set { _userLocation = value; OnPropertyChanged(); }
+        }
+        public ImageSource? UserAvatar
+        {
+            get => _userAvatar;
+            set { _userAvatar = value; OnPropertyChanged(); }
         }
         public ObservableCollection<Models.RepositoryInfo> Repositories { get; } = new();
         public Models.RepositoryInfo? SelectedRepository
@@ -104,11 +130,6 @@ namespace OCCMissionGoals.Pages
         {
             get => _groupByDate;
             set { _groupByDate = value; OnPropertyChanged(); }
-        }
-        public string VersionPrefix
-        {
-            get => _versionPrefix;
-            set { _versionPrefix = value; OnPropertyChanged(); }
         }
         public string ProjectName
         {
@@ -137,12 +158,13 @@ namespace OCCMissionGoals.Pages
         {
             RefreshProjectInfo();
             LoadData();
+            _ = RefreshGitHubUserAsync();
         }
 
         private void RefreshProjectInfo()
         {
             var proj = Services.ProjectService.CurrentProject;
-            ProjectName = proj?.Name ?? LocalizationManager.T("未打开项目", "No project opened");
+            ProjectName = proj?.Name ?? LocalizationManager.T("未打开项目", "No project opened", "Проект не открыт");
             var ver = proj?.CurrentVersion ?? "";
             // 兼容旧格式（带 .json 后缀）
             var cleanVer = ver.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
@@ -335,7 +357,7 @@ namespace OCCMissionGoals.Pages
                     Severity = e.Severity,
                     SeverityBrush = Models.SeverityHelper.GetBrush(e.Severity),
                     CompletedAt = e.CompletedAt,
-                    TypeLabel = LocalizationManager.T("已完成", "Completed"),
+                    TypeLabel = LocalizationManager.T("已完成", "Completed", "Завершено"),
                     TypeBrush = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50))
                 })
                 .ToList();
@@ -346,19 +368,235 @@ namespace OCCMissionGoals.Pages
             ActivityList.ItemsSource = RecentActivities;
             HasRecentActivity = recent.Count > 0;
 
-            // ===== 开发者信息（初始化） =====
-            UserName = "OCCO";
-            UserInitial = "O";
-            UserAvatarPath = string.Empty;
-            if (Repositories.Count == 0)
-            {
-                foreach (var repo in Services.PushSettings.LoadRepositories())
-                    Repositories.Add(repo);
-            }
-            SelectedRepository ??= Repositories.Count > 0 ? Repositories[0] : null;
+            // ===== 推送仓库与发布设置 =====
+            Repositories.Clear();
+            foreach (var repo in Services.PushSettings.LoadRepositories())
+                Repositories.Add(repo);
+            SelectedRepository = Repositories.Count > 0 ? Repositories[0] : null;
             IncludeAuthor = Services.PushSettings.IncludeAuthor;
             GroupByDate = Services.PushSettings.GroupByDate;
-            VersionPrefix = Services.PushSettings.VersionPrefix;
+        }
+
+        // ======================== 开发者信息（GitHub 登录） ========================
+
+        /// <summary>登录成功后立即用已拉取的用户信息刷新界面（无需再次请求）。</summary>
+        public void ApplyGitHubUser(Services.GitHubUser user)
+        {
+            UserName = string.IsNullOrWhiteSpace(user.Name) ? user.Login : user.Name;
+            UserLogin = user.Login;
+            UserBio = user.Bio;
+            UserCompany = user.Company;
+            UserLocation = user.Location;
+            IsLoggedIn = true;
+            _ = LoadAvatarAsync(user.AvatarUrl);
+        }
+
+        /// <summary>异步拉取当前 GitHub 用户并刷新界面。</summary>
+        private async Task RefreshGitHubUserAsync()
+        {
+            if (!Services.GitHubService.HasToken)
+            {
+                SetLoggedOut();
+                return;
+            }
+
+            try
+            {
+                var user = await Services.GitHubService.FetchUserAsync(Services.GitHubService.Token);
+                ApplyGitHubUser(user);
+            }
+            catch
+            {
+                // 令牌失效或网络异常时按未登录处理。
+                SetLoggedOut();
+            }
+        }
+
+        private async Task LoadAvatarAsync(string avatarUrl)
+        {
+            UserAvatar = null;
+            if (string.IsNullOrWhiteSpace(avatarUrl)) return;
+
+            var bytes = await Services.GitHubService.DownloadBytesAsync(avatarUrl);
+            if (bytes is { Length: > 0 })
+                UserAvatar = BytesToImage(bytes);
+        }
+
+        private void SetLoggedOut()
+        {
+            IsLoggedIn = false;
+            UserName = string.Empty;
+            UserLogin = string.Empty;
+            UserBio = string.Empty;
+            UserCompany = string.Empty;
+            UserLocation = string.Empty;
+            UserAvatar = null;
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            (Window.GetWindow(this) as MainWindow)?.ShowGitHubLoginDialog();
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Services.GitHubService.Logout();
+            SetLoggedOut();
+            (Window.GetWindow(this) as MainWindow)?.SetTipText(
+                LocalizationManager.T("已退出 GitHub 登录。", "Signed out of GitHub.", "Вы вышли из GitHub."));
+        }
+
+        // ======================== 底部推送配置入口 ========================
+
+        private void GitHubSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mw = Window.GetWindow(this) as MainWindow;
+            if (!Services.GitHubService.HasToken)
+            {
+                mw?.ShowGitHubLoginDialog();
+                return;
+            }
+
+            mw?.SetTipText(LocalizationManager.T(
+                $"已登录 GitHub：{UserLogin}",
+                $"Signed in to GitHub as {UserLogin}",
+                $"Выполнен вход в GitHub как {UserLogin}"));
+        }
+
+        private void PushLocationButton_Click(object sender, RoutedEventArgs e)
+            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("repos");
+
+        private void PushFileSettingsButton_Click(object sender, RoutedEventArgs e)
+            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("file");
+
+        private void MorePushSettingsButton_Click(object sender, RoutedEventArgs e)
+            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("options");
+
+        private async void PushNowButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mw = Window.GetWindow(this) as MainWindow;
+
+            var proj = Services.ProjectService.CurrentProject;
+            if (proj == null)
+            {
+                mw?.SetTipText(LocalizationManager.T(
+                    "没有打开的项目，无法推送。",
+                    "No project is open; nothing to push.",
+                    "Нет открытого проекта, нечего отправлять."));
+                return;
+            }
+
+            if (!Services.GitHubService.HasToken)
+            {
+                mw?.SetTipText(LocalizationManager.T(
+                    "请先登录 GitHub。",
+                    "Please sign in to GitHub first.",
+                    "Сначала войдите в GitHub."));
+                mw?.ShowGitHubLoginDialog();
+                return;
+            }
+
+            if (SelectedRepository == null)
+            {
+                mw?.SetTipText(LocalizationManager.T(
+                    "请先在设置中配置推送仓库。",
+                    "Please configure a push repo in settings first.",
+                    "Сначала настройте репозиторий для отправки в настройках."));
+                mw?.OpenPushSettingsPage("repos");
+                return;
+            }
+
+            var remotePath = Services.PushSettings.RemotePath;
+            if (string.IsNullOrWhiteSpace(remotePath))
+            {
+                mw?.SetTipText(LocalizationManager.T(
+                    "请先在设置中选择要推送的文件。",
+                    "Please select a file to push in settings first.",
+                    "Сначала выберите файл для отправки в настройках."));
+                mw?.OpenPushSettingsPage("file");
+                return;
+            }
+
+            var binDir = Services.PushSettings.BinDirectory;
+            var filePath = Path.Combine(binDir, remotePath);
+            if (!File.Exists(filePath))
+            {
+                mw?.SetTipText(LocalizationManager.T(
+                    "找不到要推送的文件。",
+                    "The file to push was not found.",
+                    "Файл для отправки не найден."));
+                return;
+            }
+
+            var content = File.ReadAllText(filePath);
+            var message = BuildCommitMessage();
+            var branch = string.IsNullOrWhiteSpace(SelectedRepository.Branch)
+                ? "main"
+                : SelectedRepository.Branch;
+
+            PushNowButton.IsEnabled = false;
+            try
+            {
+                var error = await Services.GitHubService.PushFileAsync(
+                    SelectedRepository.Url, branch, remotePath, content, message);
+
+                if (error == null)
+                {
+                    mw?.SetTipText(LocalizationManager.T(
+                        $"已推送到 {SelectedRepository.Name}（{branch}）。",
+                        $"Pushed to {SelectedRepository.Name} ({branch}).",
+                        $"Отправлено в {SelectedRepository.Name} ({branch})."));
+                }
+                else
+                {
+                    mw?.SetTipText(LocalizationManager.T(
+                        $"推送失败：{error}",
+                        $"Push failed: {error}",
+                        $"Ошибка отправки: {error}"));
+                }
+            }
+            finally
+            {
+                PushNowButton.IsEnabled = true;
+            }
+        }
+
+        /// <summary>根据推送设置与当前数据自动生成提交信息。</summary>
+        private string BuildCommitMessage()
+        {
+            var proj = Services.ProjectService.CurrentProject;
+            var version = proj?.CurrentVersion ?? string.Empty;
+            if (version.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                version = version[..^5];
+
+            var data = Services.DataService.Current;
+            var finished = data?.Finished?.Count ?? 0;
+            var unfinished = data?.Unfinished?.Count ?? 0;
+
+            var head = string.IsNullOrEmpty(version) ? "Update data" : version;
+            var parts = new List<string>
+            {
+                $"{head}: update data ({finished} completed, {unfinished} unfinished)"
+            };
+
+            if (GroupByDate)
+                parts.Add(DateTime.Now.ToString("yyyy-MM-dd"));
+            if (IncludeAuthor && !string.IsNullOrWhiteSpace(UserLogin))
+                parts.Add($"@{UserLogin}");
+
+            return string.Join(" · ", parts);
+        }
+
+        private static ImageSource BytesToImage(byte[] bytes)
+        {
+            var bmp = new BitmapImage();
+            using var ms = new MemoryStream(bytes);
+            bmp.BeginInit();
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            bmp.StreamSource = ms;
+            bmp.EndInit();
+            bmp.Freeze();
+            return bmp;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -437,8 +675,8 @@ namespace OCCMissionGoals.Pages
             set { _isOverdue = value; OnPropertyChanged(); }
         }
         public string DaysLeftText => IsOverdue
-            ? LocalizationManager.T("已过期", "Overdue")
-            : LocalizationManager.T($"{_daysLeft}天", $"{_daysLeft}d");
+            ? LocalizationManager.T("已过期", "Overdue", "Просрочено")
+            : LocalizationManager.T($"{_daysLeft}天", $"{_daysLeft}d", $"{_daysLeft} дн.");
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -485,12 +723,12 @@ namespace OCCMissionGoals.Pages
             get
             {
                 var diff = DateTime.Now - _completedAt;
-                if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now");
-                if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago");
-                if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago");
-                if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago");
-                if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago");
-                return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago");
+                if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now", "только что");
+                if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago", $"{(int)diff.TotalMinutes} мин. назад");
+                if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago", $"{(int)diff.TotalHours} ч. назад");
+                if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago", $"{(int)diff.TotalDays} дн. назад");
+                if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago", $"{(int)(diff.TotalDays / 30)} мес. назад");
+                return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago", $"{(int)(diff.TotalDays / 365)} г. назад");
             }
         }
         public Brush TypeBrush
@@ -537,6 +775,16 @@ namespace OCCMissionGoals.Pages
     {
         public static string Format(DateTime date, DateTime today)
         {
+            if (LocalizationManager.Instance.IsRussian)
+            {
+                if (date == today) return "Сегодня";
+                if (date == today.AddDays(-1)) return "Вчера";
+                if (date == today.AddDays(-2)) return "Позавчера";
+                if (date.Year == today.Year && date.Month == today.Month) return $"Число {date.Day}";
+                if (date.Year == today.Year) return date.ToString("d MMM");
+                return date.ToString("d MMM yyyy");
+            }
+
             if (LocalizationManager.Instance.IsEnglish)
             {
                 if (date == today) return "Today";
@@ -577,12 +825,12 @@ namespace OCCMissionGoals.Pages
             if (value is not DateTime dt)
                 return string.Empty;
             var diff = DateTime.Now - dt;
-            if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now");
-            if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago");
-            if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago");
-            if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago");
-            if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago");
-            return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago");
+            if (diff.TotalMinutes < 1) return LocalizationManager.T("刚刚", "just now", "только что");
+            if (diff.TotalMinutes < 60) return LocalizationManager.T($"{(int)diff.TotalMinutes}分钟前", $"{(int)diff.TotalMinutes} min ago", $"{(int)diff.TotalMinutes} мин. назад");
+            if (diff.TotalHours < 24) return LocalizationManager.T($"{(int)diff.TotalHours}小时前", $"{(int)diff.TotalHours} h ago", $"{(int)diff.TotalHours} ч. назад");
+            if (diff.TotalDays < 30) return LocalizationManager.T($"{(int)diff.TotalDays}天前", $"{(int)diff.TotalDays} d ago", $"{(int)diff.TotalDays} дн. назад");
+            if (diff.TotalDays < 365) return LocalizationManager.T($"{(int)(diff.TotalDays / 30)}个月前", $"{(int)(diff.TotalDays / 30)} mo ago", $"{(int)(diff.TotalDays / 30)} мес. назад");
+            return LocalizationManager.T($"{(int)(diff.TotalDays / 365)}年前", $"{(int)(diff.TotalDays / 365)} y ago", $"{(int)(diff.TotalDays / 365)} г. назад");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

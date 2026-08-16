@@ -121,8 +121,9 @@ public partial class ExpandPage : Page
                 MessageBox.Show(
                     LocalizationManager.T(
                         $"正在安装「{plugin.Name}」...\n\n（占位：将来对接真实下载源后，此处将触发下载并安装流程。）",
-                        $"Installing \"{plugin.Name}\"...\n\n(Placeholder: once a real download source is wired up, this will trigger the download and install flow.)"),
-                    LocalizationManager.T("安装扩展", "Install Extension"),
+                        $"Installing \"{plugin.Name}\"...\n\n(Placeholder: once a real download source is wired up, this will trigger the download and install flow.)",
+                        $"Установка «{plugin.Name}»...\n\n(Заглушка: после подключения реального источника загрузки здесь запустится загрузка и установка.)"),
+                    LocalizationManager.T("安装扩展", "Install Extension", "Установить расширение"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 plugin.IsInstalled = true;

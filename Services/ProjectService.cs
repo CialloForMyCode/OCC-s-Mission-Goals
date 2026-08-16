@@ -164,6 +164,13 @@ public static class ProjectService
         SaveProjectConfig(CurrentProjectDir, config);
     }
 
+    /// <summary>就地修改当前项目配置后，保存到 project.json（推送设置等场景）。</summary>
+    public static void SaveCurrentProject()
+    {
+        if (CurrentProject == null || CurrentProjectDir == null) return;
+        SaveProjectConfig(CurrentProjectDir, CurrentProject);
+    }
+
     /// <summary>确保 TypeColors 长度与 TypeOptions 对齐（不足补空串）。</summary>
     public static void EnsureTypeColorsAligned()
     {

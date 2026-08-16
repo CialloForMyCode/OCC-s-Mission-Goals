@@ -266,8 +266,7 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 
 | Имя | Роль | Вклад |
 |------|------|-------|
-| [OCCO](https://github.com/OCCOCCO) | Автор | Дизайн, разработка, поддержка |
-| [Reasonix](https://github.com/Reasonix) | AI ассистент | Рефакторинг CLI, исправления, документация |
+| [I-AM-SOLO](https://github.com/CialloForMyCode) | Автор | Дизайн, разработка, поддержка |
 
 ---
 

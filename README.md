@@ -267,7 +267,6 @@ Entry fields:
 | Name | Role | Contribution |
 |------|------|--------------|
 | [I-AM-SOLO](https://github.com/CialloForMyCode) | Author | Design, development, maintenance |
-| [Reasonix](https://github.com/Reasonix) | AI assistant | Talk to me, manage files, documentation |
 
 ---
 

@@ -58,24 +58,24 @@ namespace OCCMissionGoals.ToolPages
                 var dir = mw.NewProjectDialog.SelectedProjectDir;
                 if (string.IsNullOrEmpty(dir))
                 {
-                    mw.SetTipText(LocalizationManager.T("请选择一个项目。", "Please select a project."));
+                    mw.SetTipText(LocalizationManager.T("请选择一个项目。", "Please select a project.", "Выберите проект."));
                     return;
                 }
 
                 var config = ProjectService.OpenProject(dir);
                 if (config == null)
                 {
-                    mw.SetTipText(LocalizationManager.T("所选项目无效。", "The selected project is invalid."));
+                    mw.SetTipText(LocalizationManager.T("所选项目无效。", "The selected project is invalid.", "Выбранный проект недействителен."));
                     return;
                 }
 
                 mw.RefreshAllViews();
                 DismissProjectDialog();
-                mw.SetTipText(LocalizationManager.T($"已打开项目「{config.Name}」。", $"Opened project \"{config.Name}\"."));
+                mw.SetTipText(LocalizationManager.T($"已打开项目「{config.Name}」。", $"Opened project \"{config.Name}\".", $"Открыт проект «{config.Name}»."));
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LocalizationManager.T($"打开项目失败：{ex.Message}", $"Failed to open project: {ex.Message}"), LocalizationManager.T("错误", "Error"),
+                MessageBox.Show(LocalizationManager.T($"打开项目失败：{ex.Message}", $"Failed to open project: {ex.Message}", $"Не удалось открыть проект: {ex.Message}"), LocalizationManager.T("错误", "Error", "Ошибка"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -85,7 +85,7 @@ namespace OCCMissionGoals.ToolPages
             if (Application.Current.MainWindow is not MainWindow mw) return;
             if (ProjectService.CurrentProject == null)
             {
-                mw.SetTipText(LocalizationManager.T("没有打开的项目。", "No project is open."));
+                mw.SetTipText(LocalizationManager.T("没有打开的项目。", "No project is open.", "Нет открытого проекта."));
                 return;
             }
 
@@ -119,11 +119,11 @@ namespace OCCMissionGoals.ToolPages
 
                 mw.RefreshAllViews();
                 DismissProjectDialog();
-                mw.SetTipText(LocalizationManager.T($"已创建项目「{config.Name}」。", $"Created project \"{config.Name}\"."));
+                mw.SetTipText(LocalizationManager.T($"已创建项目「{config.Name}」。", $"Created project \"{config.Name}\".", $"Создан проект «{config.Name}»."));
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LocalizationManager.T($"创建项目失败：{ex.Message}", $"Failed to create project: {ex.Message}"), LocalizationManager.T("错误", "Error"),
+                MessageBox.Show(LocalizationManager.T($"创建项目失败：{ex.Message}", $"Failed to create project: {ex.Message}", $"Не удалось создать проект: {ex.Message}"), LocalizationManager.T("错误", "Error", "Ошибка"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -148,11 +148,11 @@ namespace OCCMissionGoals.ToolPages
                 ProjectService.UpdateProjectConfig(ProjectService.CurrentProject);
                 mw.RefreshAllViews();
                 DismissProjectDialog();
-                mw.SetTipText(LocalizationManager.T("项目设置已保存。", "Project settings saved."));
+                mw.SetTipText(LocalizationManager.T("项目设置已保存。", "Project settings saved.", "Настройки проекта сохранены."));
             }
             catch (Exception ex)
             {
-                MessageBox.Show(LocalizationManager.T($"保存项目设置失败：{ex.Message}", $"Failed to save project settings: {ex.Message}"), LocalizationManager.T("错误", "Error"),
+                MessageBox.Show(LocalizationManager.T($"保存项目设置失败：{ex.Message}", $"Failed to save project settings: {ex.Message}", $"Не удалось сохранить настройки проекта: {ex.Message}"), LocalizationManager.T("错误", "Error", "Ошибка"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -183,7 +183,7 @@ namespace OCCMissionGoals.ToolPages
             if (Application.Current.MainWindow is not MainWindow mw) return;
             if (ProjectService.CurrentProjectDir == null)
             {
-                mw.SetTipText(LocalizationManager.T("请先打开一个项目。", "Please open a project first."));
+                mw.SetTipText(LocalizationManager.T("请先打开一个项目。", "Please open a project first.", "Сначала откройте проект."));
                 return;
             }
 
@@ -202,7 +202,7 @@ namespace OCCMissionGoals.ToolPages
             if (Application.Current.MainWindow is not MainWindow mw) return;
             if (ProjectService.CurrentProjectDir == null)
             {
-                mw.SetTipText(LocalizationManager.T("请先打开一个项目。", "Please open a project first."));
+                mw.SetTipText(LocalizationManager.T("请先打开一个项目。", "Please open a project first.", "Сначала откройте проект."));
                 return;
             }
 
@@ -232,7 +232,7 @@ namespace OCCMissionGoals.ToolPages
                     // 打开已有版本
                     ProjectService.SwitchVersion(selectedVersion + ".json");
                     mw.RefreshAllViews();
-                    mw.SetTipText(LocalizationManager.T($"已切换到版本 {selectedVersion}。", $"Switched to version {selectedVersion}."));
+                    mw.SetTipText(LocalizationManager.T($"已切换到版本 {selectedVersion}。", $"Switched to version {selectedVersion}.", $"Переключено на версию {selectedVersion}."));
                 }
                 else if (!string.IsNullOrEmpty(versionName))
                 {
@@ -240,14 +240,14 @@ namespace OCCMissionGoals.ToolPages
                     ProjectService.CreateVersion(versionName + ".json");
                     ProjectService.SwitchVersion(versionName + ".json");
                     mw.RefreshAllViews();
-                    mw.SetTipText(LocalizationManager.T($"已创建并切换到版本 {versionName}。", $"Created and switched to version {versionName}."));
+                    mw.SetTipText(LocalizationManager.T($"已创建并切换到版本 {versionName}。", $"Created and switched to version {versionName}.", $"Версия {versionName} создана, выполнено переключение."));
                 }
 
                 DismissVersionDialog();
             }
             catch (Exception ex)
             {
-                mw.SetTipText(LocalizationManager.T($"操作失败：{ex.Message}", $"Operation failed: {ex.Message}"));
+                mw.SetTipText(LocalizationManager.T($"操作失败：{ex.Message}", $"Operation failed: {ex.Message}", $"Операция не удалась: {ex.Message}"));
             }
         }
 

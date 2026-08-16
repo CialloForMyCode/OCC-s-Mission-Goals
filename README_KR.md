@@ -266,8 +266,7 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 
 | 이름 | 역할 | 기여 |
 |------|------|------|
-| [OCCO](https://github.com/OCCOCCO) | 저자 | 설계, 개발, 유지보수 |
-| [Reasonix](https://github.com/Reasonix) | AI 어시스턴트 | CLI 리팩터링, 버그 수정, 문서화 |
+| [I-AM-SOLO](https://github.com/CialloForMyCode) | 저자 | 설계, 개발, 유지보수 |
 
 ---
 

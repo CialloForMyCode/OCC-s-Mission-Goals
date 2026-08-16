@@ -9,15 +9,24 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>OCCMissionGoals</AssemblyName>
     <Title>OCC's Mission &amp; Goals</Title>
-    <Version>0.1.5-alpha</Version>
+    <Version>0.1.6-alpha</Version>
     <Authors>I-AM-SOLO</Authors>
     <Company>Harvnyx</Company>
     <Description>一款为 ONC Compiler Collection 开发的更新/修复管理工具，为了帮助患有健忘症的我更加快速的开发 ONC Compiler Collection。该工具旨在简化在MD中填写错误然后一个个找哪个没完成的流程，提高效率，并治好我的健忘症。</Description>
     <Copyright>Harvnyx © 2022-2026</Copyright>
   </PropertyGroup>
 
+  <!-- 排除打包/发布产物目录，避免 SDK 默认通配符把它们当作项目文件 -->
   <ItemGroup>
-	  
+    <Compile Remove="output\**;publish\**" />
+    <EmbeddedResource Remove="output\**;publish\**" />
+    <None Remove="output\**;publish\**" />
+    <Page Remove="output\**;publish\**" />
+  </ItemGroup>
+
+  <!-- installer 目录：仅作为项目内容显示，不参与编译/打包 -->
+  <ItemGroup>
+    <None Include="installer\**" />
   </ItemGroup>
 
 </Project>

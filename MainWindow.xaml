@@ -130,13 +130,13 @@
                             <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform" Margin="2"
                                   Data="M1 4.5C1 3.11929 2.11929 2 3.5 2H12.5C13.8807 2 15 3.11929 15 4.5V9.5C15 10.8807 13.8807 12 12.5 12H8.68787L5.62533 14.6797C4.99168 15.2342 4 14.7842 4 13.9422V12H3.5C2.11929 12 1 10.8807 1 9.5V4.5ZM3.5 3C2.67157 3 2 3.67157 2 4.5V9.5C2 10.3284 2.67157 11 3.5 11H5V13.8981L8.31213 11H12.5C13.3284 11 14 10.3284 14 9.5V4.5C14 3.67157 13.3284 3 12.5 3H3.5Z"/>
                         </Button>
-                        <TextBlock x:Name="StatusLabel" Text="{loc:Loc Zh=就绪, En=Ready}" Foreground="{DynamicResource ForegroundBrush}"
+                        <TextBlock x:Name="StatusLabel" Text="{loc:Loc Zh=就绪, En=Ready, Ru=&quot;Готово&quot;}" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="1"/>
                         <TextBlock Text="|" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="2"/>
-                        <TextBlock x:Name="StatusText" Text="{loc:Loc Zh=状态机无更新, En=No status update}" Foreground="{DynamicResource ForegroundBrush}"
+                        <TextBlock x:Name="StatusText" Text="{loc:Loc Zh=状态机无更新, En=No status update, Ru=&quot;Нет обновлений статуса&quot;}" Foreground="{DynamicResource ForegroundBrush}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"
                                    Margin="5,0,5,0" Grid.Column="3"/>
                     </Grid>
@@ -158,7 +158,7 @@
                                   Style="{StaticResource StatusBarActionComboBox}"
                                   SelectionChanged="VersionComboBox_SelectionChanged"
                                   SelectedIndex="0">
-                            <ComboBoxItem Content="{loc:Loc Zh=调整目标的文件, En=Adjust target file}" Tag="__placeholder__"/>
+                            <ComboBoxItem Content="{loc:Loc Zh=调整目标的文件, En=Adjust target file, Ru=&quot;Изменить целевой файл&quot;}" Tag="__placeholder__"/>
                         </ComboBox>
 
                         <Button x:Name="NotificationBtn" Grid.Column="1" Style="{StaticResource StatusBarIconButton}" Margin="2,2,5,2" Click="NotificationBtn_Click">
@@ -187,17 +187,17 @@
 
                         <!-- 按模式搜索引导（空输入时显示，点击填入前缀） -->
                         <StackPanel x:Name="SearchModeHint" Grid.Row="0" Margin="10,8,10,4">
-                            <TextBlock Text="{loc:Loc Zh=按模式搜索（点击填入前缀）：, En=Search by mode (click to fill prefix):}"
+                            <TextBlock Text="{loc:Loc Zh=按模式搜索（点击填入前缀）：, En=Search by mode (click to fill prefix):, Ru=&quot;Поиск по режиму (нажмите для подстановки префикса):&quot;}"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        FontSize="11" Opacity="0.6"/>
                             <WrapPanel Margin="0,6,0,0">
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Text: 文字, En=Text: Text}" Tag="Text:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Tag: 标签, En=Tag: Tag}" Tag="Tag:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=File: 文件, En=File: File}" Tag="File:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Date: 日期, En=Date: Date}" Tag="Date:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Setting: 设置, En=Setting: Settings}" Tag="Setting:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Plugins: 插件, En=Plugins: Plugins}" Tag="Plugins:" Click="SearchModeChip_Click"/>
-                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Expand: 已安装, En=Expand: Installed}" Tag="Expand:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Text: 文字, En=Text: Text, Ru=&quot;Text: Текст&quot;}" Tag="Text:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Tag: 标签, En=Tag: Tag, Ru=&quot;Tag: Тег&quot;}" Tag="Tag:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=File: 文件, En=File: File, Ru=&quot;File: Файл&quot;}" Tag="File:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Date: 日期, En=Date: Date, Ru=&quot;Date: Дата&quot;}" Tag="Date:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Setting: 设置, En=Setting: Settings, Ru=&quot;Setting: Настройки&quot;}" Tag="Setting:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Plugins: 插件, En=Plugins: Plugins, Ru=&quot;Plugins: Плагины&quot;}" Tag="Plugins:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc Zh=Expand: 已安装, En=Expand: Installed, Ru=&quot;Expand: Установленные&quot;}" Tag="Expand:" Click="SearchModeChip_Click"/>
                             </WrapPanel>
                         </StackPanel>
 
@@ -240,7 +240,7 @@
                         </ScrollViewer>
                         <Border x:Name="SearchBoardEmpty" Grid.Row="1"
                                 Visibility="Collapsed" Padding="16,20">
-                            <TextBlock Text="{loc:Loc Zh=没有匹配结果, En=No results}"
+                            <TextBlock Text="{loc:Loc Zh=没有匹配结果, En=No results, Ru=&quot;Нет результатов&quot;}"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        FontSize="13" Opacity="0.5"
                                        HorizontalAlignment="Center"/>
@@ -272,6 +272,13 @@
                                    Visibility="Collapsed"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
+
+            <!-- GitHub 登录弹窗 -->
+            <dialogs:GitHubLoginDialog x:Name="GitHubLoginDialog"
+                                       Width="520" Height="360"
+                                       Visibility="Collapsed"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
         </Grid>
     </Border>
 </Window>

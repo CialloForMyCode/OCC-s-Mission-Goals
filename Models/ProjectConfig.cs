@@ -31,4 +31,8 @@ public class ProjectConfig
 
     [JsonPropertyName("NextEntryId")]
     public int NextEntryId { get; set; } = 1;
+
+    /// <summary>推送 / 仓库发布相关设置。</summary>
+    [JsonPropertyName("Push")]
+    public PushConfig Push { get; set; } = new();
 }

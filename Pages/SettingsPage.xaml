@@ -52,7 +52,7 @@
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                 Padding="24,16" Margin="0,0,0,8">
-            <TextBlock Text="{loc:Loc Zh=设置, En=Settings}"
+            <TextBlock Text="{loc:Loc Zh=设置, En=Settings, Ru=&quot;Настройки&quot;}"
                        FontSize="20" FontWeight="Bold"
                        Foreground="{DynamicResource ForegroundBrush}"
                        Margin="8,0,0,0"/>
@@ -74,7 +74,7 @@
                     Margin="0,0,8,0">
                 <StackPanel>
                     <Button x:Name="Nav_Appearance"
-                            Content="{loc:Loc Zh=外观主题, En=Appearance}" Tag="Appearance"
+                            Content="{loc:Loc Zh=外观主题, En=Appearance, Ru=&quot;Внешний вид&quot;}" Tag="Appearance"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
@@ -85,14 +85,21 @@
                     <Separator Margin="6,8,6,6" Opacity="0.3"/>
 
                     <Button x:Name="Nav_Project"
-                            Content="{loc:Loc Zh=项目信息, En=Project Info}" Tag="Project"
+                            Content="{loc:Loc Zh=项目信息, En=Project Info, Ru=&quot;Информация о проекте&quot;}" Tag="Project"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
                             FontSize="12"/>
                     <Button x:Name="Nav_Push"
-                            Content="{loc:Loc Zh=推送 / 仓库, En=Push / Repos}" Tag="Push"
+                            Content="{loc:Loc Zh=推送 / 仓库, En=Push / Repos, Ru=&quot;Отправка / Репозитории&quot;}" Tag="Push"
+                            Click="NavButton_Click"
+                            Style="{StaticResource CardActionBtn}"
+                            HorizontalContentAlignment="Left"
+                            Height="32" Margin="0,1"
+                            FontSize="12"/>
+                    <Button x:Name="Nav_System"
+                            Content="{loc:Loc Zh=系统 / 更新, En=System / Updates, Ru=&quot;Система / Обновления&quot;}" Tag="System"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
@@ -116,25 +123,25 @@
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
-                        <TextBlock Text="{loc:Loc Zh=外观主题, En=Appearance}"
+                        <TextBlock Text="{loc:Loc Zh=外观主题, En=Appearance, Ru=&quot;Внешний вид&quot;}"
                                    FontSize="16" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,12"/>
                         <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
-                                   Text="{loc:Loc Zh=选择应用的整体明暗风格。更改会立即生效并保存。, En=Choose the app light or dark style. Changes apply and save immediately.}"/>
+                                   Text="{loc:Loc Zh=选择应用的整体明暗风格。更改会立即生效并保存。, En=Choose the app light or dark style. Changes apply and save immediately., Ru=&quot;Выберите светлый или тёмный стиль приложения. Изменения применяются и сохраняются сразу.&quot;}"/>
 
                         <StackPanel Orientation="Horizontal">
                             <RadioButton x:Name="LightThemeRadio"
-                                         Content="{loc:Loc Zh=浅色, En=Light}"
+                                         Content="{loc:Loc Zh=浅色, En=Light, Ru=&quot;Светлая&quot;}"
                                          GroupName="ThemeGroup" Tag="light"
                                          Checked="ThemeRadio_Checked"
                                          Foreground="{DynamicResource ForegroundBrush}"
                                          FontSize="13" Margin="0,0,24,0"
                                          VerticalContentAlignment="Center"/>
                             <RadioButton x:Name="DarkThemeRadio"
-                                         Content="{loc:Loc Zh=深色, En=Dark}"
+                                         Content="{loc:Loc Zh=深色, En=Dark, Ru=&quot;Тёмная&quot;}"
                                          GroupName="ThemeGroup" Tag="dark"
                                          Checked="ThemeRadio_Checked"
                                          Foreground="{DynamicResource ForegroundBrush}"
@@ -142,14 +149,14 @@
                                          VerticalContentAlignment="Center"/>
                         </StackPanel>
 
-                        <TextBlock Text="{loc:Loc Zh=语言, En=Language}"
+                        <TextBlock Text="{loc:Loc Zh=语言, En=Language, Ru=&quot;Язык&quot;}"
                                    FontSize="13" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,18,0,8"/>
                         <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
-                                   Text="{loc:Loc Zh=选择界面显示语言，更改会立即生效并保存。, En=Choose the interface language. Changes apply and save immediately.}"/>
+                                   Text="{loc:Loc Zh=选择界面显示语言，更改会立即生效并保存。, En=Choose the interface language. Changes apply and save immediately., Ru=&quot;Выберите язык интерфейса. Изменения применяются и сохраняются сразу.&quot;}"/>
 
                         <ComboBox x:Name="LanguageCombo"
                                   Style="{StaticResource DialogComboBox}"
@@ -157,26 +164,27 @@
                                   SelectionChanged="Language_SelectionChanged">
                             <ComboBoxItem Content="中文" Tag="zh" Style="{StaticResource DialogComboBoxItem}"/>
                             <ComboBoxItem Content="English" Tag="en" Style="{StaticResource DialogComboBoxItem}"/>
+                            <ComboBoxItem Content="Русский" Tag="ru" Style="{StaticResource DialogComboBoxItem}"/>
                         </ComboBox>
 
-                        <TextBlock Text="{loc:Loc Zh=主题色, En=Accent Color}"
+                        <TextBlock Text="{loc:Loc Zh=主题色, En=Accent Color, Ru=&quot;Акцентный цвет&quot;}"
                                    FontSize="13" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,18,0,8"/>
                         <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
-                                   Text="{loc:Loc Zh=选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。, En=Choose the accent color used for buttons progress and selected states. Changes apply and save immediately.}"/>
+                                   Text="{loc:Loc Zh=选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。, En=Choose the accent color used for buttons progress and selected states. Changes apply and save immediately., Ru=&quot;Выберите акцентный цвет для кнопок прогресса и выбранных состояний. Изменения применяются и сохраняются сразу.&quot;}"/>
 
                         <WrapPanel x:Name="AccentSwatchPanel" Margin="0,0,0,10"/>
 
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{loc:Loc Zh=自定义, En=Custom}" Style="{StaticResource DialogLabel}"
+                            <TextBlock Text="{loc:Loc Zh=自定义, En=Custom, Ru=&quot;Свой&quot;}" Style="{StaticResource DialogLabel}"
                                        VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <TextBox x:Name="AccentHexBox" Width="110"
                                      Style="{StaticResource DialogTextBox}"
                                      VerticalAlignment="Center"/>
-                            <Button Content="{loc:Loc Zh=应用, En=Apply}" Click="ApplyAccentHex_Click"
+                            <Button Content="{loc:Loc Zh=应用, En=Apply, Ru=&quot;Применить&quot;}" Click="ApplyAccentHex_Click"
                                     Style="{StaticResource DialogConfirmButton}"
                                     Height="28" MinWidth="0" Width="64" Padding="0"
                                     Margin="8,0,0,0" FontSize="12"/>
@@ -191,14 +199,14 @@
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
-                        <TextBlock Text="{loc:Loc Zh=项目信息, En=Project Info}"
+                        <TextBlock Text="{loc:Loc Zh=项目信息, En=Project Info, Ru=&quot;Информация о проекте&quot;}"
                                    FontSize="16" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,12"/>
                         <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,12"
-                                   Text="{loc:Loc Zh=编辑当前打开项目的名称与描述。当前版本号由版本管理维护，此处只读展示。, En=Edit the current project name and description. The version is maintained by version management and shown read-only here.}"/>
+                                   Text="{loc:Loc Zh=编辑当前打开项目的名称与描述。当前版本号由版本管理维护，此处只读展示。, En=Edit the current project name and description. The version is maintained by version management and shown read-only here., Ru=&quot;Измените название и описание текущего проекта. Версия управляется через управление версиями и показана здесь только для чтения.&quot;}"/>
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -211,14 +219,14 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc Zh=项目名称, En=Project Name}"
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc Zh=项目名称, En=Project Name, Ru=&quot;Название проекта&quot;}"
                                        Style="{StaticResource DialogLabel}"
                                        VerticalAlignment="Center"/>
                             <TextBox x:Name="ProjectNameBox" Grid.Row="0" Grid.Column="1"
                                      Style="{StaticResource DialogTextBox}"
                                      VerticalAlignment="Center" Margin="0,3,0,3"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc Zh=项目描述, En=Project Description}"
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc Zh=项目描述, En=Project Description, Ru=&quot;Описание проекта&quot;}"
                                        Style="{StaticResource DialogLabel}"
                                        VerticalAlignment="Center"/>
                             <TextBox x:Name="ProjectDescBox" Grid.Row="1" Grid.Column="1"
@@ -227,7 +235,7 @@
                                      Height="64" AcceptsReturn="True"
                                      TextWrapping="Wrap" VerticalContentAlignment="Top"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc Zh=当前版本, En=Current Version}"
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc Zh=当前版本, En=Current Version, Ru=&quot;Текущая версия&quot;}"
                                        Style="{StaticResource DialogLabel}"
                                        VerticalAlignment="Center"/>
                             <TextBox x:Name="ProjectVersionBox" Grid.Row="2" Grid.Column="1"
@@ -236,7 +244,7 @@
                                      VerticalAlignment="Center"/>
                         </Grid>
 
-                        <Button x:Name="SaveProjectBtn" Content="{loc:Loc Zh=保存项目信息, En=Save Project Info}"
+                        <Button x:Name="SaveProjectBtn" Content="{loc:Loc Zh=保存项目信息, En=Save Project Info, Ru=&quot;Сохранить информацию о проекте&quot;}"
                                 Click="SaveProject_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 HorizontalAlignment="Left" MinWidth="120" Height="34"/>
@@ -248,103 +256,189 @@
                         CornerRadius="8"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
-                        Padding="24,20" Margin="0">
+                        Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
-                        <TextBlock Text="{loc:Loc Zh=推送 / 仓库设置, En=Push / Repo Settings}"
+                        <TextBlock Text="{loc:Loc Zh=推送 / 仓库设置, En=Push / Repo Settings, Ru=&quot;Настройки отправки / репозитория&quot;}"
                                    FontSize="16" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,12"/>
                         <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,12"
-                                   Text="{loc:Loc Zh=管理「更新日志」提交生成时使用的目标仓库与提交选项。更改会自动保存。, En=Manage the target repos and commit options used when generating update log commits. Changes save automatically.}"/>
+                                   Text="{loc:Loc Zh=管理「更新日志」提交生成时使用的目标仓库与提交选项。更改会自动保存。, En=Manage the target repos and commit options used when generating update log commits. Changes save automatically., Ru=&quot;Управление целевыми репозиториями и параметрами коммитов для создания коммитов журнала обновлений. Изменения сохраняются автоматически.&quot;}"/>
 
-                        <!-- 仓库列表 -->
-                        <TextBlock Text="{loc:Loc Zh=目标仓库, En=Target Repos}"
+                        <!-- 目标仓库（从 GitHub 选择） -->
+                        <TextBlock x:Name="ReposHeader"
+                                   Text="{loc:Loc Zh=目标仓库, En=Target Repo, Ru=&quot;Целевой репозиторий&quot;}"
                                    FontSize="13" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,6"/>
 
-                        <ItemsControl x:Name="RepoList" Margin="0,0,0,10">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="180"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{Binding Name}"
-                                                   Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{Binding Url}"
-                                                   Foreground="{DynamicResource ForegroundBrush}"
-                                                   Opacity="0.6" FontSize="12"
-                                                   VerticalAlignment="Center"
-                                                   Margin="12,0,8,0"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <Button Grid.Column="2"
-                                                Content="{loc:Loc Zh=删除, En=Delete}"
-                                                Click="RemoveRepo_Click"
-                                                Style="{StaticResource DialogCancelButton}"
-                                                Height="26" MinWidth="0" Width="56"
-                                                Padding="0" FontSize="11"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <!-- 添加仓库 -->
-                        <Grid Margin="0,0,0,14">
+                        <Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="180"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="RepoNameBox" Grid.Column="0"
-                                     Style="{StaticResource DialogTextBox}"
-                                     Margin="0,0,8,0" ToolTip="{loc:Loc Zh=仓库名称, En=Repo name}"/>
-                            <TextBox x:Name="RepoUrlBox" Grid.Column="1"
-                                     Style="{StaticResource DialogTextBox}"
-                                     Margin="0,0,8,0" ToolTip="{loc:Loc Zh=仓库 URL, En=Repo URL}"/>
-                            <Button Grid.Column="2" Content="{loc:Loc Zh=添加仓库, En=Add Repo}"
-                                    Click="AddRepo_Click"
+                            <ComboBox x:Name="RepoSelector" Grid.Column="0"
+                                      Style="{StaticResource DialogComboBox}"
+                                      ItemContainerStyle="{StaticResource DialogComboBoxItem}"
+                                      DisplayMemberPath="Name"
+                                      SelectionChanged="RepoSelector_SelectionChanged"
+                                      Margin="0,0,8,0"
+                                      ToolTip="{loc:Loc Zh=从已登录的 GitHub 账号选择目标仓库, En=Select a target repo from the signed-in GitHub account, Ru=&quot;Выберите целевой репозиторий из аккаунта GitHub после входа&quot;}"/>
+                            <Button Grid.Column="1" Content="{loc:Loc Zh=刷新, En=Refresh, Ru=&quot;Обновить&quot;}"
+                                    Click="RefreshRepos_Click"
                                     Style="{StaticResource DialogConfirmButton}"
-                                    Height="30" MinWidth="0" Width="88" Padding="0"/>
+                                    Height="30" MinWidth="0" Width="64" Padding="0"/>
+                        </Grid>
+                        <TextBlock x:Name="RepoLoginHint" FontSize="12" Opacity="0.6"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   Text="{loc:Loc Zh=未登录 GitHub：请先在账号页登录后点击「刷新」。, En=Not signed in to GitHub: sign in on the account page then click Refresh., Ru=&quot;Не выполнен вход в GitHub: войдите на странице аккаунта и нажмите «Обновить».&quot;}"/>
+
+                        <!-- 分支（选择已有或输入新分支名） -->
+                        <Grid x:Name="BranchRow" Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="{loc:Loc Zh=分支, En=Branch, Ru=&quot;Ветка&quot;}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <ComboBox x:Name="BranchSelector" Grid.Column="1"
+                                      Style="{StaticResource DialogComboBox}"
+                                      ItemContainerStyle="{StaticResource DialogComboBoxItem}"
+                                      IsEditable="True"
+                                      SelectionChanged="BranchSelector_SelectionChanged"
+                                      LostFocus="BranchSelector_LostFocus"
+                                      ToolTip="{loc:Loc Zh=选择已有分支，或输入新分支名以在推送时自动创建, En=Select an existing branch or type a new branch name to create it on push, Ru=&quot;Выберите существующую ветку или введите имя новой ветки чтобы создать её при отправке&quot;}"/>
+                        </Grid>
+
+                        <!-- 远程文件路径（从 bin 文件夹选择） -->
+                        <Grid x:Name="RemotePathRow" Margin="0,0,0,14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="{loc:Loc Zh=要推送的文件, En=File to push, Ru=&quot;Файл для отправки&quot;}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <ComboBox x:Name="RemotePathCombo" Grid.Column="1"
+                                      Style="{StaticResource DialogComboBox}"
+                                      ItemContainerStyle="{StaticResource DialogComboBoxItem}"
+                                      SelectionChanged="RemotePath_SelectionChanged"
+                                      Margin="0,0,8,0"
+                                      ToolTip="{loc:Loc Zh=从程序 bin 文件夹中选择要推送的文件, En=Select the file to push from the app bin folder, Ru=&quot;Выберите файл для отправки из папки bin приложения&quot;}"/>
+                            <Button Grid.Column="2" Content="{loc:Loc Zh=刷新, En=Refresh, Ru=&quot;Обновить&quot;}"
+                                    Click="RefreshBinFiles_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="30" MinWidth="0" Width="64" Padding="0"/>
                         </Grid>
 
                         <Separator Margin="0,4,0,12" Opacity="0.2"/>
 
                         <!-- 提交选项 -->
-                        <TextBlock Text="{loc:Loc Zh=提交生成选项, En=Commit Generation Options}"
+                        <TextBlock x:Name="CommitOptionsHeader"
+                                   Text="{loc:Loc Zh=提交生成选项, En=Commit Generation Options, Ru=&quot;Параметры создания коммита&quot;}"
                                    FontSize="13" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,8"/>
 
                         <CheckBox x:Name="IncludeAuthorCheck"
-                                  Content="{loc:Loc Zh=提交信息包含作者, En=Include author in commit message}"
+                                  Content="{loc:Loc Zh=提交信息包含作者, En=Include author in commit message, Ru=&quot;Включить автора в сообщение коммита&quot;}"
                                   Checked="IncludeAuthor_Changed" Unchecked="IncludeAuthor_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
                                   FontSize="13" Margin="0,0,0,6"/>
                         <CheckBox x:Name="GroupByDateCheck"
-                                  Content="{loc:Loc Zh=按日期分组, En=Group by date}"
+                                  Content="{loc:Loc Zh=按日期分组, En=Group by date, Ru=&quot;Группировать по дате&quot;}"
                                   Checked="GroupByDate_Changed" Unchecked="GroupByDate_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
                                   FontSize="13" Margin="0,0,0,12"/>
+                    </StackPanel>
+                </Border>
 
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{loc:Loc Zh=版本号前缀, En=Version prefix}"
+                <!-- ==================== 系统 / 更新 ==================== -->
+                <Border x:Name="Section_System"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="24,20" Margin="0">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc Zh=系统 / 更新, En=System / Updates, Ru=&quot;Система / Обновления&quot;}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,12"/>
+
+                        <!-- 开机自启动 -->
+                        <TextBlock Text="{loc:Loc Zh=开机自启动, En=Launch at startup, Ru=&quot;Автозапуск&quot;}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="{loc:Loc Zh=登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。, En=Automatically launch this app when you sign in to Windows. It uses the current user startup registry entry and requires no administrator rights., Ru=&quot;Автоматически запускать приложение при входе в Windows. Используется запись автозапуска текущего пользователя в реестре и не требуются права администратора.&quot;}"/>
+
+                        <CheckBox x:Name="AutoStartCheck"
+                                  Content="{loc:Loc Zh=开机自动启动, En=Start with Windows, Ru=&quot;Запускать вместе с Windows&quot;}"
+                                  Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"
+                                  Foreground="{DynamicResource ForegroundBrush}"
+                                  FontSize="13" Margin="0,0,0,6"/>
+
+                        <Separator Margin="0,10,0,14" Opacity="0.2"/>
+
+                        <!-- 自动更新 -->
+                        <TextBlock Text="{loc:Loc Zh=自动更新, En=Auto Update, Ru=&quot;Автообновление&quot;}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="{loc:Loc Zh=从 GitHub Releases 检查新版本，确认后自动下载并运行安装程序。, En=Check GitHub Releases for new versions then download and run the installer after confirmation., Ru=&quot;Проверяет GitHub Releases на новые версии и после подтверждения загружает и запускает установщик.&quot;}"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="{loc:Loc Zh=当前版本, En=Current Version, Ru=&quot;Текущая версия&quot;}"
                                        Style="{StaticResource DialogLabel}"
                                        VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBox x:Name="VersionPrefixBox"
-                                     Style="{StaticResource DialogTextBox}"
-                                     Width="80" HorizontalAlignment="Left"
-                                     LostFocus="VersionPrefix_LostFocus"/>
+                            <TextBlock x:Name="CurrentVersionText"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
+
+                        <CheckBox x:Name="AutoCheckStartupCheck"
+                                  Content="{loc:Loc Zh=启动时自动检查更新, En=Check for updates on startup, Ru=&quot;Проверять обновления при запуске&quot;}"
+                                  Checked="AutoCheckStartup_Changed" Unchecked="AutoCheckStartup_Changed"
+                                  Foreground="{DynamicResource ForegroundBrush}"
+                                  FontSize="13" Margin="0,0,0,12"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Button x:Name="CheckUpdateBtn"
+                                    Content="{loc:Loc Zh=检查更新, En=Check for Updates, Ru=&quot;Проверить обновления&quot;}"
+                                    Click="CheckUpdate_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="32" MinWidth="0" Width="108" Padding="0" FontSize="12"/>
+                            <Button x:Name="DownloadUpdateBtn"
+                                    Content="{loc:Loc Zh=下载并安装, En=Download &amp; Install, Ru=&quot;Загрузить и установить&quot;}"
+                                    Click="DownloadUpdate_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="12"
+                                    Margin="8,0,0,0" Visibility="Collapsed"/>
+                            <Button x:Name="OpenReleaseBtn"
+                                    Content="{loc:Loc Zh=打开下载页, En=Open Download Page, Ru=&quot;Открыть страницу загрузки&quot;}"
+                                    Click="OpenRelease_Click"
+                                    Style="{StaticResource DialogCancelButton}"
+                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="12"
+                                    Margin="8,0,0,0" Visibility="Collapsed"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="UpdateStatusText"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Opacity="0.7" FontSize="12"
+                                   TextWrapping="Wrap" LineHeight="20"/>
                     </StackPanel>
                 </Border>
 
