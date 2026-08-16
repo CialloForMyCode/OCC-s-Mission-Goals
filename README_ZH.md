@@ -270,5 +270,5 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 
 ---
 
-> 本项目采用 MIT License。
+> 本项目采用 GPL-2.0 License。
 > 仓库地址：[https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)

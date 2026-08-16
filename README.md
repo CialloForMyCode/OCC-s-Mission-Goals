@@ -270,5 +270,5 @@ Entry fields:
 
 ---
 
-> MIT License.
+> GPL-2.0 License.
 > Repo: [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)

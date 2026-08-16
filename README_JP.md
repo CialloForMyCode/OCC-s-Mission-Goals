@@ -270,5 +270,5 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 
 ---
 
-> MIT License.
+> GPL-2.0 License.
 > リポジトリ: [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)

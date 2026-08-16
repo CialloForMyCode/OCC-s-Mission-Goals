@@ -270,5 +270,5 @@ Champs d'entrée :
 
 ---
 
-> Licence MIT.
+> Licence GPL-2.0.
 > Dépôt : [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)

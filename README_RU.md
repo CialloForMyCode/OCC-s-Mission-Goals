@@ -270,5 +270,5 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 
 ---
 
-> Лицензия MIT.
+> Лицензия GPL-2.0.
 > Репозиторий: [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)
