@@ -14,7 +14,7 @@
 #endif
 
 #define MyAppName "OCC's Mission & Goals"
-#define MyAppVersion "0.1.7-Beta"
+#define MyAppVersion "0.1.8-Beta"
 #define MyAppPublisher "Harvnyx"
 #define MyAppURL "https://github.com/CialloForMyCode/OCC-s-Mission-Goals"
 #define MyAppExeName "OCCMissionGoals.exe"
@@ -59,8 +59,8 @@ ArchitecturesAllowed=x86compatible
 #endif
 
 ; setup.exe 自身的版本信息（Windows 要求纯数字版本段）
-VersionInfoVersion=0.1.7.0
-VersionInfoProductVersion=0.1.7.0
+VersionInfoVersion=0.1.8.0
+VersionInfoProductVersion=0.1.8.0
 VersionInfoTextVersion={#MyAppVersion}
 VersionInfoProductTextVersion={#MyAppVersion}
 

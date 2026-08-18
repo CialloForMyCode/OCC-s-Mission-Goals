@@ -14,8 +14,13 @@ public partial class VersionDialog : UserControl
 
     public string VersionName => VersionNameBox.Text.Trim();
     public string? SelectedVersion => VersionListBox.SelectedItem as string;
+    public string? SelectedDeleteVersion => DeleteVersionListBox.SelectedItem as string;
+
+    /// <summary>当前是否为「删除版本」模式。</summary>
+    public bool IsDeleteMode => _isDeleteMode;
 
     private bool _isNewMode = true;
+    private bool _isDeleteMode;
 
     public VersionDialog()
     {
@@ -32,9 +37,11 @@ public partial class VersionDialog : UserControl
                 : f)
             .ToList();
         VersionListBox.ItemsSource = cleanNames;
+        DeleteVersionListBox.ItemsSource = cleanNames;
         if (cleanNames.Count > 0)
         {
             VersionListBox.SelectedIndex = 0;
+            DeleteVersionListBox.SelectedIndex = 0;
             // 预填下一个版本号
             var current = ProjectService.CurrentProject?.CurrentVersion ?? "0.1.0-alpha.0";
             VersionNameBox.Text = NextVersion(current);
@@ -47,29 +54,58 @@ public partial class VersionDialog : UserControl
         VersionNameBox.Text = "0.2.0-alpha.0";
         NewHint.Text = "";
         OpenHint.Text = "";
+        DeleteHint.Text = "";
     }
 
     private void NewModeBtn_Checked(object sender, RoutedEventArgs e)
     {
-        if (NewPanel == null || OpenPanel == null || ConfirmBtn == null) return;
+        if (NewPanel == null || OpenPanel == null || DeletePanel == null || ConfirmBtn == null) return;
         _isNewMode = true;
+        _isDeleteMode = false;
         NewPanel.Visibility = Visibility.Visible;
         OpenPanel.Visibility = Visibility.Collapsed;
+        DeletePanel.Visibility = Visibility.Collapsed;
         ConfirmBtn.Content = LocalizationManager.T("创建");
     }
 
     private void OpenModeBtn_Checked(object sender, RoutedEventArgs e)
     {
-        if (NewPanel == null || OpenPanel == null || ConfirmBtn == null) return;
+        if (NewPanel == null || OpenPanel == null || DeletePanel == null || ConfirmBtn == null) return;
         _isNewMode = false;
+        _isDeleteMode = false;
         NewPanel.Visibility = Visibility.Collapsed;
         OpenPanel.Visibility = Visibility.Visible;
+        DeletePanel.Visibility = Visibility.Collapsed;
         ConfirmBtn.Content = LocalizationManager.T("打开");
+    }
+
+    private void DeleteModeBtn_Checked(object sender, RoutedEventArgs e)
+    {
+        if (NewPanel == null || OpenPanel == null || DeletePanel == null || ConfirmBtn == null) return;
+        _isNewMode = false;
+        _isDeleteMode = true;
+        NewPanel.Visibility = Visibility.Collapsed;
+        OpenPanel.Visibility = Visibility.Collapsed;
+        DeletePanel.Visibility = Visibility.Visible;
+        ConfirmBtn.Content = LocalizationManager.T("删除");
     }
 
     private void ConfirmBtn_Click(object sender, RoutedEventArgs e)
     {
-        if (_isNewMode)
+        if (_isDeleteMode)
+        {
+            if (string.IsNullOrEmpty(SelectedDeleteVersion))
+            {
+                DeleteHint.Text = LocalizationManager.T("请选择一个版本。");
+                return;
+            }
+            if (SelectedDeleteVersion == (ProjectService.CurrentProject?.CurrentVersion ?? ""))
+            {
+                DeleteHint.Text = LocalizationManager.T("不能删除当前版本。");
+                return;
+            }
+        }
+        else if (_isNewMode)
         {
             if (string.IsNullOrWhiteSpace(VersionName))
             {

@@ -236,7 +236,7 @@
     <s:String xml:space="preserve" x:Key="打开">打开</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">打开下载页</s:String>
     <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">打开推送（上传 / 备份）设置</s:String>
-    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">打开数据文件(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本(_O)">打开版本(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">打开版本</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">打开项目</s:String>
     <s:String xml:space="preserve" x:Key="打开项目(_O)">打开项目(_O)</s:String>
@@ -283,8 +283,8 @@
     <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false</s:String>
     <s:String xml:space="preserve" x:Key="收起">收起</s:String>
     <s:String xml:space="preserve" x:Key="数据文件">数据文件</s:String>
-    <s:String xml:space="preserve" x:Key="文件(_F)">文件(_F)</s:String>
-    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">新建数据文件(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="版本(_V)">版本(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本(_N)">新建版本(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建条目">新建条目</s:String>
     <s:String xml:space="preserve" x:Key="新建条目(_N)">新建条目(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建版本">新建版本</s:String>
@@ -469,4 +469,10 @@
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 致命</s:String>
     <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 补丁</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 更新</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本">删除版本</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本(_D)">删除版本(_D)</s:String>
+    <s:String xml:space="preserve" x:Key="已删除版本 {0}。">已删除版本 {0}。</s:String>
+    <s:String xml:space="preserve" x:Key="不能删除当前版本。">不能删除当前版本。</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除版本 {0} 吗？此操作不可恢复。">确定要删除版本 {0} 吗？此操作不可恢复。</s:String>
+    <s:String xml:space="preserve" x:Key="选择要删除的版本">选择要删除的版本</s:String>
 </ResourceDictionary>

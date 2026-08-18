@@ -13,8 +13,9 @@ namespace OCCMissionGoals.ToolPages
             MenuItemOpen.Click += OpenProject_Click;
             MenuItemSetting.Click += SettingProject_Click;
             MenuItemNewEntry.Click += NewEntry_Click;
-            MenuItemNewData.Click += NewVersion_Click;
-            MenuItemOpenData.Click += OpenVersion_Click;
+            MenuItemNewVersion.Click += NewVersion_Click;
+            MenuItemOpenVersion.Click += OpenVersion_Click;
+            MenuItemDeleteVersion.Click += DeleteVersion_Click;
             MenuItemHelp.Click += Help_Click;
         }
 
@@ -29,13 +30,16 @@ namespace OCCMissionGoals.ToolPages
         private void SettingProject_Click(object sender, RoutedEventArgs e)
             => (Application.Current.MainWindow as MainWindow)?.OpenProjectSettings();
 
-        // ======================== 数据文件 / 版本 ========================
+        // ======================== 版本 ========================
 
         private void NewVersion_Click(object sender, RoutedEventArgs e)
             => (Application.Current.MainWindow as MainWindow)?.ShowNewVersionDialog();
 
         private void OpenVersion_Click(object sender, RoutedEventArgs e)
             => (Application.Current.MainWindow as MainWindow)?.ShowOpenVersionDialog();
+
+        private void DeleteVersion_Click(object sender, RoutedEventArgs e)
+            => (Application.Current.MainWindow as MainWindow)?.ShowDeleteVersionDialog();
 
         // ======================== 条目视图 ========================
 

@@ -29,8 +29,18 @@ public static class DataService
     /// <summary>获取当前数据文件路径，可能为 null。</summary>
     public static string? GetFilePath() => _path;
 
-    /// <summary>从当前路径加载数据。</summary>
+    /// <summary>从当前路径加载数据（加跨进程锁，避免读到写了一半的文件）。</summary>
     public static void Load()
+    {
+        if (_path == null) return;
+        using (FileLock.Acquire())
+        {
+            LoadCore();
+        }
+    }
+
+    /// <summary>锁内从当前路径加载数据。</summary>
+    private static void LoadCore()
     {
         if (_path == null) return;
 
@@ -48,10 +58,20 @@ public static class DataService
     }
 
     /// <summary>GUI 内部保存时为 true，用于抑制文件监视器。</summary>
-    internal static bool IsInternalSave;
+    internal static volatile bool IsInternalSave;
 
-    /// <summary>将当前数据写回当前路径。</summary>
+    /// <summary>将当前数据写回当前路径（加跨进程锁）。</summary>
     public static void Save()
+    {
+        if (_path == null) return;
+        using (FileLock.Acquire())
+        {
+            WriteCurrentCore();
+        }
+    }
+
+    /// <summary>锁内将当前数据写回当前路径。</summary>
+    private static void WriteCurrentCore()
     {
         if (_path == null) return;
 
@@ -62,6 +82,27 @@ public static class DataService
         var json = JsonSerializer.Serialize(Current, _jsonOptions);
         File.WriteAllText(_path, json);
         IsInternalSave = false;
+    }
+
+    /// <summary>
+    /// 原子添加一条条目：在跨进程锁内重新读取磁盘最新数据、分配编号、追加后写回。
+    /// 防止 GUI 与 CLI 并发添加时互相覆盖或编号重复。
+    /// </summary>
+    public static void AddEntryAtomic(GoalEntry entry)
+    {
+        if (_path == null) return;
+        using (FileLock.Acquire())
+        {
+            // 1. 基于磁盘最新 project.json 分配编号
+            ProjectService.AssignEntryIdCore(entry);
+
+            // 2. 重新读取磁盘最新数据，再追加，避免覆盖外部进程刚写入的内容
+            LoadCore();
+            Current.Unfinished.Add(entry);
+
+            // 3. 写回
+            WriteCurrentCore();
+        }
     }
 
     /// <summary>
@@ -94,6 +135,15 @@ public static class DataService
     /// 执行修改后保存。如果版本号变更则跨文件搬迁。
     /// </summary>
     public static bool SaveToEntryVersion(string projectDir, GoalEntry entry,
+        Action<DataFile, GoalEntry> modify)
+    {
+        using (FileLock.Acquire())
+        {
+            return SaveToEntryVersionCore(projectDir, entry, modify);
+        }
+    }
+
+    private static bool SaveToEntryVersionCore(string projectDir, GoalEntry entry,
         Action<DataFile, GoalEntry> modify)
     {
         var versionsDir = ProjectService.GetVersionsDir(projectDir);
@@ -137,7 +187,7 @@ public static class DataService
             bool inUnfinished = foundData.Unfinished.Contains(target);
             if (inUnfinished) foundData.Unfinished.Remove(target);
             else foundData.Finished.Remove(target);
-            SaveVersionFile(foundFile, foundData);
+            WriteVersionFileCore(foundFile, foundData);
 
             var newFile = Path.Combine(versionsDir, newVersion + ".json");
             DataFile newData;
@@ -150,11 +200,11 @@ public static class DataService
 
             if (inUnfinished) newData.Unfinished.Add(target);
             else newData.Finished.Add(target);
-            SaveVersionFile(newFile, newData);
+            WriteVersionFileCore(newFile, newData);
         }
         else
         {
-            SaveVersionFile(foundFile, foundData);
+            WriteVersionFileCore(foundFile, foundData);
         }
 
         // 3. 同步更新调用方持有的 entry 引用
@@ -182,7 +232,16 @@ public static class DataService
             if (f != hintFile) yield return f;
     }
 
-    private static void SaveVersionFile(string file, DataFile data)
+    /// <summary>将数据写入指定版本文件（加跨进程锁）。</summary>
+    public static void SaveVersionFile(string file, DataFile data)
+    {
+        using (FileLock.Acquire())
+        {
+            WriteVersionFileCore(file, data);
+        }
+    }
+
+    private static void WriteVersionFileCore(string file, DataFile data)
     {
         var dir = Path.GetDirectoryName(file);
         if (dir != null) Directory.CreateDirectory(dir);

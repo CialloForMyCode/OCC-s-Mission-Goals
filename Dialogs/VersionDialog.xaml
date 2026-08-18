@@ -109,6 +109,9 @@
                     <RadioButton x:Name="OpenModeBtn" Content="{loc:Loc &quot;打开版本&quot;}" GroupName="Mode"
                                  Checked="OpenModeBtn_Checked"
                                  Style="{StaticResource ConsoleTabRadioButton}"/>
+                    <RadioButton x:Name="DeleteModeBtn" Content="{loc:Loc &quot;删除版本&quot;}" GroupName="Mode"
+                                 Checked="DeleteModeBtn_Checked"
+                                 Style="{StaticResource ConsoleTabRadioButton}"/>
                 </StackPanel>
 
                 <!-- 新建模式 -->
@@ -130,6 +133,18 @@
                              ItemContainerStyle="{StaticResource VersionListBoxItemStyle}"
                              Margin="0,0,0,10"/>
                     <TextBlock x:Name="OpenHint" Text=""
+                               Foreground="{DynamicResource ForegroundBrush}"
+                               FontSize="11" Margin="0,0,0,8"/>
+                </StackPanel>
+
+                <!-- 删除模式 -->
+                <StackPanel x:Name="DeletePanel" Visibility="Collapsed">
+                    <TextBlock Text="{loc:Loc &quot;选择要删除的版本&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <ListBox x:Name="DeleteVersionListBox" MaxHeight="160"
+                             Style="{StaticResource VersionListBoxStyle}"
+                             ItemContainerStyle="{StaticResource VersionListBoxItemStyle}"
+                             Margin="0,0,0,10"/>
+                    <TextBlock x:Name="DeleteHint" Text=""
                                Foreground="{DynamicResource ForegroundBrush}"
                                FontSize="11" Margin="0,0,0,8"/>
                 </StackPanel>

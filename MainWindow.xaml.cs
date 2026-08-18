@@ -320,6 +320,7 @@ namespace OCCMissionGoals
             new("openProject", LocalizationManager.T("打开项目"), new[] { "打开项目", "打开", "项目", "open project", "project" }, ShowOpenProjectDialog),
             new("newVersion", LocalizationManager.T("新建版本"), new[] { "新建版本", "新建", "版本", "数据", "new version", "version" }, ShowNewVersionDialog),
             new("openVersion", LocalizationManager.T("打开版本"), new[] { "打开版本", "打开", "版本", "数据", "open version", "version" }, ShowOpenVersionDialog),
+            new("deleteVersion", LocalizationManager.T("删除版本"), new[] { "删除版本", "删除", "版本", "delete version", "version" }, ShowDeleteVersionDialog),
             new("help", LocalizationManager.T("帮助"), new[] { "帮助", "使用说明", "文档", "help", "about" }, ShowHelpPage),
         };
 
@@ -995,6 +996,23 @@ namespace OCCMissionGoals
             ShowVersionDialogOverlay();
         }
 
+        /// <summary>打开「删除版本」弹窗。</summary>
+        public void ShowDeleteVersionDialog()
+        {
+            if (Services.ProjectService.CurrentProjectDir == null)
+            {
+                SetTipText(LocalizationManager.T("请先打开一个项目。"));
+                return;
+            }
+
+            VersionDialog.Reset();
+            VersionDialog.LoadVersions(Services.ProjectService.CurrentProjectDir);
+            VersionDialog.DeleteModeBtn.IsChecked = true;
+            VersionDialog.Confirmed += OnVersionConfirmed;
+            VersionDialog.Cancelled += OnVersionDismissed;
+            ShowVersionDialogOverlay();
+        }
+
         private void ShowVersionDialogOverlay()
         {
             MainContentGrid.Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 8 };
@@ -1006,6 +1024,30 @@ namespace OCCMissionGoals
         {
             try
             {
+                if (VersionDialog.IsDeleteMode)
+                {
+                    var deleteVersion = VersionDialog.SelectedDeleteVersion;
+                    if (string.IsNullOrEmpty(deleteVersion))
+                    {
+                        SetTipText(LocalizationManager.T("请选择一个版本。"));
+                        return;
+                    }
+
+                    var yes = MessageBox.Show(
+                        this,
+                        LocalizationManager.T("确定要删除版本 {0} 吗？此操作不可恢复。", deleteVersion),
+                        LocalizationManager.T("删除版本"),
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+                    if (yes != MessageBoxResult.Yes) return;
+
+                    Services.ProjectService.DeleteVersion(deleteVersion + ".json");
+                    RefreshAllViews();
+                    DismissVersionDialog();
+                    SetTipText(LocalizationManager.T("已删除版本 {0}。", deleteVersion));
+                    return;
+                }
+
                 var versionName = VersionDialog.VersionName;
                 var selectedVersion = VersionDialog.SelectedVersion;
 
@@ -1604,9 +1646,7 @@ namespace OCCMissionGoals
                     Type = NewEntryDialog.Type,
                     RelatedFiles = new(NewEntryDialog.Files)
                 };
-                Services.ProjectService.AssignEntryId(entry);
-                Services.DataService.Current.Unfinished.Add(entry);
-                Services.DataService.Save();
+                Services.DataService.AddEntryAtomic(entry);
                 RefreshUnDoneList();
                 DismissDialogOverlay();
                 SetTipText(LocalizationManager.T("已添加条目「{0}」。", entry.Title));

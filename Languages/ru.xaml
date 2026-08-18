@@ -236,7 +236,7 @@
     <s:String xml:space="preserve" x:Key="打开">Открыть</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">Открыть страницу загрузки</s:String>
     <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">Открыть настройки отправки (загрузка / резервное копирование)</s:String>
-    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">Открыть файл данных(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本(_O)">Открыть версию(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">Открыть версию</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">Открыть проект</s:String>
     <s:String xml:space="preserve" x:Key="打开项目(_O)">Открыть проект(_O)</s:String>
@@ -283,8 +283,8 @@
     <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">Добавить в избранное / убрать. Использование: -f &lt;id&gt; true|false</s:String>
     <s:String xml:space="preserve" x:Key="收起">Свернуть</s:String>
     <s:String xml:space="preserve" x:Key="数据文件">Файлы данных</s:String>
-    <s:String xml:space="preserve" x:Key="文件(_F)">Файл(_F)</s:String>
-    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">Новый файл данных(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="版本(_V)">Версия(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本(_N)">Новая версия(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建条目">Новая запись</s:String>
     <s:String xml:space="preserve" x:Key="新建条目(_N)">Новая запись(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建版本">Новая версия</s:String>
@@ -469,4 +469,10 @@
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 Критический</s:String>
     <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 Исправление</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 Обновление</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本">Удалить версию</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本(_D)">Удалить версию(_D)</s:String>
+    <s:String xml:space="preserve" x:Key="已删除版本 {0}。">Версия {0} удалена.</s:String>
+    <s:String xml:space="preserve" x:Key="不能删除当前版本。">Текущую версию удалить нельзя.</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除版本 {0} 吗？此操作不可恢复。">Удалить версию {0}? Это действие необратимо.</s:String>
+    <s:String xml:space="preserve" x:Key="选择要删除的版本">Выберите версию для удаления</s:String>
 </ResourceDictionary>

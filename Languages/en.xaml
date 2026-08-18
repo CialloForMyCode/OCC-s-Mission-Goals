@@ -236,7 +236,7 @@
     <s:String xml:space="preserve" x:Key="打开">Open</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">Open Download Page</s:String>
     <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">Open push (upload / backup) settings</s:String>
-    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">Open Data File(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本(_O)">Open Version(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">Open Version</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">Open Project</s:String>
     <s:String xml:space="preserve" x:Key="打开项目(_O)">Open Project(_O)</s:String>
@@ -283,8 +283,8 @@
     <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">Favorite / unfavorite. Usage: -f &lt;id&gt; true|false</s:String>
     <s:String xml:space="preserve" x:Key="收起">Collapse</s:String>
     <s:String xml:space="preserve" x:Key="数据文件">Data files</s:String>
-    <s:String xml:space="preserve" x:Key="文件(_F)">File(_F)</s:String>
-    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">New Data File(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="版本(_V)">Version(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本(_N)">New Version(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建条目">New Entry</s:String>
     <s:String xml:space="preserve" x:Key="新建条目(_N)">New Entry(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建版本">New Version</s:String>
@@ -469,4 +469,10 @@
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 Fatal</s:String>
     <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 Patch</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 Update</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本">Delete Version</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本(_D)">Delete Version(_D)</s:String>
+    <s:String xml:space="preserve" x:Key="已删除版本 {0}。">Version {0} deleted.</s:String>
+    <s:String xml:space="preserve" x:Key="不能删除当前版本。">Cannot delete the current version.</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除版本 {0} 吗？此操作不可恢复。">Delete version {0}? This cannot be undone.</s:String>
+    <s:String xml:space="preserve" x:Key="选择要删除的版本">Select a version to delete</s:String>
 </ResourceDictionary>

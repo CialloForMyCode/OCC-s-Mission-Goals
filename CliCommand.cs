@@ -185,22 +185,23 @@ public static class CliCommand
         catch (Exception ex) { Err($"解析失败: {ex.Message}"); return 1; }
         if (entry == null || string.IsNullOrWhiteSpace(entry.Title)) { Err("缺少 Title"); return 1; }
 
-        ProjectService.AssignEntryId(entry);
-        DataService.Current.Unfinished.Add(entry);
-        DataService.Save();
+        DataService.AddEntryAtomic(entry);
         OutJson(EntryToDict(entry, 0));
         return 0;
     }
 
     static int EntryDelete(List<string> args)
     {
-        var (entry, data, file) = FindEntryById(args);
-        if (entry == null) return 1;
-        if (data.Unfinished.Contains(entry)) data.Unfinished.Remove(entry);
-        else data.Finished.Remove(entry);
-        SaveVersionFile(file, data);
-        OutJson(new { ok = true, id = entry.Id, title = entry.Title, deleted = true });
-        return 0;
+        using (FileLock.Acquire())
+        {
+            var (entry, data, file) = FindEntryById(args);
+            if (entry == null) return 1;
+            if (data.Unfinished.Contains(entry)) data.Unfinished.Remove(entry);
+            else data.Finished.Remove(entry);
+            SaveVersionFileCore(file, data);
+            OutJson(new { ok = true, id = entry.Id, title = entry.Title, deleted = true });
+            return 0;
+        }
     }
 
     static int EntryCheck(List<string> args)
@@ -217,27 +218,33 @@ public static class CliCommand
 
     static int EntryDone(List<string> args)
     {
-        var (entry, data, file) = FindEntryById(args);
-        if (entry == null) return 1;
-        if (data.Finished.Contains(entry)) { Err("条目已完成。"); return 1; }
-        data.Unfinished.Remove(entry);
-        entry.CompletedAt = DateTime.Today;
-        data.Finished.Add(entry);
-        SaveVersionFile(file, data);
-        OutJson(new { ok = true, id = entry.Id, title = entry.Title, status = "finished" });
-        return 0;
+        using (FileLock.Acquire())
+        {
+            var (entry, data, file) = FindEntryById(args);
+            if (entry == null) return 1;
+            if (data.Finished.Contains(entry)) { Err("条目已完成。"); return 1; }
+            data.Unfinished.Remove(entry);
+            entry.CompletedAt = DateTime.Today;
+            data.Finished.Add(entry);
+            SaveVersionFileCore(file, data);
+            OutJson(new { ok = true, id = entry.Id, title = entry.Title, status = "finished" });
+            return 0;
+        }
     }
 
     static int EntryUndone(List<string> args)
     {
-        var (entry, data, file) = FindEntryById(args);
-        if (entry == null) return 1;
-        if (data.Unfinished.Contains(entry)) { Err("条目未完成。"); return 1; }
-        data.Finished.Remove(entry);
-        data.Unfinished.Insert(0, entry);
-        SaveVersionFile(file, data);
-        OutJson(new { ok = true, id = entry.Id, title = entry.Title, status = "unfinished" });
-        return 0;
+        using (FileLock.Acquire())
+        {
+            var (entry, data, file) = FindEntryById(args);
+            if (entry == null) return 1;
+            if (data.Unfinished.Contains(entry)) { Err("条目未完成。"); return 1; }
+            data.Finished.Remove(entry);
+            data.Unfinished.Insert(0, entry);
+            SaveVersionFileCore(file, data);
+            OutJson(new { ok = true, id = entry.Id, title = entry.Title, status = "unfinished" });
+            return 0;
+        }
     }
 
     static int EntryFavorite(List<string> args)
@@ -245,12 +252,15 @@ public static class CliCommand
         if (args.Count < 2) { Err("用法: -f <编号> true|false"); return 1; }
         var id = args[0];
         if (!bool.TryParse(args[1], out var fav)) { Err("第二个参数必须是 true 或 false"); return 1; }
-        var (entry, data, file) = FindEntryByIdRaw(id);
-        if (entry == null) return 1;
-        entry.IsFavorited = fav;
-        SaveVersionFile(file, data);
-        OutJson(new { ok = true, id = entry.Id, title = entry.Title, isFavorited = entry.IsFavorited });
-        return 0;
+        using (FileLock.Acquire())
+        {
+            var (entry, data, file) = FindEntryByIdRaw(id);
+            if (entry == null) return 1;
+            entry.IsFavorited = fav;
+            SaveVersionFileCore(file, data);
+            OutJson(new { ok = true, id = entry.Id, title = entry.Title, isFavorited = entry.IsFavorited });
+            return 0;
+        }
     }
 
     static int EntryList(List<string> args)
@@ -294,7 +304,7 @@ public static class CliCommand
         var file = SysPath.Combine(ProjectService.GetVersionsDir(ProjectService.CurrentProjectDir!), ver + ".json");
         if (!File.Exists(file)) { Err($"版本文件不存在: {ver}.json"); return 1; }
         if (ver == (ProjectService.CurrentProject?.CurrentVersion ?? "")) { Err("不能删除当前版本。"); return 1; }
-        File.Delete(file);
+        ProjectService.DeleteVersion(ver + ".json");
         OutJson(new { ok = true, version = ver, deleted = true });
         return 0;
     }
@@ -447,9 +457,7 @@ public static class CliCommand
         var deadline = DateTime.Today.AddDays(7);
         if (!string.IsNullOrWhiteSpace(dlStr)) DateTime.TryParse(dlStr, out deadline);
         var entry = new GoalEntry { Title = title, Severity = sev, Brief = brief, Detail = detail, Deadline = deadline, Version = ver };
-        ProjectService.AssignEntryId(entry);
-        DataService.Current.Unfinished.Add(entry);
-        DataService.Save();
+        DataService.AddEntryAtomic(entry);
         OutJson(EntryToDict(entry, DataService.Current.Unfinished.Count));
         return 0;
     }
@@ -658,7 +666,7 @@ public static class CliCommand
         catch { return null; }
     }
 
-    static void SaveVersionFile(string file, DataFile data)
+    static void SaveVersionFileCore(string file, DataFile data)
     {
         var dir = SysPath.GetDirectoryName(file);
         if (dir != null) Directory.CreateDirectory(dir);
