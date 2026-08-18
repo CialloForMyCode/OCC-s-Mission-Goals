@@ -4,6 +4,31 @@
     <!-- 共享缓动 -->
     <CubicEase x:Key="MenuEase" EasingMode="EaseOut"/>
 
+    <!-- 右键菜单（ContextMenu）背景样式 -->
+    <Style TargetType="ContextMenu">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border Background="{DynamicResource MenuPopupBackgroundBrush}"
+                            BorderBrush="{DynamicResource MenuPopupBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}"
+                            MinWidth="180">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="2"
+                                              Opacity="0.25" Color="Black"/>
+                        </Border.Effect>
+                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- MenuItem 样式 -->
     <Style x:Key="MenuItemStyle" TargetType="MenuItem">
         <Setter Property="Margin" Value="2,0,2,0"/>
@@ -1098,6 +1123,91 @@
     </Style>
     
     <!-- 空状态页操作按钮 -->
+    <!-- 设置页单选按钮（带圆形指示器 + 文字标签） -->
+    <Style x:Key="SettingsRadioButton" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Grid Width="18" Height="18" VerticalAlignment="Center">
+                            <Ellipse x:Name="Ring"
+                                     Stroke="{DynamicResource CardBorderBrush}"
+                                     StrokeThickness="1.5"
+                                     Fill="Transparent"/>
+                            <Ellipse x:Name="Dot"
+                                     Width="8" Height="8"
+                                     Fill="{DynamicResource PrimaryBrush}"
+                                     Visibility="Collapsed"/>
+                        </Grid>
+                        <ContentPresenter VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Ring" Property="Stroke" Value="{DynamicResource PrimaryBrush}"/>
+                            <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Ring" Property="Stroke" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                            <Setter TargetName="Ring" Property="Stroke" Value="{DynamicResource DisabledForegroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 设置页复选框（带圆角方框 + 勾选标记 + 文字标签） -->
+    <Style x:Key="SettingsCheckBox" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Border x:Name="Box"
+                                Width="18" Height="18"
+                                CornerRadius="4"
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource CardBorderBrush}"
+                                BorderThickness="1.5"
+                                VerticalAlignment="Center">
+                            <Path x:Name="CheckMark"
+                                  Data="M13.6572 3.13573C13.8583 2.9465 14.175 2.95614 14.3643 3.15722C14.5438 3.35831 14.5438 3.675 14.3428 3.86425L5.84277 11.8642C5.64597 12.0494 5.33756 12.0446 5.14648 11.8535L1.64648 8.35351C1.45121 8.15824 1.45121 7.84174 1.64648 7.64647C1.84174 7.45121 2.15825 7.45121 2.35351 7.64647L5.50976 10.8027L13.6572 3.13573Z"
+                                  Stretch="Uniform"
+                                  Width="11" Height="11"
+                                  Fill="#FFFFFF"
+                                  Visibility="Collapsed"/>
+                        </Border>
+                        <ContentPresenter VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource DisabledForegroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="NotFileExplorerButton" TargetType="Button">
         <Setter Property="Height" Value="30"/>
         <Setter Property="FontSize" Value="13"/>

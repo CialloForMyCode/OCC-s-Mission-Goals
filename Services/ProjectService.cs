@@ -240,6 +240,31 @@ public static class ProjectService
         DataService.Load();
     }
 
+    /// <summary>删除当前项目下的一个版本文件（加跨进程锁，禁止删除当前版本）。</summary>
+    public static void DeleteVersion(string versionFileName)
+    {
+        if (CurrentProjectDir == null)
+            throw new InvalidOperationException("没有打开的项目。");
+        if (CurrentProject == null)
+            throw new InvalidOperationException("没有打开的项目配置。");
+
+        var cleanVersion = versionFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+            ? versionFileName[..^5]
+            : versionFileName;
+        if (cleanVersion == CurrentProject.CurrentVersion)
+            throw new InvalidOperationException("不能删除当前版本。");
+
+        var versionsDir = GetVersionsDir(CurrentProjectDir);
+        var versionPath = Path.Combine(versionsDir, cleanVersion + ".json");
+
+        using (FileLock.Acquire())
+        {
+            if (!File.Exists(versionPath))
+                throw new FileNotFoundException("版本文件不存在。", versionPath);
+            File.Delete(versionPath);
+        }
+    }
+
     /// <summary>尝试从 config.ini 恢复上次打开的项目。</summary>
     public static bool TryRestoreLastProject()
     {
@@ -287,13 +312,27 @@ public static class ProjectService
 
     // ======================== 条目编号 ========================
 
-    /// <summary>为新条目分配隐藏编号（PPPEEEEEE 格式）。</summary>
+    /// <summary>为新条目分配隐藏编号（PPPEEEEEE 格式），加跨进程锁并基于磁盘最新值。</summary>
     public static void AssignEntryId(GoalEntry entry)
     {
         if (CurrentProject == null || CurrentProjectDir == null) return;
-        entry.Id = $"{CurrentProject.ProjectNumber:D3}{CurrentProject.NextEntryId:D6}";
-        CurrentProject.NextEntryId++;
-        SaveProjectConfig(CurrentProjectDir, CurrentProject);
+        using (FileLock.Acquire())
+        {
+            AssignEntryIdCore(entry);
+        }
+    }
+
+    /// <summary>锁内为新条目分配编号：重新读取 project.json 拿最新 NextEntryId，避免与 CLI 冲突。</summary>
+    internal static void AssignEntryIdCore(GoalEntry entry)
+    {
+        if (CurrentProject == null || CurrentProjectDir == null) return;
+
+        // 重新读取磁盘上的 project.json，确保基于最新 NextEntryId（而非进程内可能过期的缓存）
+        var cfg = ReadProjectConfigFromDisk(CurrentProjectDir) ?? CurrentProject;
+        entry.Id = $"{cfg.ProjectNumber:D3}{cfg.NextEntryId:D6}";
+        cfg.NextEntryId++;
+        CurrentProject = cfg;
+        WriteProjectConfigCore(CurrentProjectDir, cfg);
     }
 
     /// <summary>为缺少 Id 的旧条目回填编号，并同步 NextEntryId。</summary>
@@ -348,9 +387,34 @@ public static class ProjectService
 
     private static void SaveProjectConfig(string dir, ProjectConfig config)
     {
+        using (FileLock.Acquire())
+        {
+            WriteProjectConfigCore(dir, config);
+        }
+    }
+
+    /// <summary>锁内写 project.json。</summary>
+    private static void WriteProjectConfigCore(string dir, ProjectConfig config)
+    {
         var path = Path.Combine(dir, "project.json");
         var json = JsonSerializer.Serialize(config, _jsonOptions);
         File.WriteAllText(path, json);
+    }
+
+    /// <summary>从磁盘读取 project.json（锁内使用，绕过进程内缓存）。</summary>
+    private static ProjectConfig? ReadProjectConfigFromDisk(string dir)
+    {
+        var path = Path.Combine(dir, "project.json");
+        if (!File.Exists(path)) return null;
+        try
+        {
+            var json = File.ReadAllText(path);
+            return JsonSerializer.Deserialize<ProjectConfig>(json, _jsonOptions);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static string SanitizeFolderName(string name)

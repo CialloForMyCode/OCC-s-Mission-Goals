@@ -18,7 +18,7 @@
             <!-- 主内容 -->
             <Grid x:Name="MainContentGrid" ClipToBounds="True">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
@@ -105,7 +105,7 @@
             
             <!-- 主要栏 -->
             <Frame x:Name="ListPage" Grid.Row="1" NavigationUIVisibility="Hidden" Margin="5,0,5,5"
-                   ClipToBounds="True"/>
+                   ClipToBounds="True" PreviewMouseRightButtonDown="ListPage_PreviewMouseRightButtonDown"/>
 
             <!-- 状态 -->
             <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}"

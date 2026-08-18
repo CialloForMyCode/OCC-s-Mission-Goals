@@ -14,7 +14,7 @@
 #endif
 
 #define MyAppName "OCC's Mission & Goals"
-#define MyAppVersion "0.1.7-Beta"
+#define MyAppVersion "0.1.9-Beta"
 #define MyAppPublisher "Harvnyx"
 #define MyAppURL "https://github.com/CialloForMyCode/OCC-s-Mission-Goals"
 #define MyAppExeName "OCCMissionGoals.exe"
@@ -59,8 +59,8 @@ ArchitecturesAllowed=x86compatible
 #endif
 
 ; setup.exe 自身的版本信息（Windows 要求纯数字版本段）
-VersionInfoVersion=0.1.7.0
-VersionInfoProductVersion=0.1.7.0
+VersionInfoVersion=0.1.9.0
+VersionInfoProductVersion=0.1.9.0
 VersionInfoTextVersion={#MyAppVersion}
 VersionInfoProductTextVersion={#MyAppVersion}
 
@@ -75,7 +75,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "publish\win-{#Arch}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "publish\win-{#Arch}\Languages\*.xaml"; DestDir: "{app}\Languages"; Flags: ignoreversion
+; 安装包只自带中文与英语，其余语言（日/韩/俄）作为扩展中心的可下载语言包，不打包进安装程序
+Source: "publish\win-{#Arch}\Languages\zh.xaml"; DestDir: "{app}\Languages"; Flags: ignoreversion
+Source: "publish\win-{#Arch}\Languages\en.xaml"; DestDir: "{app}\Languages"; Flags: ignoreversion
 Source: "LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

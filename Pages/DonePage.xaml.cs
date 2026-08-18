@@ -289,6 +289,13 @@ namespace OCCMissionGoals.Pages
                 arrow.Text = expanded ? "▼" : "▶";
         }
 
+        /// <summary>折叠/展开版本分组（供右键菜单使用）。</summary>
+        public void ToggleGroup(DoneVersionGroupVM group)
+        {
+            group.IsExpanded = !group.IsExpanded;
+            RebuildGroups();
+        }
+
         private static T? FindNameInTree<T>(DependencyObject parent, string name) where T : FrameworkElement
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
@@ -304,54 +311,70 @@ namespace OCCMissionGoals.Pages
         private void UndoComplete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is DoneItemVM vm)
-                RunAnimation(btn, null, () =>
-                {
-                    Services.DataService.SaveToEntryVersion(
-                        Services.ProjectService.CurrentProjectDir!, vm.Entry,
-                        (data, target) =>
-                        {
-                            data.Finished.Remove(target);
-                            target.CompletedAt = default;
-                            data.Unfinished.Insert(0, target);
-                        });
-                    LoadFromData();
-                    RebuildGroups();
+                RunAnimation(btn, null, () => UndoItem(vm));
+        }
 
-                    if (Window.GetWindow(this) is MainWindow mw)
-                    {
-                        mw.SetTipText(Services.TipService.GetUndoCompleteTip(vm.Entry));
-                        mw.RefreshUnDoneList();
-                    }
+        /// <summary>撤销完成（供右键菜单使用，无折叠动画）。</summary>
+        public void UndoItem(DoneItemVM vm)
+        {
+            Services.DataService.SaveToEntryVersion(
+                Services.ProjectService.CurrentProjectDir!, vm.Entry,
+                (data, target) =>
+                {
+                    data.Finished.Remove(target);
+                    target.CompletedAt = default;
+                    data.Unfinished.Insert(0, target);
                 });
+            LoadFromData();
+            RebuildGroups();
+
+            if (Window.GetWindow(this) is MainWindow mw)
+            {
+                mw.SetTipText(Services.TipService.GetUndoCompleteTip(vm.Entry));
+                mw.RefreshUnDoneList();
+            }
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is DoneItemVM vm)
-            {
-                if (Window.GetWindow(this) is MainWindow mw)
-                    mw.ShowEditEntryDialog(vm.Entry);
-            }
+                EditItem(vm);
+        }
+
+        /// <summary>打开条目编辑窗口（供右键菜单使用）。</summary>
+        public void EditItem(DoneItemVM vm)
+        {
+            if (Window.GetWindow(this) is MainWindow mw)
+                mw.ShowEditEntryDialog(vm.Entry);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is DoneItemVM vm)
-                RunAnimation(btn, Colors.Red, () =>
-                {
-                    Services.DataService.SaveToEntryVersion(
-                        Services.ProjectService.CurrentProjectDir!, vm.Entry,
-                        (data, target) => data.Finished.Remove(target));
-                    LoadFromData();
-                    RebuildGroups();
-                });
+                RunAnimation(btn, Colors.Red, () => DeleteItem(vm));
+        }
+
+        /// <summary>删除条目（供右键菜单使用，无折叠动画）。</summary>
+        public void DeleteItem(DoneItemVM vm)
+        {
+            Services.DataService.SaveToEntryVersion(
+                Services.ProjectService.CurrentProjectDir!, vm.Entry,
+                (data, target) => data.Finished.Remove(target));
+            LoadFromData();
+            RebuildGroups();
         }
 
         private void Archive_Click(object sender, RoutedEventArgs e)
         {
+            if (sender is not Button btn || btn.Tag is not DoneVersionGroupVM group) return;
+            ArchiveGroup(group);
+        }
+
+        /// <summary>归档版本（供右键菜单使用）。</summary>
+        public void ArchiveGroup(DoneVersionGroupVM group)
+        {
             try
             {
-                if (sender is not Button btn || btn.Tag is not DoneVersionGroupVM group) return;
                 if (group.Items.Count == 0) return;
 
                 var exeDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -370,35 +393,25 @@ namespace OCCMissionGoals.Pages
                 sb.AppendLine(LocalizationManager.T("> 条目数量: {0}", group.Items.Count));
                 sb.AppendLine();
 
+                // 每个错误/条目占一行，用一张 Markdown 表格呈现
+                sb.AppendLine($"| {LocalizationManager.T("标题")} | {LocalizationManager.T("严重程度")} | {LocalizationManager.T("详细信息")} | {LocalizationManager.T("截止日期")} | {LocalizationManager.T("完成时间")} | {LocalizationManager.T("相关文件")} |");
+                sb.AppendLine("|------|------|------|------|------|------|");
+
                 foreach (var item in group.Items)
                 {
-                    sb.AppendLine("---");
-                    sb.AppendLine();
-                    sb.AppendLine($"## {EscapeMd(item.Title)}");
-                    sb.AppendLine();
-                    sb.AppendLine(LocalizationManager.T("| 字段 | 内容 |"));
-                    sb.AppendLine($"|------|------|");
-                    sb.AppendLine(LocalizationManager.T("| 严重程度 | {0} |", SeverityHelper.GetText(item.Entry.Severity)));
-                    sb.AppendLine(LocalizationManager.T("| 详细信息 | {0} |", EscapeMd(item.Detail)));
-                    sb.AppendLine(LocalizationManager.T("| 截止日期 | {0:yyyy-MM-dd} |", item.Entry.Deadline));
-                    sb.AppendLine(LocalizationManager.T("| 完成时间 | {0:yyyy-MM-dd} |", item.Entry.CompletedAt));
-
-                    if (item.Entry.RelatedFiles.Count > 0)
-                    {
-                        var files = string.Join(LocalizationManager.T("、"), item.Entry.RelatedFiles.Select(f =>
+                    var files = item.Entry.RelatedFiles.Count > 0
+                        ? string.Join(LocalizationManager.T("、"), item.Entry.RelatedFiles.Select(f =>
                         {
                             var name = Path.GetFileName(f.Path);
                             return $"{name}[{f.Line}:{f.Column}]";
-                        }));
-                        sb.AppendLine(LocalizationManager.T("| 相关文件 | {0} |", EscapeMd(files)));
-                    }
-                    else
-                    {
-                        sb.AppendLine(LocalizationManager.T("| 相关文件 | (无) |"));
-                    }
+                        }))
+                        : LocalizationManager.T("(无)");
 
-                    sb.AppendLine();
+                    sb.AppendLine(
+                        $"| {EscapeMd(item.Title)} | {SeverityHelper.GetText(item.Entry.Severity)} | {EscapeMd(item.Detail)} | {item.Entry.Deadline:yyyy-MM-dd} | {item.Entry.CompletedAt:yyyy-MM-dd} | {EscapeMd(files)} |");
                 }
+
+                sb.AppendLine();
 
                 File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
 
@@ -544,6 +557,28 @@ namespace OCCMissionGoals.Pages
             if (sender is not TextBlock toggle) return;
             if (toggle.DataContext is not DoneItemVM vm) return;
             vm.IsDetailExpanded = !vm.IsDetailExpanded;
+        }
+
+        private void CopyInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not DoneItemVM vm) return;
+            CopyItemInfo(vm);
+        }
+
+        /// <summary>复制条目信息（供右键菜单使用）。</summary>
+        public void CopyItemInfo(DoneItemVM vm)
+        {
+            try
+            {
+                Clipboard.SetText(Services.EntryCopyFormatter.BuildText(vm.Entry));
+
+                if (Window.GetWindow(this) is MainWindow mw)
+                    mw.SetTipText(LocalizationManager.T("已复制条目信息。"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(LocalizationManager.T("操作失败：{0}", ex.Message), LocalizationManager.T("错误"), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

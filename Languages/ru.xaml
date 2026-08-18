@@ -19,6 +19,7 @@
     <s:String xml:space="preserve" x:Key="Date: 日期">Date: Дата</s:String>
     <s:String xml:space="preserve" x:Key="Expand: 已安装">Expand: Установленные</s:String>
     <s:String xml:space="preserve" x:Key="File: 文件">File: Файл</s:String>
+    <s:String xml:space="preserve" x:Key="Function: 功能">Function: Функция</s:String>
     <s:String xml:space="preserve" x:Key="GitHub 推送配置">Настройки отправки в GitHub</s:String>
     <s:String xml:space="preserve" x:Key="GitHub 集成">Интеграция с GitHub</s:String>
     <s:String xml:space="preserve" x:Key="Github设置">Настройки GitHub</s:String>
@@ -176,6 +177,7 @@
     <s:String xml:space="preserve" x:Key="在仪表盘底部可直接编辑当前版本号。点击「迭代标签」按钮自动递增迭代编号（末段 +1）。编辑后保存，新条目将自动归属该版本。">Редактируйте текущую версию прямо внизу панели управления. Нажмите кнопку «Итерация», чтобы автоматически увеличить номер итерации (последний сегмент +1). После сохранения новые записи будут относиться к этой версии.</s:String>
     <s:String xml:space="preserve" x:Key="在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。">На панели подробностей записи таблица «Связанные файлы» показывает все ссылки. Вы можете добавлять, изменять или удалять связанные файлы при редактировании записи.</s:String>
     <s:String xml:space="preserve" x:Key="基本用法">Основное использование</s:String>
+    <s:String xml:space="preserve" x:Key="复制信息">Копировать информацию</s:String>
     <s:String xml:space="preserve" x:Key="外观主题">Внешний вид</s:String>
     <s:String xml:space="preserve" x:Key="多项目目录与数据管理">Несколько каталогов проектов и управление данными</s:String>
     <s:String xml:space="preserve" x:Key="如何创建令牌？打开 GitHub 令牌页面">Как создать токен? Открыть страницу токенов GitHub</s:String>
@@ -184,6 +186,7 @@
     <s:String xml:space="preserve" x:Key="完成">Завершить</s:String>
     <s:String xml:space="preserve" x:Key="完成于">Завершено </s:String>
     <s:String xml:space="preserve" x:Key="完成度">Завершение </s:String>
+    <s:String xml:space="preserve" x:Key="完成时间">Дата завершения</s:String>
     <s:String xml:space="preserve" x:Key="完成的条目">Завершённые</s:String>
     <s:String xml:space="preserve" x:Key="将已完成条目恢复为未完成状态。">Вернуть завершённую запись в статус незавершённой.</s:String>
     <s:String xml:space="preserve" x:Key="将条目标记为已完成，自动记录完成日期。">Отметить запись как завершённую и автоматически записать дату завершения.</s:String>
@@ -193,7 +196,10 @@
     <s:String xml:space="preserve" x:Key="已切换到版本 {0}。">Переключено на версию {0}.</s:String>
     <s:String xml:space="preserve" x:Key="已创建并切换到版本 {0}。">Версия {0} создана, выполнено переключение.</s:String>
     <s:String xml:space="preserve" x:Key="已创建项目「{0}」。">Создан проект «{0}».</s:String>
+    <s:String xml:space="preserve" x:Key="已复制条目信息。">Информация о записи скопирована.</s:String>
+    <s:String xml:space="preserve" x:Key="全部">Все</s:String>
     <s:String xml:space="preserve" x:Key="已安装">Установлено</s:String>
+    <s:String xml:space="preserve" x:Key="语言包">Языковой пакет</s:String>
     <s:String xml:space="preserve" x:Key="已完成">Завершено</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目">Завершённые</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">Завершённые (DonePage)</s:String>
@@ -236,7 +242,7 @@
     <s:String xml:space="preserve" x:Key="打开">Открыть</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">Открыть страницу загрузки</s:String>
     <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">Открыть настройки отправки (загрузка / резервное копирование)</s:String>
-    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">Открыть файл данных(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本(_O)">Открыть версию(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">Открыть версию</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">Открыть проект</s:String>
     <s:String xml:space="preserve" x:Key="打开项目(_O)">Открыть проект(_O)</s:String>
@@ -283,8 +289,8 @@
     <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">Добавить в избранное / убрать. Использование: -f &lt;id&gt; true|false</s:String>
     <s:String xml:space="preserve" x:Key="收起">Свернуть</s:String>
     <s:String xml:space="preserve" x:Key="数据文件">Файлы данных</s:String>
-    <s:String xml:space="preserve" x:Key="文件(_F)">Файл(_F)</s:String>
-    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">Новый файл данных(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="版本(_V)">Версия(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本(_N)">Новая версия(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建条目">Новая запись</s:String>
     <s:String xml:space="preserve" x:Key="新建条目(_N)">Новая запись(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建版本">Новая версия</s:String>
@@ -377,6 +383,7 @@
     <s:String xml:space="preserve" x:Key="登录失败：{0}">Ошибка входа: {0}</s:String>
     <s:String xml:space="preserve" x:Key="目标仓库">Целевой репозиторий</s:String>
     <s:String xml:space="preserve" x:Key="相关文件">Связанные файлы</s:String>
+    <s:String xml:space="preserve" x:Key="(无)">(нет)</s:String>
     <s:String xml:space="preserve" x:Key="相关的函数或方法名（可选）">Имя связанной функции или метода (необязательно)</s:String>
     <s:String xml:space="preserve" x:Key="确定">ОК</s:String>
     <s:String xml:space="preserve" x:Key="确认">Подтвердить</s:String>
@@ -469,4 +476,14 @@
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 Критический</s:String>
     <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 Исправление</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 Обновление</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本">Удалить версию</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本(_D)">Удалить версию(_D)</s:String>
+    <s:String xml:space="preserve" x:Key="已删除版本 {0}。">Версия {0} удалена.</s:String>
+    <s:String xml:space="preserve" x:Key="不能删除当前版本。">Текущую версию удалить нельзя.</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除版本 {0} 吗？此操作不可恢复。">Удалить версию {0}? Это действие необратимо.</s:String>
+    <s:String xml:space="preserve" x:Key="选择要删除的版本">Выберите версию для удаления</s:String>
+    <s:String xml:space="preserve" x:Key="项目">Проект</s:String>
+    <s:String xml:space="preserve" x:Key="条目">Записи</s:String>
+    <s:String xml:space="preserve" x:Key="收藏">В избранное</s:String>
+    <s:String xml:space="preserve" x:Key="展开">Развернуть</s:String>
 </ResourceDictionary>

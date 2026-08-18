@@ -23,9 +23,10 @@
             <MenuItem x:Name="MenuItemView"       Header="{loc:Loc &quot;条目(_V)&quot;}">
                 <MenuItem x:Name="MenuItemNewEntry" Header="{loc:Loc &quot;新建条目(_N)&quot;}"/>
             </MenuItem>
-            <MenuItem x:Name="MenuItemGit"    Header="{loc:Loc &quot;文件(_F)&quot;}">
-                <MenuItem x:Name="MenuItemNewData" Header="{loc:Loc &quot;新建数据文件(_N)&quot;}"/>
-                <MenuItem x:Name="MenuItemOpenData" Header="{loc:Loc &quot;打开数据文件(_O)&quot;}"/>
+            <MenuItem x:Name="MenuItemVersion" Header="{loc:Loc &quot;版本(_V)&quot;}">
+                <MenuItem x:Name="MenuItemNewVersion" Header="{loc:Loc &quot;新建版本(_N)&quot;}"/>
+                <MenuItem x:Name="MenuItemOpenVersion" Header="{loc:Loc &quot;打开版本(_O)&quot;}"/>
+                <MenuItem x:Name="MenuItemDeleteVersion" Header="{loc:Loc &quot;删除版本(_D)&quot;}"/>
             </MenuItem>
             <MenuItem x:Name="MenuItemHelp"   Header="{loc:Loc &quot;帮助(_H)&quot;}"/>
         </Menu>

@@ -144,6 +144,10 @@ namespace OCCMissionGoals
 
             // 默认打开第一个页面
             SwitchTab("log");
+
+            // 预加载扩展目录：让「Plugins:」/「Expand:」搜索在尚未打开扩展页时也能返回结果
+            _pageCache["expand"] = new Pages.ExpandPage();
+
             SourceInitialized += OnSourceInitialized;
             StateChanged += OnStateChanged;
             PreviewKeyDown += OnPreviewKeyDown;
@@ -320,6 +324,7 @@ namespace OCCMissionGoals
             new("openProject", LocalizationManager.T("打开项目"), new[] { "打开项目", "打开", "项目", "open project", "project" }, ShowOpenProjectDialog),
             new("newVersion", LocalizationManager.T("新建版本"), new[] { "新建版本", "新建", "版本", "数据", "new version", "version" }, ShowNewVersionDialog),
             new("openVersion", LocalizationManager.T("打开版本"), new[] { "打开版本", "打开", "版本", "数据", "open version", "version" }, ShowOpenVersionDialog),
+            new("deleteVersion", LocalizationManager.T("删除版本"), new[] { "删除版本", "删除", "版本", "delete version", "version" }, ShowDeleteVersionDialog),
             new("help", LocalizationManager.T("帮助"), new[] { "帮助", "使用说明", "文档", "help", "about" }, ShowHelpPage),
         };
 
@@ -766,7 +771,7 @@ namespace OCCMissionGoals
             foreach (var reg in _pageRegs)
                 _switchPage?.UpdateTabLabel(reg.Key, LocalizationManager.T(reg.TabLabel));
 
-            StatusText.Text = LocalizationManager.T("状态机无更新");
+            RestoreStatusText();
             RefreshAllViews();
         }
 
@@ -995,6 +1000,23 @@ namespace OCCMissionGoals
             ShowVersionDialogOverlay();
         }
 
+        /// <summary>打开「删除版本」弹窗。</summary>
+        public void ShowDeleteVersionDialog()
+        {
+            if (Services.ProjectService.CurrentProjectDir == null)
+            {
+                SetTipText(LocalizationManager.T("请先打开一个项目。"));
+                return;
+            }
+
+            VersionDialog.Reset();
+            VersionDialog.LoadVersions(Services.ProjectService.CurrentProjectDir);
+            VersionDialog.DeleteModeBtn.IsChecked = true;
+            VersionDialog.Confirmed += OnVersionConfirmed;
+            VersionDialog.Cancelled += OnVersionDismissed;
+            ShowVersionDialogOverlay();
+        }
+
         private void ShowVersionDialogOverlay()
         {
             MainContentGrid.Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 8 };
@@ -1006,6 +1028,30 @@ namespace OCCMissionGoals
         {
             try
             {
+                if (VersionDialog.IsDeleteMode)
+                {
+                    var deleteVersion = VersionDialog.SelectedDeleteVersion;
+                    if (string.IsNullOrEmpty(deleteVersion))
+                    {
+                        SetTipText(LocalizationManager.T("请选择一个版本。"));
+                        return;
+                    }
+
+                    var yes = MessageBox.Show(
+                        this,
+                        LocalizationManager.T("确定要删除版本 {0} 吗？此操作不可恢复。", deleteVersion),
+                        LocalizationManager.T("删除版本"),
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+                    if (yes != MessageBoxResult.Yes) return;
+
+                    Services.ProjectService.DeleteVersion(deleteVersion + ".json");
+                    RefreshAllViews();
+                    DismissVersionDialog();
+                    SetTipText(LocalizationManager.T("已删除版本 {0}。", deleteVersion));
+                    return;
+                }
+
                 var versionName = VersionDialog.VersionName;
                 var selectedVersion = VersionDialog.SelectedVersion;
 
@@ -1049,6 +1095,14 @@ namespace OCCMissionGoals
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
+            // ESC：按优先级关闭当前最顶层的浮层 UserControl / 弹窗
+            if (e.Key == Key.Escape)
+            {
+                if (CloseTopmostUserControl())
+                    e.Handled = true;
+                return;
+            }
+
             if (e.Key != Key.LeftCtrl && e.Key != Key.RightCtrl) return;
             if (!e.IsRepeat)
             {
@@ -1064,6 +1118,43 @@ namespace OCCMissionGoals
                 }
             }
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// 按 ESC 关闭当前最顶层的浮层 UserControl（弹窗 / 搜索结果板）。
+        /// 优先级从高到低：条目弹窗 → 项目弹窗 → 版本弹窗 → GitHub 登录弹窗 → 搜索结果板。
+        /// 返回是否关闭了某个浮层。
+        /// </summary>
+        private bool CloseTopmostUserControl()
+        {
+            if (NewEntryDialog.Visibility == Visibility.Visible)
+            {
+                DismissDialogOverlay();
+                return true;
+            }
+            if (NewProjectDialog.Visibility == Visibility.Visible)
+            {
+                // 项目弹窗存在两种模式（新建/打开 与 项目设置），统一取消两个方向的订阅即可安全关闭
+                DismissProjectDialog();
+                DismissProjectSettings();
+                return true;
+            }
+            if (VersionDialog.Visibility == Visibility.Visible)
+            {
+                DismissVersionDialog();
+                return true;
+            }
+            if (GitHubLoginDialog.Visibility == Visibility.Visible)
+            {
+                DismissGitHubLoginDialog();
+                return true;
+            }
+            if (SearchBoard.Visibility == Visibility.Visible)
+            {
+                CloseSearchBoard();
+                return true;
+            }
+            return false;
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs e)
@@ -1274,7 +1365,17 @@ namespace OCCMissionGoals
             (_pageCache.GetValueOrDefault("log") as Pages.LogPage)?.RefreshStats();
         }
 
-        public void SetTipText(string tip)
+        /// <summary>状态栏默认文字（无更新时显示）。</summary>
+        private static string DefaultStatusText => LocalizationManager.T("状态机无更新");
+
+        /// <summary>在状态栏显示一条提示，5 秒后自动恢复默认文字。</summary>
+        public void SetTipText(string tip) => AnimateStatusText(tip, autoRestore: true);
+
+        /// <summary>恢复状态栏默认文字（语言切换或提示消失时调用）。</summary>
+        private void RestoreStatusText() => AnimateStatusText(DefaultStatusText, autoRestore: false);
+
+        /// <summary>用切换动画更新状态栏文字；autoRestore 为 true 时显示 5 秒后自动恢复。</summary>
+        private void AnimateStatusText(string text, bool autoRestore)
         {
             if (StatusText.RenderTransform is not TranslateTransform tt)
             {
@@ -1295,7 +1396,7 @@ namespace OCCMissionGoals
 
             fadeOut.Completed += (_, _) =>
             {
-                StatusText.Text = tip;
+                StatusText.Text = text;
                 StatusText.Opacity = 0;
                 tt.Y = 12;
 
@@ -1308,46 +1409,26 @@ namespace OCCMissionGoals
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
                 };
 
-                fadeIn.Completed += (_, _) =>
+                if (autoRestore)
                 {
-                    _tipTimer = new System.Windows.Threading.DispatcherTimer
+                    fadeIn.Completed += (_, _) =>
                     {
-                        Interval = TimeSpan.FromSeconds(5)
+                        _tipTimer = new System.Windows.Threading.DispatcherTimer
+                        {
+                            Interval = TimeSpan.FromSeconds(5)
+                        };
+                        _tipTimer.Tick += (_, _) =>
+                        {
+                            _tipTimer.Stop();
+                            RestoreStatusText();
+                        };
+                        _tipTimer.Start();
                     };
-                    _tipTimer.Tick += (_, _) =>
-                    {
-                        _tipTimer.Stop();
-                        DismissTip();
-                    };
-                    _tipTimer.Start();
-                };
+                }
 
                 tt.BeginAnimation(TranslateTransform.YProperty, moveDown);
                 StatusText.BeginAnimation(OpacityProperty, fadeIn);
             };
-
-            tt.BeginAnimation(TranslateTransform.YProperty, moveUp);
-            StatusText.BeginAnimation(OpacityProperty, fadeOut);
-        }
-
-        private void DismissTip()
-        {
-            if (StatusText.RenderTransform is not TranslateTransform tt)
-            {
-                StatusText.RenderTransform = new TranslateTransform(0, 0);
-                tt = (TranslateTransform)StatusText.RenderTransform;
-            }
-
-            var moveUp = new DoubleAnimation(0, -12, TimeSpan.FromMilliseconds(150))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-            };
-            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-            };
-
-            fadeOut.Completed += (_, _) => StatusText.Text = LocalizationManager.T("状态机无更新");
 
             tt.BeginAnimation(TranslateTransform.YProperty, moveUp);
             StatusText.BeginAnimation(OpacityProperty, fadeOut);
@@ -1358,7 +1439,7 @@ namespace OCCMissionGoals
         private void BellBtn_Click(object sender, RoutedEventArgs e)
         {
             // 点击铃铛显示当前提示
-            if (StatusText.Text != LocalizationManager.T("状态机无更新"))
+            if (StatusText.Text != DefaultStatusText)
                 SetTipText(StatusText.Text);
             else
                 SetTipText(LocalizationManager.T("暂无新消息。"));
@@ -1463,6 +1544,165 @@ namespace OCCMissionGoals
         public void ShowHelpPage()
         {
             SwitchTab("help");
+        }
+
+        // ======================== 右键菜单 ========================
+
+        /// <summary>在当前页右键弹出上下文菜单：内容随当前页与命中的控件类型变化，并始终附带 MenuPage 的核心功能。</summary>
+        private void ListPage_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var menu = BuildContextMenu(e.OriginalSource as DependencyObject);
+            if (menu == null) return;
+
+            menu.PlacementTarget = ListPage;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            menu.IsOpen = true;
+            e.Handled = true;
+        }
+
+        /// <summary>根据当前页与鼠标命中的控件数据上下文构建右键菜单。</summary>
+        private ContextMenu? BuildContextMenu(DependencyObject? source)
+        {
+            var pageKey = _lastTabIndex >= 0 && _lastTabIndex < _pageRegs.Count
+                ? _pageRegs[_lastTabIndex].Key
+                : string.Empty;
+
+            var ctx = FindContextData(source);
+            var menu = new ContextMenu();
+
+            BuildPageSpecificItems(menu, pageKey, ctx);
+
+            // 分隔线 + 始终可用的 MenuPage 核心功能
+            if (menu.Items.Count > 0)
+                menu.Items.Add(new Separator());
+            BuildBaseMenuItems(menu, pageKey);
+
+            return menu;
+        }
+
+        /// <summary>向上遍历可视树，找到最近一个属于已知条目/分组/插件类型的数据上下文。</summary>
+        private static object? FindContextData(DependencyObject? source)
+        {
+            while (source != null)
+            {
+                if (source is FrameworkElement fe && fe.DataContext is { } dc)
+                {
+                    if (dc is Pages.UnDoneItemVM or Pages.DoneItemVM
+                        or Pages.UnDoneVersionGroupVM or Pages.DoneVersionGroupVM
+                        or PluginInfo)
+                        return dc;
+                }
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return null;
+        }
+
+        private void BuildPageSpecificItems(ContextMenu menu, string pageKey, object? ctx)
+        {
+            switch (pageKey)
+            {
+                case "undone":
+                    if (ctx is Pages.UnDoneItemVM uItem)
+                        AddUnDoneEntryItems(menu, uItem);
+                    else if (ctx is Pages.UnDoneVersionGroupVM uGroup)
+                        AddGroupToggleItem(menu, uGroup.IsExpanded, () => (GetPage("undone") as Pages.UnDonePage)?.ToggleGroup(uGroup));
+                    break;
+
+                case "done":
+                    if (ctx is Pages.DoneItemVM dItem)
+                    {
+                        AddDoneEntryItems(menu, dItem);
+                    }
+                    else if (ctx is Pages.DoneVersionGroupVM dGroup)
+                    {
+                        if (dGroup.CanArchive)
+                            menu.Items.Add(CreateItem("归档", () => (GetPage("done") as Pages.DonePage)?.ArchiveGroup(dGroup)));
+                        AddGroupToggleItem(menu, dGroup.IsExpanded, () => (GetPage("done") as Pages.DonePage)?.ToggleGroup(dGroup));
+                    }
+                    break;
+
+                case "expand":
+                    if (ctx is PluginInfo plugin)
+                    {
+                        menu.Items.Add(CreateAsyncItem(plugin.IsInstalled ? "卸载" : "安装", async () =>
+                        {
+                            if (GetPage("expand") is Pages.ExpandPage ep)
+                                await ep.ToggleInstall(plugin);
+                        }));
+                    }
+                    menu.Items.Add(CreateItem("刷新", () => (GetPage("expand") as Pages.ExpandPage)?.Refresh()));
+                    break;
+
+                case "log":
+                    menu.Items.Add(CreateItem("刷新", () => (GetPage("log") as Pages.LogPage)?.RefreshStats()));
+                    break;
+            }
+        }
+
+        private void AddUnDoneEntryItems(ContextMenu menu, Pages.UnDoneItemVM item)
+        {
+            var page = GetPage("undone") as Pages.UnDonePage;
+            menu.Items.Add(CreateItem("收藏", () => page?.ToggleFavorite(item)));
+            menu.Items.Add(CreateItem("编辑", () => page?.EditItem(item)));
+            menu.Items.Add(CreateItem("完成", () => page?.CompleteItem(item)));
+            menu.Items.Add(CreateItem("删除", () => page?.DeleteItem(item)));
+            menu.Items.Add(CreateItem("复制信息", () => page?.CopyItemInfo(item)));
+        }
+
+        private void AddDoneEntryItems(ContextMenu menu, Pages.DoneItemVM item)
+        {
+            var page = GetPage("done") as Pages.DonePage;
+            menu.Items.Add(CreateItem("撤销完成", () => page?.UndoItem(item)));
+            menu.Items.Add(CreateItem("编辑", () => page?.EditItem(item)));
+            menu.Items.Add(CreateItem("删除", () => page?.DeleteItem(item)));
+            menu.Items.Add(CreateItem("复制信息", () => page?.CopyItemInfo(item)));
+        }
+
+        private void AddGroupToggleItem(ContextMenu menu, bool isExpanded, Action onToggle)
+            => menu.Items.Add(CreateItem(isExpanded ? "收起" : "展开", onToggle));
+
+        private void BuildBaseMenuItems(ContextMenu menu, string pageKey)
+        {
+            menu.Items.Add(CreateSubMenu("项目",
+                CreateItem("新建项目", ShowNewProjectDialog),
+                CreateItem("打开项目", ShowOpenProjectDialog),
+                CreateItem("设置项目", OpenProjectSettings)));
+
+            if (pageKey == "log")
+            {
+                menu.Items.Add(CreateSubMenu("条目",
+                    CreateItem("新建条目", ShowNewEntryDialog)));
+            }
+
+            menu.Items.Add(CreateSubMenu("版本",
+                CreateItem("新建版本", ShowNewVersionDialog),
+                CreateItem("打开版本", ShowOpenVersionDialog),
+                CreateItem("删除版本", ShowDeleteVersionDialog)));
+
+            menu.Items.Add(CreateItem("帮助", ShowHelpPage));
+        }
+
+        private Page? GetPage(string key) => _pageCache.GetValueOrDefault(key);
+
+        private static MenuItem CreateItem(string key, Action onClick)
+        {
+            var mi = new MenuItem { Header = LocalizationManager.T(key) };
+            mi.Click += (_, _) => onClick();
+            return mi;
+        }
+
+        private static MenuItem CreateAsyncItem(string key, Func<Task> onClick)
+        {
+            var mi = new MenuItem { Header = LocalizationManager.T(key) };
+            mi.Click += async (_, _) => await onClick();
+            return mi;
+        }
+
+        private static MenuItem CreateSubMenu(string key, params MenuItem[] children)
+        {
+            var mi = new MenuItem { Header = LocalizationManager.T(key) };
+            foreach (var c in children) mi.Items.Add(c);
+            return mi;
         }
 
         // ── GitHub 登录弹窗 ──
@@ -1604,9 +1844,7 @@ namespace OCCMissionGoals
                     Type = NewEntryDialog.Type,
                     RelatedFiles = new(NewEntryDialog.Files)
                 };
-                Services.ProjectService.AssignEntryId(entry);
-                Services.DataService.Current.Unfinished.Add(entry);
-                Services.DataService.Save();
+                Services.DataService.AddEntryAtomic(entry);
                 RefreshUnDoneList();
                 DismissDialogOverlay();
                 SetTipText(LocalizationManager.T("已添加条目「{0}」。", entry.Title));
@@ -1674,7 +1912,7 @@ namespace OCCMissionGoals
         {
             _pageRegs.Add(reg);
             if (!reg.IsOverlayTab)
-                _switchPage?.AddTabButton(reg.Key, reg.TabLabel, _pageRegs.Count - 1);
+                _switchPage?.AddTabButton(reg.Key, LocalizationManager.T(reg.TabLabel), _pageRegs.Count - 1);
         }
 
         private void NavigateToPage(int tabIndex, Action<Frame> getPage)

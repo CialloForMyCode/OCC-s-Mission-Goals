@@ -134,6 +134,7 @@
 
                         <StackPanel Orientation="Horizontal">
                             <RadioButton x:Name="LightThemeRadio"
+                                         Style="{StaticResource SettingsRadioButton}"
                                          Content="{loc:Loc &quot;浅色&quot;}"
                                          GroupName="ThemeGroup" Tag="light"
                                          Checked="ThemeRadio_Checked"
@@ -141,6 +142,7 @@
                                          FontSize="13" Margin="0,0,24,0"
                                          VerticalContentAlignment="Center"/>
                             <RadioButton x:Name="DarkThemeRadio"
+                                         Style="{StaticResource SettingsRadioButton}"
                                          Content="{loc:Loc &quot;深色&quot;}"
                                          GroupName="ThemeGroup" Tag="dark"
                                          Checked="ThemeRadio_Checked"
@@ -345,11 +347,13 @@
                                    Margin="0,0,0,8"/>
 
                         <CheckBox x:Name="IncludeAuthorCheck"
+                                  Style="{StaticResource SettingsCheckBox}"
                                   Content="{loc:Loc &quot;提交信息包含作者&quot;}"
                                   Checked="IncludeAuthor_Changed" Unchecked="IncludeAuthor_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
                                   FontSize="13" Margin="0,0,0,6"/>
                         <CheckBox x:Name="GroupByDateCheck"
+                                  Style="{StaticResource SettingsCheckBox}"
                                   Content="{loc:Loc &quot;按日期分组&quot;}"
                                   Checked="GroupByDate_Changed" Unchecked="GroupByDate_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
@@ -380,6 +384,7 @@
                                    Text="{loc:Loc &quot;登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。&quot;}"/>
 
                         <CheckBox x:Name="AutoStartCheck"
+                                  Style="{StaticResource SettingsCheckBox}"
                                   Content="{loc:Loc &quot;开机自动启动&quot;}"
                                   Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
@@ -407,6 +412,7 @@
                         </StackPanel>
 
                         <CheckBox x:Name="AutoCheckStartupCheck"
+                                  Style="{StaticResource SettingsCheckBox}"
                                   Content="{loc:Loc &quot;启动时自动检查更新&quot;}"
                                   Checked="AutoCheckStartup_Changed" Unchecked="AutoCheckStartup_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"

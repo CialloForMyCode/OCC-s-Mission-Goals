@@ -266,15 +266,32 @@ namespace OCCMissionGoals.Pages
             }
         }
 
+        /// <summary>折叠/展开版本分组（供右键菜单使用）。</summary>
+        public void ToggleGroup(UnDoneVersionGroupVM group)
+        {
+            group.IsExpanded = !group.IsExpanded;
+            RebuildGroups();
+        }
+
         private void Favorite_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn || btn.Tag is not UnDoneItemVM vm) return;
 
-            Path? star = FindStarPath(btn);
-            if (star == null) return;
-
+            var star = FindStarPath(btn);
             vm.IsFavorited = !vm.IsFavorited;
-            ApplyStarState(star, vm.IsFavorited);
+            if (star != null) ApplyStarState(star, vm.IsFavorited);
+            PersistFavorite(vm);
+        }
+
+        /// <summary>切换收藏状态（供右键菜单使用，重建列表后星标由模板刷新）。</summary>
+        public void ToggleFavorite(UnDoneItemVM vm)
+        {
+            vm.IsFavorited = !vm.IsFavorited;
+            PersistFavorite(vm);
+        }
+
+        private void PersistFavorite(UnDoneItemVM vm)
+        {
             Services.DataService.SaveToEntryVersion(
                 Services.ProjectService.CurrentProjectDir!, vm.Entry,
                 (data, target) => target.IsFavorited = vm.IsFavorited);
@@ -320,29 +337,39 @@ namespace OCCMissionGoals.Pages
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is UnDoneItemVM vm)
-                RunAnimation(btn, Colors.Red, () =>
-                {
-                    Services.DataService.SaveToEntryVersion(
-                        Services.ProjectService.CurrentProjectDir!, vm.Entry,
-                        (data, target) => data.Unfinished.Remove(target));
-                    LoadFromData();
-                    RebuildGroups();
-                });
+                RunAnimation(btn, Colors.Red, () => DeleteItem(vm));
+        }
+
+        /// <summary>删除条目（供右键菜单使用，无折叠动画）。</summary>
+        public void DeleteItem(UnDoneItemVM vm)
+        {
+            Services.DataService.SaveToEntryVersion(
+                Services.ProjectService.CurrentProjectDir!, vm.Entry,
+                (data, target) => data.Unfinished.Remove(target));
+            LoadFromData();
+            RebuildGroups();
         }
 
         private void Complete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is UnDoneItemVM vm)
-                RunAnimation(btn, Color.FromRgb(0x4C, 0xAF, 0x50), () => RemoveItem(vm));
+                RunAnimation(btn, Color.FromRgb(0x4C, 0xAF, 0x50), () => CompleteItem(vm));
         }
+
+        /// <summary>完成条目（供右键菜单使用）。</summary>
+        public void CompleteItem(UnDoneItemVM vm) => RemoveItem(vm);
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is UnDoneItemVM vm)
-            {
-                if (Window.GetWindow(this) is MainWindow mw)
-                    mw.ShowEditEntryDialog(vm.Entry);
-            }
+                EditItem(vm);
+        }
+
+        /// <summary>打开条目编辑窗口（供右键菜单使用）。</summary>
+        public void EditItem(UnDoneItemVM vm)
+        {
+            if (Window.GetWindow(this) is MainWindow mw)
+                mw.ShowEditEntryDialog(vm.Entry);
         }
 
         private void RemoveItem(UnDoneItemVM vm)
@@ -450,6 +477,28 @@ namespace OCCMissionGoals.Pages
             if (sender is not TextBlock toggle) return;
             if (toggle.DataContext is not UnDoneItemVM vm) return;
             vm.IsDetailExpanded = !vm.IsDetailExpanded;
+        }
+
+        private void CopyInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not UnDoneItemVM vm) return;
+            CopyItemInfo(vm);
+        }
+
+        /// <summary>复制条目信息（供右键菜单使用）。</summary>
+        public void CopyItemInfo(UnDoneItemVM vm)
+        {
+            try
+            {
+                Clipboard.SetText(Services.EntryCopyFormatter.BuildText(vm.Entry));
+
+                if (Window.GetWindow(this) is MainWindow mw)
+                    mw.SetTipText(LocalizationManager.T("已复制条目信息。"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(LocalizationManager.T("操作失败：{0}", ex.Message), LocalizationManager.T("错误"), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

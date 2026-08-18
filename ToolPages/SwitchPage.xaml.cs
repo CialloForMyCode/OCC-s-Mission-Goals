@@ -118,13 +118,12 @@ public partial class SwitchPage : Page
     /// <summary>更新指定页签按钮的显示文字（语言切换时由 MainWindow 调用）。</summary>
     public void UpdateTabLabel(string key, string label)
     {
+        // 普通页签与隐藏页签（overlay）可能使用相同的 key（如 settings/help），
+        // 因此两者都要更新，不能命中普通页签后就提前返回。
         foreach (var btn in _tabButtons)
         {
             if (btn.Tag as string == key)
-            {
                 btn.Content = label;
-                return;
-            }
         }
         if (_overlayButtons.TryGetValue(key, out var overlay))
             overlay.Content = label;

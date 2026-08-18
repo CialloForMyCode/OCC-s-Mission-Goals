@@ -110,6 +110,18 @@ Projects/
 
 Entry IDs use the format `PPPEEEEEE` (9 digits): first 3 for the project number, last 6 auto-incremented.
 
+### Extension Storage
+
+Extensions installed from the Extension Center are stored next to the executable in two directories:
+
+```
+Languages/            # Language packs (one *.xaml per UI language)
+Expand/               # Extension plugins
+```
+
+- **Language packs** are downloaded and installed into `Languages/`, where `LocalizationManager` auto-loads them on startup.
+- **Extension plugins** are downloaded and installed into `Expand/`; both directories are created automatically as needed and are shipped with the published app.
+
 ### Dual Mode
 
 The app checks startup arguments in `Main`: no arguments launches **GUI mode** (WPF window); arguments launch **CLI mode** (console with JSON output).
@@ -224,7 +236,10 @@ OCC-s-Mission-Goals/
 │   └── VersionDialog.xaml      # Version management
 │
 ├── Styles.xaml                 # Global WPF styles
-└── ThemeBrushes.xaml           # Theme colour brushes
+├── ThemeBrushes.xaml           # Theme colour brushes
+│
+├── Languages/                  # Language packs (*.xaml UI translations)
+└── Expand/                     # Extension plugins
 ```
 
 ### Tech Stack

@@ -134,6 +134,21 @@ public sealed class LocalizationManager : INotifyPropertyChanged
         LanguageChanged?.Invoke(_language);
     }
 
+    /// <summary>
+    /// 重新扫描 Languages 目录并重建语言表（安装 / 卸载语言包后调用）。
+    /// 若当前语言已不存在则回退到默认语言，并通知界面刷新。
+    /// </summary>
+    public void Reload()
+    {
+        var previous = _language;
+        LoadLanguages();
+        _language = Normalize(previous);
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Language)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AvailableLanguages)));
+        LanguageChanged?.Invoke(_language);
+    }
+
     /// <summary>按当前语言取文本。key 为中文原文，找不到翻译时回退为 key。</summary>
     public static string T(string key) => Instance.Lookup(key);
 

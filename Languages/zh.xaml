@@ -19,6 +19,7 @@
     <s:String xml:space="preserve" x:Key="Date: 日期">Date: 日期</s:String>
     <s:String xml:space="preserve" x:Key="Expand: 已安装">Expand: 已安装</s:String>
     <s:String xml:space="preserve" x:Key="File: 文件">File: 文件</s:String>
+    <s:String xml:space="preserve" x:Key="Function: 功能">Function: 功能</s:String>
     <s:String xml:space="preserve" x:Key="GitHub 推送配置">GitHub 推送配置</s:String>
     <s:String xml:space="preserve" x:Key="GitHub 集成">GitHub 集成</s:String>
     <s:String xml:space="preserve" x:Key="Github设置">Github设置</s:String>
@@ -176,6 +177,7 @@
     <s:String xml:space="preserve" x:Key="在仪表盘底部可直接编辑当前版本号。点击「迭代标签」按钮自动递增迭代编号（末段 +1）。编辑后保存，新条目将自动归属该版本。">在仪表盘底部可直接编辑当前版本号。点击「迭代标签」按钮自动递增迭代编号（末段 +1）。编辑后保存，新条目将自动归属该版本。</s:String>
     <s:String xml:space="preserve" x:Key="在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。">在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。</s:String>
     <s:String xml:space="preserve" x:Key="基本用法">基本用法</s:String>
+    <s:String xml:space="preserve" x:Key="复制信息">复制信息</s:String>
     <s:String xml:space="preserve" x:Key="外观主题">外观主题</s:String>
     <s:String xml:space="preserve" x:Key="多项目目录与数据管理">多项目目录与数据管理</s:String>
     <s:String xml:space="preserve" x:Key="如何创建令牌？打开 GitHub 令牌页面">如何创建令牌？打开 GitHub 令牌页面</s:String>
@@ -184,6 +186,7 @@
     <s:String xml:space="preserve" x:Key="完成">完成</s:String>
     <s:String xml:space="preserve" x:Key="完成于">完成于</s:String>
     <s:String xml:space="preserve" x:Key="完成度">完成度</s:String>
+    <s:String xml:space="preserve" x:Key="完成时间">完成时间</s:String>
     <s:String xml:space="preserve" x:Key="完成的条目">完成的条目</s:String>
     <s:String xml:space="preserve" x:Key="将已完成条目恢复为未完成状态。">将已完成条目恢复为未完成状态。</s:String>
     <s:String xml:space="preserve" x:Key="将条目标记为已完成，自动记录完成日期。">将条目标记为已完成，自动记录完成日期。</s:String>
@@ -193,7 +196,10 @@
     <s:String xml:space="preserve" x:Key="已切换到版本 {0}。">已切换到版本 {0}。</s:String>
     <s:String xml:space="preserve" x:Key="已创建并切换到版本 {0}。">已创建并切换到版本 {0}。</s:String>
     <s:String xml:space="preserve" x:Key="已创建项目「{0}」。">已创建项目「{0}」。</s:String>
+    <s:String xml:space="preserve" x:Key="已复制条目信息。">已复制条目信息。</s:String>
+    <s:String xml:space="preserve" x:Key="全部">全部</s:String>
     <s:String xml:space="preserve" x:Key="已安装">已安装</s:String>
+    <s:String xml:space="preserve" x:Key="语言包">语言包</s:String>
     <s:String xml:space="preserve" x:Key="已完成">已完成</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目">已完成条目</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">已完成条目（DonePage）</s:String>
@@ -236,7 +242,7 @@
     <s:String xml:space="preserve" x:Key="打开">打开</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">打开下载页</s:String>
     <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">打开推送（上传 / 备份）设置</s:String>
-    <s:String xml:space="preserve" x:Key="打开数据文件(_O)">打开数据文件(_O)</s:String>
+    <s:String xml:space="preserve" x:Key="打开版本(_O)">打开版本(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">打开版本</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">打开项目</s:String>
     <s:String xml:space="preserve" x:Key="打开项目(_O)">打开项目(_O)</s:String>
@@ -283,8 +289,8 @@
     <s:String xml:space="preserve" x:Key="收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false">收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false</s:String>
     <s:String xml:space="preserve" x:Key="收起">收起</s:String>
     <s:String xml:space="preserve" x:Key="数据文件">数据文件</s:String>
-    <s:String xml:space="preserve" x:Key="文件(_F)">文件(_F)</s:String>
-    <s:String xml:space="preserve" x:Key="新建数据文件(_N)">新建数据文件(_N)</s:String>
+    <s:String xml:space="preserve" x:Key="版本(_V)">版本(_V)</s:String>
+    <s:String xml:space="preserve" x:Key="新建版本(_N)">新建版本(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建条目">新建条目</s:String>
     <s:String xml:space="preserve" x:Key="新建条目(_N)">新建条目(_N)</s:String>
     <s:String xml:space="preserve" x:Key="新建版本">新建版本</s:String>
@@ -377,6 +383,7 @@
     <s:String xml:space="preserve" x:Key="登录失败：{0}">登录失败：{0}</s:String>
     <s:String xml:space="preserve" x:Key="目标仓库">目标仓库</s:String>
     <s:String xml:space="preserve" x:Key="相关文件">相关文件</s:String>
+    <s:String xml:space="preserve" x:Key="(无)">(无)</s:String>
     <s:String xml:space="preserve" x:Key="相关的函数或方法名（可选）">相关的函数或方法名（可选）</s:String>
     <s:String xml:space="preserve" x:Key="确定">确定</s:String>
     <s:String xml:space="preserve" x:Key="确认">确认</s:String>
@@ -469,4 +476,14 @@
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 致命</s:String>
     <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 补丁</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 更新</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本">删除版本</s:String>
+    <s:String xml:space="preserve" x:Key="删除版本(_D)">删除版本(_D)</s:String>
+    <s:String xml:space="preserve" x:Key="已删除版本 {0}。">已删除版本 {0}。</s:String>
+    <s:String xml:space="preserve" x:Key="不能删除当前版本。">不能删除当前版本。</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除版本 {0} 吗？此操作不可恢复。">确定要删除版本 {0} 吗？此操作不可恢复。</s:String>
+    <s:String xml:space="preserve" x:Key="选择要删除的版本">选择要删除的版本</s:String>
+    <s:String xml:space="preserve" x:Key="项目">项目</s:String>
+    <s:String xml:space="preserve" x:Key="条目">条目</s:String>
+    <s:String xml:space="preserve" x:Key="收藏">收藏</s:String>
+    <s:String xml:space="preserve" x:Key="展开">展开</s:String>
 </ResourceDictionary>
