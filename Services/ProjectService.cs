@@ -164,7 +164,7 @@ public static class ProjectService
         SaveProjectConfig(CurrentProjectDir, config);
     }
 
-    /// <summary>就地修改当前项目配置后，保存到 project.json（推送设置等场景）。</summary>
+    /// <summary>就地修改当前项目配置后，保存到 project.json。</summary>
     public static void SaveCurrentProject()
     {
         if (CurrentProject == null || CurrentProjectDir == null) return;

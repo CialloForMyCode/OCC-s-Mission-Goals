@@ -312,7 +312,7 @@ namespace OCCMissionGoals
             new("language", LocalizationManager.T("语言"), new[] { "语言", "中文", "英文", "英语", "俄语", "language", "english", "russian" }, () => { }),
             new("accent", LocalizationManager.T("主题色"), new[] { "主题色", "强调色", "颜色", "accent", "color" }, () => { }),
             new("project", LocalizationManager.T("设置项目"), new[] { "设置项目", "项目设置", "项目", "设置", "配置", "project", "config", "setting" }, OpenProjectSettings),
-            new("push", LocalizationManager.T("推送设置"), new[] { "推送设置", "推送", "上传", "仓库", "github", "备份", "push", "upload" }, OpenPushSettings),
+            new("stats", LocalizationManager.T("数据统计"), new[] { "数据统计", "统计", "概览", "分布", "stats", "statistics", "overview" }, OpenStatsSettings),
             new("autostart", LocalizationManager.T("开机自启动"), new[] { "开机自启动", "开机", "自启动", "启动", "autostart", "startup" }, ToggleAutoStart),
             new("update", LocalizationManager.T("检查更新"), new[] { "检查更新", "自动更新", "更新", "版本", "auto update", "update", "upgrade" }, CheckForUpdates),
         };
@@ -476,7 +476,7 @@ namespace OCCMissionGoals
             {
                 "theme" => (ThemeManager.IsDark ? LocalizationManager.T("切换为亮色") : LocalizationManager.T("切换为深色"), LocalizationManager.T("切换深色 / 浅色主题")),
                 "project" => (LocalizationManager.T("打开"), LocalizationManager.T("打开项目设置对话框")),
-                "push" => (LocalizationManager.T("跳转"), LocalizationManager.T("打开推送（上传 / 备份）设置")),
+                "stats" => (LocalizationManager.T("跳转"), LocalizationManager.T("打开数据统计面板")),
                 "autostart" => (Services.AutoStartService.IsEnabled() ? LocalizationManager.T("关闭") : LocalizationManager.T("开启"), LocalizationManager.T("登录 Windows 后自动启动本应用")),
                 "update" => (LocalizationManager.T("检查"), LocalizationManager.T("检查并安装新版本")),
                 _ => (LocalizationManager.T("打开"), s.Title),
@@ -675,28 +675,29 @@ namespace OCCMissionGoals
                 (page as Pages.UnDonePage)?.SelectEntry(entry);
         }
 
-        private void OpenPushSettings()
+        private void OpenStatsSettings()
         {
-            // 推送/GitHub 设置入口：跳转到「设置」页的推送区块
-            OpenPushSettingsPage("repos");
-        }
-
-        /// <summary>跳转到「设置」页的推送区块，并可定位到子区块（repos / file / options）。</summary>
-        public void OpenPushSettingsPage(string anchor = "repos")
-        {
+            // 数据统计入口：跳转到「设置」页的统计区块
             SwitchTab("settings");
-            (_pageCache.GetValueOrDefault("settings") as Pages.SettingsPage)?.NavigateToPush(anchor);
+            (_pageCache.GetValueOrDefault("settings") as Pages.SettingsPage)?.NavigateToStats();
         }
 
         /// <summary>切换明暗主题并持久化。</summary>
         public void ToggleTheme() => SetTheme(!ThemeManager.IsDark);
 
-        /// <summary>设置明暗主题（深色/浅色）并持久化、同步控制按钮图标。</summary>
+        /// <summary>设置明暗主题（深色/浅色）并持久化。</summary>
         public void SetTheme(bool dark)
         {
             ThemeManager.ApplyTheme(dark);
-            _controlButtonPage?.SyncThemeIcon();
             ConfigManager.Set("General", "theme", dark ? "dark" : "light");
+        }
+
+        /// <summary>设置主题样式（配色方案）并持久化。</summary>
+        public void SetThemeStyle(string name)
+        {
+            ThemeManager.SetThemeStyle(name);
+            ConfigManager.Set("General", "themestyle", ThemeManager.CurrentThemeName);
+            RefreshAllViews();
         }
 
         /// <summary>设置主题色（#RRGGBB）并持久化。</summary>
@@ -1122,7 +1123,7 @@ namespace OCCMissionGoals
 
         /// <summary>
         /// 按 ESC 关闭当前最顶层的浮层 UserControl（弹窗 / 搜索结果板）。
-        /// 优先级从高到低：条目弹窗 → 项目弹窗 → 版本弹窗 → GitHub 登录弹窗 → 搜索结果板。
+        /// 优先级从高到低：条目弹窗 → 项目弹窗 → 版本弹窗 → 搜索结果板。
         /// 返回是否关闭了某个浮层。
         /// </summary>
         private bool CloseTopmostUserControl()
@@ -1142,11 +1143,6 @@ namespace OCCMissionGoals
             if (VersionDialog.Visibility == Visibility.Visible)
             {
                 DismissVersionDialog();
-                return true;
-            }
-            if (GitHubLoginDialog.Visibility == Visibility.Visible)
-            {
-                DismissGitHubLoginDialog();
                 return true;
             }
             if (SearchBoard.Visibility == Visibility.Visible)
@@ -1574,25 +1570,35 @@ namespace OCCMissionGoals
 
             // 分隔线 + 始终可用的 MenuPage 核心功能
             if (menu.Items.Count > 0)
-                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateMenuSeparator());
             BuildBaseMenuItems(menu, pageKey);
 
             return menu;
         }
 
-        /// <summary>向上遍历可视树，找到最近一个属于已知条目/分组/插件类型的数据上下文。</summary>
+        /// <summary>向上遍历树，找到最近一个属于已知条目/分组/插件类型的数据上下文。</summary>
         private static object? FindContextData(DependencyObject? source)
         {
             while (source != null)
             {
-                if (source is FrameworkElement fe && fe.DataContext is { } dc)
+                // 数据上下文可能挂在 FrameworkElement 上，也可能挂在 FrameworkContentElement
+                // （如 TextBlock 内联的 Run）上；两种都检查。
+                object? dc = (source as FrameworkElement)?.DataContext
+                             ?? (source as FrameworkContentElement)?.DataContext;
+                if (dc is Pages.UnDoneItemVM or Pages.DoneItemVM
+                    or Pages.UnDoneVersionGroupVM or Pages.DoneVersionGroupVM
+                    or PluginInfo)
+                    return dc;
+
+                // Visual 树优先；非 Visual（如 Run/TextElement）没有视觉父级，走逻辑树
+                if (source is Visual || source is System.Windows.Media.Media3D.Visual3D)
                 {
-                    if (dc is Pages.UnDoneItemVM or Pages.DoneItemVM
-                        or Pages.UnDoneVersionGroupVM or Pages.DoneVersionGroupVM
-                        or PluginInfo)
-                        return dc;
+                    source = VisualTreeHelper.GetParent(source) ?? LogicalTreeHelper.GetParent(source);
                 }
-                source = VisualTreeHelper.GetParent(source);
+                else
+                {
+                    source = LogicalTreeHelper.GetParent(source);
+                }
             }
             return null;
         }
@@ -1668,7 +1674,7 @@ namespace OCCMissionGoals
                 CreateItem("打开项目", ShowOpenProjectDialog),
                 CreateItem("设置项目", OpenProjectSettings)));
 
-            if (pageKey == "log")
+            if (pageKey == "undone" || pageKey == "done")
             {
                 menu.Items.Add(CreateSubMenu("条目",
                     CreateItem("新建条目", ShowNewEntryDialog)));
@@ -1683,6 +1689,28 @@ namespace OCCMissionGoals
         }
 
         private Page? GetPage(string key) => _pageCache.GetValueOrDefault(key);
+
+        /// <summary>
+        /// 创建主题感知的分隔线。显式设置模板，避免右键菜单里的 Separator 回退到
+        /// 系统默认模板（使用 SystemColors.ControlLightBrush，暗色主题下会显示为白色）。
+        /// </summary>
+        private static Separator CreateMenuSeparator()
+        {
+            var separator = new Separator();
+
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.HeightProperty, 1.0);
+            border.SetValue(Border.MarginProperty, new Thickness(0, 4, 0, 4));
+            border.SetValue(Border.SnapsToDevicePixelsProperty, true);
+            border.SetResourceReference(Border.BackgroundProperty, "SeparatorBrush");
+
+            separator.Template = new ControlTemplate(typeof(Separator))
+            {
+                VisualTree = border,
+            };
+
+            return separator;
+        }
 
         private static MenuItem CreateItem(string key, Action onClick)
         {
@@ -1703,61 +1731,6 @@ namespace OCCMissionGoals
             var mi = new MenuItem { Header = LocalizationManager.T(key) };
             foreach (var c in children) mi.Items.Add(c);
             return mi;
-        }
-
-        // ── GitHub 登录弹窗 ──
-
-        /// <summary>打开 GitHub 登录弹窗（由「更新日志」页的登录按钮调用）。</summary>
-        public void ShowGitHubLoginDialog()
-        {
-            GitHubLoginDialog.Reset();
-            GitHubLoginDialog.Confirmed += OnGitHubLoginConfirmed;
-            GitHubLoginDialog.Cancelled += OnGitHubLoginCancelled;
-            DialogOverlay.Visibility = Visibility.Visible;
-            GitHubLoginDialog.Visibility = Visibility.Visible;
-        }
-
-        private void DismissGitHubLoginDialog()
-        {
-            GitHubLoginDialog.Confirmed -= OnGitHubLoginConfirmed;
-            GitHubLoginDialog.Cancelled -= OnGitHubLoginCancelled;
-            GitHubLoginDialog.Visibility = Visibility.Collapsed;
-            DialogOverlay.Visibility = Visibility.Collapsed;
-        }
-
-        private async void OnGitHubLoginConfirmed(object? sender, EventArgs e)
-        {
-            var token = GitHubLoginDialog.Token;
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                GitHubLoginDialog.ShowError(LocalizationManager.T("请输入 Personal Access Token。"));
-                return;
-            }
-
-            GitHubLoginDialog.SetBusy(true);
-            try
-            {
-                var user = await Services.GitHubService.FetchUserAsync(token);
-                Services.GitHubService.Token = token;
-
-                DismissGitHubLoginDialog();
-                SetTipText(LocalizationManager.T("已登录 GitHub：{0}", user.Login));
-                if (_pageCache.GetValueOrDefault("log") is Pages.LogPage logPage)
-                    logPage.ApplyGitHubUser(user);
-            }
-            catch (Exception ex)
-            {
-                GitHubLoginDialog.ShowError(LocalizationManager.T("登录失败：{0}", ex.Message));
-            }
-            finally
-            {
-                GitHubLoginDialog.SetBusy(false);
-            }
-        }
-
-        private void OnGitHubLoginCancelled(object? sender, EventArgs e)
-        {
-            DismissGitHubLoginDialog();
         }
 
         // ── 弹窗管理 ──

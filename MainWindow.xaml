@@ -329,13 +329,6 @@
                                    Visibility="Collapsed"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
-
-            <!-- GitHub 登录弹窗 -->
-            <dialogs:GitHubLoginDialog x:Name="GitHubLoginDialog"
-                                       Width="520" Height="360"
-                                       Visibility="Collapsed"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"/>
         </Grid>
     </Border>
 </Window>

@@ -195,12 +195,14 @@
                     <TextBlock Text="{loc:Loc &quot;标题&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="TitleTextBox"
                              Style="{StaticResource DialogTextBox}"
+                             MaxLength="200"
                              Margin="0,0,0,14"/>
 
                     <!-- 简介 -->
                     <TextBlock Text="{loc:Loc &quot;简介&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="BriefTextBox"
                              Style="{StaticResource DialogTextBox}"
+                             MaxLength="500"
                              Height="60"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
@@ -209,9 +211,11 @@
                              Margin="0,0,0,14"/>
 
                     <!-- 详细信息 -->
-                    <TextBlock Text="{loc:Loc &quot;详细信息&quot;}" Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;详细信息&quot;}" Style="{StaticResource DialogLabel}"
+                               ToolTip="{loc:Loc &quot;详情 —— 可选，Markdown 格式的完整描述文本&quot;}"/>
                     <TextBox x:Name="DetailTextBox"
                              Style="{StaticResource DialogTextBox}"
+                             MaxLength="2000"
                              Height="80"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"

@@ -20,15 +20,12 @@
     <s:String xml:space="preserve" x:Key="Expand: 已安装">Expand: 설치됨</s:String>
     <s:String xml:space="preserve" x:Key="File: 文件">File: 파일</s:String>
     <s:String xml:space="preserve" x:Key="Function: 功能">Function: 기능</s:String>
-    <s:String xml:space="preserve" x:Key="GitHub 推送配置">GitHub 푸시 설정</s:String>
-    <s:String xml:space="preserve" x:Key="GitHub 集成">GitHub 연동</s:String>
-    <s:String xml:space="preserve" x:Key="Github设置">GitHub 설정</s:String>
     <s:String xml:space="preserve" x:Key="OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、截止日期、版本归属、关联文件追踪以及多项目切换。">OCC's Mission &amp; Goals 는 개발자와 프로젝트 유지보수자를 위한 가벼운 작업 추적 도구입니다. 「항목(Mission)」을 기본 단위로 하며, 각 항목은 독립적인 목표 작업을 기록합니다. 심각도 등급, 마감일, 버전 소속, 관련 파일 추적 및 다중 프로젝트 전환을 지원합니다.</s:String>
     <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe [-p &lt;项目&gt;] &lt;命令&gt; [参数]">OCCMissionGoals.exe [-p &lt;프로젝트&gt;] &lt;명령&gt; [인수]</s:String>
     <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe 命令行接口">OCCMissionGoals.exe 명령줄 인터페이스</s:String>
     <s:String xml:space="preserve" x:Key="Plugins: 插件">Plugins: 플러그인</s:String>
     <s:String xml:space="preserve" x:Key="Plugins: 搜索扩展中心全部插件，Expand: 只搜索已安装插件。两者都不筛选条目列表，结果在搜索板中展示，关键词为空时列出全部对应插件；点击结果跳转到扩展中心。">Plugins: 확장 센터의 전체 플러그인 검색, Expand: 설치된 플러그인만 검색. 둘 다 항목 목록은 필터링하지 않으며 결과는 검색 보드에 표시됩니다. 키워드가 비어 있으면 해당 플러그인을 모두 나열하고, 결과를 클릭하면 확장 센터로 이동합니다.</s:String>
-    <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开推送设置。">Setting: 모드는 항목 목록을 필터링하지 않고 결과 보드에 설정 바로가기 항목을 나열하며, 키워드가 비어 있어도 모든 설정 항목을 표시합니다. 클릭하여 바로 실행할 수 있습니다: 다크/라이트 테마 전환, 프로젝트 설정 열기, 푸시 설정 열기.</s:String>
+    <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。">Setting: 모드는 항목 목록을 필터링하지 않고 결과 보드에 설정 바로가기 항목을 나열하며, 키워드가 비어 있어도 모든 설정 항목을 표시합니다. 클릭하여 바로 실행할 수 있습니다: 다크/라이트 테마 전환, 프로젝트 설정 열기, 데이터 통계 열기.</s:String>
     <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: 설정</s:String>
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: 태그</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: 텍스트</s:String>
@@ -58,19 +55,19 @@
     <s:String xml:space="preserve" x:Key="• 分类浏览 —— 按插件类别分组展示可用扩展">• 카테고리 탐색 —— 플러그인 카테고리별로 사용 가능한 확장을 그룹화하여 표시</s:String>
     <s:String xml:space="preserve" x:Key="• 删除 —— 移除已完成条目">• 삭제 —— 완료된 항목을 제거</s:String>
     <s:String xml:space="preserve" x:Key="• 删除条目 —— 移除不需要的条目（不可恢复）">• 항목 삭제 —— 필요 없는 항목을 제거(복구 불가)</s:String>
-    <s:String xml:space="preserve" x:Key="• 在仪表盘底部可编辑当前版本号，修改后新条目将归属新版本">• 대시보드 하단에서 현재 버전 번호를 편집할 수 있으며, 수정 후 새 항목은 새 버전에 속합니다</s:String>
+    <s:String xml:space="preserve" x:Key="• 通过「版本管理」弹窗新建、打开或删除版本，新条目将归属当前版本">• 「버전 관리」 대화 상자에서 버전을 새로 만들거나 열거나 삭제할 수 있으며, 새 항목은 현재 버전에 속합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 安装 / 卸载 —— 一键安装或卸载扩展插件">• 설치 / 제거 —— 확장 플러그인을 한 번의 클릭으로 설치 또는 제거</s:String>
     <s:String xml:space="preserve" x:Key="• 完成日期 —— 每条目卡片额外显示「完成于」日期信息">• 완료 날짜 —— 각 항목 카드에 「완료일」 날짜 정보를 추가 표시</s:String>
     <s:String xml:space="preserve" x:Key="• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面">• 항목 완료 —— 항목을 완료로 표시하고 완료 시간을 자동 기록하며, 항목이 이 페이지에서 완료 페이지로 이동합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助">• 탐색 모음      대시보드 / 미완료 항목 / 완료 항목 / 확장 센터 / 도움말</s:String>
     <s:String xml:space="preserve" x:Key="• 展开详情 —— 点击「详情」按钮展开条目完整信息面板，包括详细描述和关联文件表格">• 상세 펼치기 —— 「상세」 버튼을 클릭하여 상세 설명과 관련 파일 표를 포함한 전체 정보 패널을 펼칩니다</s:String>
-    <s:String xml:space="preserve" x:Key="• 工具栏      按住 Ctrl 显示：新建条目 / 搜索 / 排序 / 推送 / CLI 等快捷操作">• 도구 모음      Ctrl 을 누르면 표시: 새 항목 / 검색 / 정렬 / 푸시 / CLI 등 바로가기 작업</s:String>
+    <s:String xml:space="preserve" x:Key="• 工具栏      按住 Ctrl 显示：新建条目 / 搜索 / 排序 / 数据统计 / CLI 等快捷操作">• 도구 모음      Ctrl 을 누르면 표시: 새 항목 / 검색 / 정렬 / 데이터 통계 / CLI 등 바로가기 작업</s:String>
     <s:String xml:space="preserve" x:Key="• 已完成条目在版本内全部完成后才可归档，保持视图整洁">• 완료된 항목은 버전 내의 모든 항목이 완료된 후에만 보관할 수 있어 보기를 깔끔하게 유지합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 常见标签：bug（缺陷）、feature（新功能）、refactor（重构）、docs（文档）、test（测试）、chore（杂项）">• 자주 쓰는 태그: bug(결함), feature(새 기능), refactor(리팩터링), docs(문서), test(테스트), chore(잡일)</s:String>
     <s:String xml:space="preserve" x:Key="• 按版本归档 —— 仅当版本内所有条目均已完成时，才显示归档按钮。归档将导出 Markdown 并删除版本数据文件">• 버전별 보관 —— 버전 내 모든 항목이 완료된 경우에만 보관 버튼을 표시합니다. 보관은 Markdown 을 내보내고 버전 데이터 파일을 삭제합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 排序 —— 按严重程度（高→低）、截止日期（近→远）、版本号（升/降）以及仅收藏排序">• 정렬 —— 심각도(높음→낮음), 마감일(가까움→먼순), 버전 번호(오름차순/내림차순), 즐겨찾기만으로 정렬</s:String>
     <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框实时过滤插件列表">• 검색 필터 —— 상단 검색 상자에서 플러그인 목록을 실시간으로 필터링</s:String>
-    <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框输入关键词实时过滤，支持前缀切换匹配范围：Text:内容、Tag:标签、Setting:设置（项目设置/主题/推送）、File:文件路径、Date:日期；不带前缀时按文字匹配，Setting: 下按回车执行设置项">• 검색 필터 —— 상단 검색 상자에 키워드를 입력하면 실시간으로 필터링되며, 접두사로 매칭 범위를 전환할 수 있습니다: Text:내용, Tag:태그, Setting:설정(프로젝트 설정/테마/푸시), File:파일 경로, Date:날짜. 접두사 없이는 텍스트로 매칭하고, Setting: 에서는 Enter 로 설정 항목을 실행합니다</s:String>
+    <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框输入关键词实时过滤，支持前缀切换匹配范围：Text:内容、Tag:标签、Setting:设置（项目设置/主题/数据统计）、File:文件路径、Date:日期；不带前缀时按文字匹配，Setting: 下按回车执行设置项">• 검색 필터 —— 상단 검색 상자에 키워드를 입력하면 실시간으로 필터링되며, 접두사로 매칭 범위를 전환할 수 있습니다: Text:내용, Tag:태그, Setting:설정(프로젝트 설정/테마/데이터 통계), File:파일 경로, Date:날짜. 접두사 없이는 텍스트로 매칭하고, Setting: 에서는 Enter 로 설정 항목을 실행합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 撤销完成 —— 将已完成条目恢复为未完成状态，条目移回 UnDonePage">• 완료 취소 —— 완료된 항목을 미완료 상태로 되돌리고 항목을 UnDonePage 로 이동</s:String>
     <s:String xml:space="preserve" x:Key="• 支持按变更需求升序或降序排列条目列表">• 변경 요구사항에 따라 항목 목록을 오름차순 또는 내림차순으로 정렬 지원</s:String>
     <s:String xml:space="preserve" x:Key="• 收藏加星 —— 点击星标按钮收藏条目，收藏的条目在列表中高亮显示">• 즐겨찾기 별표 —— 별표 버튼을 클릭하여 항목을 즐겨찾기하고, 즐겨찾기 항목은 목록에서 강조 표시됩니다</s:String>
@@ -84,7 +81,7 @@
     <s:String xml:space="preserve" x:Key="• 正常输出 JSON（stdout），带缩进便于阅读">• 정상적으로 JSON(stdout)을 출력하며, 읽기 쉽도록 들여쓰기가 적용됩니다</s:String>
     <s:String xml:space="preserve" x:Key="• 每个条目可附带一个或多个类型标签（多选）">• 각 항목에 하나 이상의 유형 태그를 붙일 수 있습니다(다중 선택)</s:String>
     <s:String xml:space="preserve" x:Key="• 每个条目归属于一个版本，创建时自动设为当前版本">• 각 항목은 하나의 버전에 속하며, 생성 시 자동으로 현재 버전으로 설정됩니다</s:String>
-    <s:String xml:space="preserve" x:Key="• 点击「迭代标签」按钮自动将迭代编号 +1（如 alpha.0 → alpha.1）">• 「반복 태그」 버튼을 클릭하면 반복 번호를 자동으로 +1 합니다(예: alpha.0 → alpha.1)</s:String>
+    <s:String xml:space="preserve" x:Key="• 使用命令 -v Iterate 将迭代编号 +1（如 alpha.0 → alpha.1）">• -v Iterate 명령으로 반복 번호를 +1 합니다(예: alpha.0 → alpha.1)</s:String>
     <s:String xml:space="preserve" x:Key="• 点击搜索框外部关闭结果板。">• 검색 상자 바깥을 클릭하면 결과 보드를 닫습니다.</s:String>
     <s:String xml:space="preserve" x:Key="• 版本分组折叠 —— 条目按版本号分组，每组可折叠 / 展开，标题显示版本名和条目数">• 버전 그룹 접기 —— 항목은 버전 번호별로 그룹화되며 각 그룹을 접거나 펼칠 수 있고, 제목에 버전 이름과 항목 수를 표시합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 状态栏      项目切换下拉框">• 상태 표시줄      프로젝트 전환 드롭다운</s:String>
@@ -101,7 +98,6 @@
     <s:String xml:space="preserve" x:Key="、">, </s:String>
     <s:String xml:space="preserve" x:Key="一般">일반</s:String>
     <s:String xml:space="preserve" x:Key="一般 General">일반 General</s:String>
-    <s:String xml:space="preserve" x:Key="一键推送数据">한 번의 클릭으로 데이터 푸시</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">다운로드에 실패했습니다. 잠시 후 다시 시도하거나 「다운로드 페이지 열기」를 사용하세요.</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">다운로드 실패: {0}</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">다운로드 및 설치</s:String>
@@ -114,14 +110,11 @@
     <s:String xml:space="preserve" x:Key="严重程度分布">심각도 분포</s:String>
     <s:String xml:space="preserve" x:Key="严重程度直接影响列表默认排序（高→低），同时在仪表盘分布图表中可视化。编辑条目时可随时调整。">심각도는 목록 기본 정렬(높음→낮음)에 직접 영향을 주며, 대시보드 분포 차트에서 시각화됩니다. 항목 편집 시 언제든지 조정할 수 있습니다.</s:String>
     <s:String xml:space="preserve" x:Key="严重程度（Severity）">심각도(Severity)</s:String>
-    <s:String xml:space="preserve" x:Key="主">주</s:String>
     <s:String xml:space="preserve" x:Key="主版本.次版本.补丁版本-标签.迭代编号">주버전.부버전.패치버전-태그.반복 번호</s:String>
     <s:String xml:space="preserve" x:Key="主题样式">테마 스타일</s:String>
+    <s:String xml:space="preserve" x:Key="默认主题">기본</s:String>
     <s:String xml:space="preserve" x:Key="主题色">테마 색상</s:String>
     <s:String xml:space="preserve" x:Key="从 GitHub Releases 检查新版本，确认后自动下载并运行安装程序。">GitHub Releases 에서 새 버전을 확인하고, 확인 후 자동으로 다운로드하여 설치 프로그램을 실행합니다.</s:String>
-    <s:String xml:space="preserve" x:Key="从已登录的 GitHub 账号选择目标仓库">로그인된 GitHub 계정에서 대상 저장소 선택</s:String>
-    <s:String xml:space="preserve" x:Key="从程序 bin 文件夹中选择要推送的文件">프로그램 bin 폴더에서 푸시할 파일 선택</s:String>
-    <s:String xml:space="preserve" x:Key="仓库推送位置">저장소 푸시 위치</s:String>
     <s:String xml:space="preserve" x:Key="代码文件引用追踪">코드 파일 참조 추적</s:String>
     <s:String xml:space="preserve" x:Key="以可视化图表展示五个严重等级（致命/严重/一般/补丁/更新）各自的条目数量，帮助快速识别项目风险分布。">다섯 가지 심각도(치명적/심각/일반/패치/업데이트)별 항목 수를 시각적 차트로 표시하여 프로젝트 리스크 분포를 빠르게 파악할 수 있습니다.</s:String>
     <s:String xml:space="preserve" x:Key="仪表盘">대시보드</s:String>
@@ -139,7 +132,6 @@
     <s:String xml:space="preserve" x:Key="关联的源代码文件路径（必填）">관련 소스 코드 파일 경로(필수)</s:String>
     <s:String xml:space="preserve" x:Key="函数">함수</s:String>
     <s:String xml:space="preserve" x:Key="函数 Function">함수 Function</s:String>
-    <s:String xml:space="preserve" x:Key="分支">브랜치</s:String>
     <s:String xml:space="preserve" x:Key="分类标签系统">분류 태그 시스템</s:String>
     <s:String xml:space="preserve" x:Key="切换为亮色">라이트로 전환</s:String>
     <s:String xml:space="preserve" x:Key="切换为深色">다크로 전환</s:String>
@@ -159,7 +151,6 @@
     <s:String xml:space="preserve" x:Key="删除条目（不可恢复）。">항목을 삭제합니다(복구 불가).</s:String>
     <s:String xml:space="preserve" x:Key="刷新">새로 고침</s:String>
     <s:String xml:space="preserve" x:Key="功能更新和体验优化，最低优先级">기능 업데이트 및 경험 개선, 최저 우선순위</s:String>
-    <s:String xml:space="preserve" x:Key="加载仓库列表失败：{0}">저장소 목록 불러오기 실패: {0}</s:String>
     <s:String xml:space="preserve" x:Key="即将到期">곧 마감</s:String>
     <s:String xml:space="preserve" x:Key="卸载">제거</s:String>
     <s:String xml:space="preserve" x:Key="发现新版本 {0}，是否下载并安装？">새 버전 {0} 이(가) 있습니다. 다운로드하여 설치할까요?</s:String>
@@ -174,13 +165,12 @@
     <s:String xml:space="preserve" x:Key="命令行">명령줄</s:String>
     <s:String xml:space="preserve" x:Key="命令行（CLI）">명령줄(CLI)</s:String>
     <s:String xml:space="preserve" x:Key="命名空间.类.方法">네임스페이스.클래스.메서드</s:String>
-    <s:String xml:space="preserve" x:Key="在仪表盘底部可直接编辑当前版本号。点击「迭代标签」按钮自动递增迭代编号（末段 +1）。编辑后保存，新条目将自动归属该版本。">대시보드 하단에서 현재 버전 번호를 직접 편집할 수 있습니다. 「반복 태그」 버튼을 클릭하면 반복 번호가 자동으로 증가합니다(마지막 부분 +1). 편집 후 저장하면 새 항목은 해당 버전에 자동으로 속합니다.</s:String>
     <s:String xml:space="preserve" x:Key="在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。">항목 상세 패널에서 「관련 파일」 표가 모든 관련 참조를 표시합니다. 항목 편집 시 관련 파일을 추가, 수정 또는 삭제할 수 있습니다.</s:String>
     <s:String xml:space="preserve" x:Key="基本用法">기본 사용법</s:String>
+    <s:String xml:space="preserve" x:Key="复制">복사</s:String>
     <s:String xml:space="preserve" x:Key="复制信息">정보 복사</s:String>
     <s:String xml:space="preserve" x:Key="外观主题">외관 테마</s:String>
     <s:String xml:space="preserve" x:Key="多项目目录与数据管理">다중 프로젝트 디렉터리와 데이터 관리</s:String>
-    <s:String xml:space="preserve" x:Key="如何创建令牌？打开 GitHub 令牌页面">토큰을 만드는 방법은? GitHub 토큰 페이지 열기</s:String>
     <s:String xml:space="preserve" x:Key="安装">설치</s:String>
     <s:String xml:space="preserve" x:Key="安装扩展">확장 설치</s:String>
     <s:String xml:space="preserve" x:Key="完成">완료</s:String>
@@ -197,6 +187,7 @@
     <s:String xml:space="preserve" x:Key="已创建并切换到版本 {0}。">버전 {0} 을(를) 생성하고 전환했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已创建项目「{0}」。">프로젝트 「{0}」을(를) 생성했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已复制条目信息。">항목 정보를 복사했습니다.</s:String>
+    <s:String xml:space="preserve" x:Key="已复制">복사됨</s:String>
     <s:String xml:space="preserve" x:Key="全部">전체</s:String>
     <s:String xml:space="preserve" x:Key="已安装">설치됨</s:String>
     <s:String xml:space="preserve" x:Key="语言包">언어 팩</s:String>
@@ -207,22 +198,19 @@
     <s:String xml:space="preserve" x:Key="已开启开机自启动。">시작 시 자동 실행을 활성화했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已归档 {0} 条到 bin/{1}。">{0}개를 bin/{1}에 보관했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已打开项目「{0}」。">프로젝트 「{0}」을(를) 열었습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="已推送到 {0}（{1}）。">{0}({1})에 푸시했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已收起所有条目详情。">모든 항목 상세를 접었습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已是最新版本。">최신 버전입니다.</s:String>
     <s:String xml:space="preserve" x:Key="已是最新版本（{0}）。">최신 버전입니다({0}).</s:String>
     <s:String xml:space="preserve" x:Key="已更新条目「{0}」。">항목 「{0}」을(를) 업데이트했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="已添加条目「{0}」。">항목 「{0}」을(를) 추가했습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="已登录 GitHub：{0}">GitHub 로그인됨: {0}</s:String>
     <s:String xml:space="preserve" x:Key="已过期">기한 초과</s:String>
-    <s:String xml:space="preserve" x:Key="已退出 GitHub 登录。">GitHub 에서 로그아웃했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="帮助">도움말</s:String>
     <s:String xml:space="preserve" x:Key="帮助 / 使用指南">도움말 / 사용자 가이드</s:String>
     <s:String xml:space="preserve" x:Key="帮助(_H)">도움말(_H)</s:String>
     <s:String xml:space="preserve" x:Key="常规任务和需求，默认等级">일반 작업과 요구사항, 기본 등급</s:String>
     <s:String xml:space="preserve" x:Key="应用">적용</s:String>
     <s:String xml:space="preserve" x:Key="应用结构">앱 구조</s:String>
-    <s:String xml:space="preserve" x:Key="底部工具栏提供快速操作入口：新建条目、搜索过滤、排序切换、GitHub 推送、CLI 命令行模式等。按住 Ctrl 键即可查看和使用。">하단 도구 모음은 빠른 작업 진입점을 제공합니다: 새 항목, 검색 필터, 정렬 전환, GitHub 푸시, CLI 명령줄 모드 등. Ctrl 키를 누르면 확인하고 사용할 수 있습니다.</s:String>
+    <s:String xml:space="preserve" x:Key="底部工具栏提供快速操作入口：新建条目、搜索过滤、排序切换、数据统计、CLI 命令行模式等。按住 Ctrl 键即可查看和使用。">하단 도구 모음은 빠른 작업 진입점을 제공합니다: 새 항목, 검색 필터, 정렬 전환, 데이터 통계, CLI 명령줄 모드 등. Ctrl 키를 누르면 확인하고 사용할 수 있습니다.</s:String>
     <s:String xml:space="preserve" x:Key="开机自动启动">시작 시 자동 실행</s:String>
     <s:String xml:space="preserve" x:Key="开机自启动">시작 시 자동 실행</s:String>
     <s:String xml:space="preserve" x:Key="归档">보관</s:String>
@@ -241,7 +229,6 @@
     <s:String xml:space="preserve" x:Key="打印帮助信息。">도움말 정보를 출력합니다.</s:String>
     <s:String xml:space="preserve" x:Key="打开">열기</s:String>
     <s:String xml:space="preserve" x:Key="打开下载页">다운로드 페이지 열기</s:String>
-    <s:String xml:space="preserve" x:Key="打开推送（上传 / 备份）设置">푸시(업로드 / 백업) 설정 열기</s:String>
     <s:String xml:space="preserve" x:Key="打开版本(_O)">버전 열기(_O)</s:String>
     <s:String xml:space="preserve" x:Key="打开版本">버전 열기</s:String>
     <s:String xml:space="preserve" x:Key="打开项目">프로젝트 열기</s:String>
@@ -251,7 +238,6 @@
     <s:String xml:space="preserve" x:Key="扩展">확장</s:String>
     <s:String xml:space="preserve" x:Key="扩展中心">확장 센터</s:String>
     <s:String xml:space="preserve" x:Key="扩展中心（ExpandPage）">확장 센터(ExpandPage)</s:String>
-    <s:String xml:space="preserve" x:Key="找不到要推送的文件。">푸시할 파일을 찾을 수 없습니다.</s:String>
     <s:String xml:space="preserve" x:Key="指定目标项目（按目录名或 project.json 中的项目名匹配）。">대상 프로젝트를 지정합니다(디렉터리 이름 또는 project.json 의 프로젝트 이름으로 매칭).</s:String>
     <s:String xml:space="preserve" x:Key="按住 Ctrl">Ctrl 누르기</s:String>
     <s:String xml:space="preserve" x:Key="按日期分组">날짜별 그룹</s:String>
@@ -265,13 +251,6 @@
     <s:String xml:space="preserve" x:Key="按照版本升序排序">버전 오름차순 정렬</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">버전 내림차순 정렬</s:String>
     <s:String xml:space="preserve" x:Key="排序方式：">정렬 방식:</s:String>
-    <s:String xml:space="preserve" x:Key="推送 / 仓库">푸시 / 저장소</s:String>
-    <s:String xml:space="preserve" x:Key="推送 / 仓库设置">푸시 / 저장소 설정</s:String>
-    <s:String xml:space="preserve" x:Key="推送失败：{0}">푸시 실패: {0}</s:String>
-    <s:String xml:space="preserve" x:Key="推送文件设置">푸시 파일 설정</s:String>
-    <s:String xml:space="preserve" x:Key="推送设置">푸시 설정</s:String>
-    <s:String xml:space="preserve" x:Key="提交信息包含作者">커밋 메시지에 작성자 포함</s:String>
-    <s:String xml:space="preserve" x:Key="提交生成选项">커밋 생성 옵션</s:String>
     <s:String xml:space="preserve" x:Key="提示">팁</s:String>
     <s:String xml:space="preserve" x:Key="插件与功能扩展管理">플러그인 및 기능 확장 관리</s:String>
     <s:String xml:space="preserve" x:Key="插件搜索">플러그인 검색</s:String>
@@ -302,7 +281,6 @@
     <s:String xml:space="preserve" x:Key="显示底部工具栏和侧边栏选项卡标签">하단 도구 모음 및 사이드바 탭 라벨 표시</s:String>
     <s:String xml:space="preserve" x:Key="显示当前项目的条目完成率：已完成数 / 总数，配百分比进度条。一目了然地反映项目整体推进情况。">현재 프로젝트의 항목 완료율(완료 수 / 총 수)을 백분율 진행률 막대와 함께 표시하여 프로젝트 전체 진행 상황을 한눈에 보여줍니다.</s:String>
     <s:String xml:space="preserve" x:Key="暂无新消息。">새 메시지가 없습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="更多推送设置">더 많은 푸시 설정</s:String>
     <s:String xml:space="preserve" x:Key="更改条目">항목 변경</s:String>
     <s:String xml:space="preserve" x:Key="更新">업데이트</s:String>
     <s:String xml:space="preserve" x:Key="更新 Update">업데이트 Update</s:String>
@@ -318,7 +296,6 @@
     <s:String xml:space="preserve" x:Key="未打开任何项目。">열린 프로젝트가 없습니다.</s:String>
     <s:String xml:space="preserve" x:Key="未打开项目">프로젝트가 열리지 않음</s:String>
     <s:String xml:space="preserve" x:Key="未指定版本">버전 미지정</s:String>
-    <s:String xml:space="preserve" x:Key="未登录 GitHub：请先在账号页登录后点击「刷新」。">GitHub 미로그인: 먼저 계정 페이지에서 로그인한 후 「새로 고침」을 클릭하세요.</s:String>
     <s:String xml:space="preserve" x:Key="未知">알 수 없음</s:String>
     <s:String xml:space="preserve" x:Key="条目 (Mission)">항목 (Mission)</s:String>
     <s:String xml:space="preserve" x:Key="条目(_V)">항목(_V)</s:String>
@@ -342,7 +319,6 @@
     <s:String xml:space="preserve" x:Key="检查更新">업데이트 확인</s:String>
     <s:String xml:space="preserve" x:Key="检查更新失败：{0}">업데이트 확인 실패: {0}</s:String>
     <s:String xml:space="preserve" x:Key="概述">개요</s:String>
-    <s:String xml:space="preserve" x:Key="次">부</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新…">업데이트 다운로드 중…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">업데이트 다운로드 중… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">설치 프로그램 실행 중…</s:String>
@@ -355,7 +331,6 @@
     <s:String xml:space="preserve" x:Key="没有匹配结果">일치하는 결과가 없습니다</s:String>
     <s:String xml:space="preserve" x:Key="没有已完成条目">완료된 항목이 없습니다</s:String>
     <s:String xml:space="preserve" x:Key="没有打开的项目。">열린 프로젝트가 없습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="没有打开的项目，无法推送。">열린 프로젝트가 없어 푸시할 수 없습니다.</s:String>
     <s:String xml:space="preserve" x:Key="没有扩展">확장이 없습니다</s:String>
     <s:String xml:space="preserve" x:Key="没有未完成条目">미완료 항목이 없습니다</s:String>
     <s:String xml:space="preserve" x:Key="浅色">라이트</s:String>
@@ -368,20 +343,14 @@
     <s:String xml:space="preserve" x:Key="版本号">버전 번호</s:String>
     <s:String xml:space="preserve" x:Key="版本号 —— 条目创建时自动归属当前版本，不可手动修改">버전 번호 —— 항목 생성 시 자동으로 현재 버전에 속하며 수동으로 수정할 수 없습니다</s:String>
     <s:String xml:space="preserve" x:Key="版本号包含无效字符。">버전 번호에 유효하지 않은 문자가 포함되어 있습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="版本号编辑区">버전 번호 편집 영역</s:String>
     <s:String xml:space="preserve" x:Key="版本号采用五段式语义化格式：">버전 번호는 5단계 시맨틱 형식을 사용합니다:</s:String>
     <s:String xml:space="preserve" x:Key="版本号（Version）">버전 번호(Version)</s:String>
     <s:String xml:space="preserve" x:Key="版本操作">버전 작업</s:String>
-    <s:String xml:space="preserve" x:Key="版本标签">버전 태그</s:String>
     <s:String xml:space="preserve" x:Key="版本管理">버전 관리</s:String>
     <s:String xml:space="preserve" x:Key="版本管理体系">버전 관리 체계</s:String>
     <s:String xml:space="preserve" x:Key="版本迭代：当前版本号的迭代编号 +1（如 alpha.0 → alpha.1）。">버전 반복: 현재 버전 번호의 반복 번호를 +1 합니다(예: alpha.0 → alpha.1).</s:String>
     <s:String xml:space="preserve" x:Key="状态机无更新">상태 머신 업데이트 없음</s:String>
-    <s:String xml:space="preserve" x:Key="登录">로그인</s:String>
-    <s:String xml:space="preserve" x:Key="登录 GitHub">GitHub 로그인</s:String>
     <s:String xml:space="preserve" x:Key="登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。">Windows 로그인 후 이 앱을 자동 실행합니다. 현재 사용자 시작 항목 레지스트리를 통해 구현되며 관리자 권한이 필요 없습니다.</s:String>
-    <s:String xml:space="preserve" x:Key="登录失败：{0}">로그인 실패: {0}</s:String>
-    <s:String xml:space="preserve" x:Key="目标仓库">대상 저장소</s:String>
     <s:String xml:space="preserve" x:Key="相关文件">관련 파일</s:String>
     <s:String xml:space="preserve" x:Key="(无)">(없음)</s:String>
     <s:String xml:space="preserve" x:Key="相关的函数或方法名（可选）">관련 함수 또는 메서드 이름(선택)</s:String>
@@ -390,8 +359,8 @@
     <s:String xml:space="preserve" x:Key="程序在启动时检测命令行参数：带参数启动进入 CLI 模式（控制台），无参数启动进入 GUI 模式。CLI 所有输出为标准 JSON，错误输出至 stderr，适合 AI / 脚本 / CI 集成。">프로그램은 시작 시 명령줄 인수를 감지합니다: 인수와 함께 실행하면 CLI 모드(콘솔), 인수 없이 실행하면 GUI 모드가 됩니다. CLI 의 모든 출력은 표준 JSON 이고 오류는 stderr 로 출력되어 AI / 스크립트 / CI 연동에 적합합니다.</s:String>
     <s:String xml:space="preserve" x:Key="简介">요약</s:String>
     <s:String xml:space="preserve" x:Key="简介不能超过 500 个字符。">요약은 500자를 초과할 수 없습니다.</s:String>
+    <s:String xml:space="preserve" x:Key="详细信息不能超过 2000 个字符。">상세 내용은 2000자를 초과할 수 없습니다.</s:String>
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">요약 —— 선택 사항, 한 줄 설명</s:String>
-    <s:String xml:space="preserve" x:Key="管理「更新日志」提交生成时使用的目标仓库与提交选项。更改会自动保存。">「업데이트 로그」 커밋 생성 시 사용하는 대상 저장소와 커밋 옵션을 관리합니다. 변경 사항은 자동으로 저장됩니다.</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">모든 미완료 목표 작업 관리</s:String>
     <s:String xml:space="preserve" x:Key="类别">카테고리</s:String>
     <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">유형 태그 —— 다중 선택 가능(예: bug, feature, refactor 등)</s:String>
@@ -409,10 +378,8 @@
     <s:String xml:space="preserve" x:Key="致命 Fatal">치명적 Fatal</s:String>
     <s:String xml:space="preserve" x:Key="行">행</s:String>
     <s:String xml:space="preserve" x:Key="行号 Line">행 번호 Line</s:String>
-    <s:String xml:space="preserve" x:Key="补">보</s:String>
     <s:String xml:space="preserve" x:Key="补丁">패치</s:String>
     <s:String xml:space="preserve" x:Key="补丁 Patch">패치 Patch</s:String>
-    <s:String xml:space="preserve" x:Key="要推送的文件">푸시할 파일</s:String>
     <s:String xml:space="preserve" x:Key="设置">설정</s:String>
     <s:String xml:space="preserve" x:Key="设置开机自启动失败：{0}">시작 시 자동 실행 설정 실패: {0}</s:String>
     <s:String xml:space="preserve" x:Key="设置搜索">설정 검색</s:String>
@@ -423,12 +390,7 @@
     <s:String xml:space="preserve" x:Key="详情 —— 可选，Markdown 格式的完整描述文本">상세 —— 선택 사항, Markdown 형식의 전체 설명 텍스트</s:String>
     <s:String xml:space="preserve" x:Key="详细信息">상세 정보</s:String>
     <s:String xml:space="preserve" x:Key="语言">언어</s:String>
-    <s:String xml:space="preserve" x:Key="请先在设置中选择要推送的文件。">먼저 설정에서 푸시할 파일을 선택하세요.</s:String>
-    <s:String xml:space="preserve" x:Key="请先在设置中配置推送仓库。">먼저 설정에서 푸시 저장소를 구성하세요.</s:String>
     <s:String xml:space="preserve" x:Key="请先打开一个项目。">먼저 프로젝트를 여세요.</s:String>
-    <s:String xml:space="preserve" x:Key="请先登录 GitHub。">먼저 GitHub 에 로그인하세요.</s:String>
-    <s:String xml:space="preserve" x:Key="请输入 Personal Access Token。">Personal Access Token 을 입력하세요.</s:String>
-    <s:String xml:space="preserve" x:Key="请输入 Personal Access Token（经典或精细粒度均可），需要 read:user 权限。">Personal Access Token 을 입력하세요(클래식 또는 파인 그레인 모두 가능). read:user 권한이 필요합니다.</s:String>
     <s:String xml:space="preserve" x:Key="请输入版本号。">버전 번호를 입력하세요.</s:String>
     <s:String xml:space="preserve" x:Key="请选择一个版本。">버전을 선택하세요.</s:String>
     <s:String xml:space="preserve" x:Key="请选择一个项目。">프로젝트를 선택하세요.</s:String>
@@ -438,20 +400,16 @@
     <s:String xml:space="preserve" x:Key="路径 Path">경로 Path</s:String>
     <s:String xml:space="preserve" x:Key="跳转">이동</s:String>
     <s:String xml:space="preserve" x:Key="输出格式">출력 형식</s:String>
-    <s:String xml:space="preserve" x:Key="迭代标签">반복 태그</s:String>
     <s:String xml:space="preserve" x:Key="退出">종료</s:String>
-    <s:String xml:space="preserve" x:Key="退出登录">로그아웃</s:String>
-    <s:String xml:space="preserve" x:Key="选择已有分支，或输入新分支名以在推送时自动创建">기존 브랜치를 선택하거나 새 브랜치 이름을 입력하여 푸시 시 자동으로 생성합니다</s:String>
     <s:String xml:space="preserve" x:Key="选择已有类别直接添加，或输入新类别后按回车/点添加">기존 카테고리를 선택하여 바로 추가하거나, 새 카테고리를 입력한 후 Enter/추가를 클릭합니다</s:String>
     <s:String xml:space="preserve" x:Key="选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。">앱의 테마 강조 색상을 선택합니다. 버튼, 진행률, 선택 상태 등에 사용됩니다. 변경 사항은 즉시 적용되고 저장됩니다.</s:String>
     <s:String xml:space="preserve" x:Key="选择应用的整体明暗风格。更改会立即生效并保存。">앱 전체의 밝고 어두운 스타일을 선택합니다. 변경 사항은 즉시 적용되고 저장됩니다.</s:String>
     <s:String xml:space="preserve" x:Key="选择版本文件">버전 파일 선택</s:String>
     <s:String xml:space="preserve" x:Key="选择界面显示语言，更改会立即生效并保存。">인터페이스 표시 언어를 선택합니다. 변경 사항은 즉시 적용되고 저장됩니다.</s:String>
     <s:String xml:space="preserve" x:Key="选择要关联的文件">연결할 파일 선택</s:String>
+    <s:String xml:space="preserve" x:Key="选择配色方案。每个方案都包含浅色与深色两套配色。">색 구성표를 선택하세요. 각 구성표에는 밝은 팔레트와 어두운 팔레트가 모두 포함됩니다.</s:String>
     <s:String xml:space="preserve" x:Key="选择项目">프로젝트 선택</s:String>
     <s:String xml:space="preserve" x:Key="配合条目命令时，指定操作的目标版本。">항목 명령과 함께 사용할 때 작업 대상 버전을 지정합니다.</s:String>
-    <s:String xml:space="preserve" x:Key="配置 GitHub 仓库、分支和 Personal Access Token 后，可一键将 data.json 推送到远程仓库。支持自动生成 commit message（包含版本号和变更摘要），实现数据的自动备份和团队共享。">GitHub 저장소, 브랜치, Personal Access Token 을 설정하면 data.json 을 한 번의 클릭으로 원격 저장소에 푸시할 수 있습니다. commit message 자동 생성(버전 번호와 변경 요약 포함)을 지원하여 데이터 자동 백업과 팀 공유를 실현합니다.</s:String>
-    <s:String xml:space="preserve" x:Key="配置 GitHub 仓库地址、分支名、Personal Access Token，实现数据文件的一键推送。支持自动生成 commit message。">GitHub 저장소 주소, 브랜치 이름, Personal Access Token 을 설정하여 데이터 파일을 한 번의 클릭으로 푸시합니다. commit message 자동 생성을 지원합니다.</s:String>
     <s:String xml:space="preserve" x:Key="重要问题，需尽快解决">중요한 문제, 빠른 해결 필요</s:String>
     <s:String xml:space="preserve" x:Key="错误">오류</s:String>
     <s:String xml:space="preserve" x:Key="键盘快捷操作">키보드 바로가기</s:String>
@@ -486,4 +444,12 @@
     <s:String xml:space="preserve" x:Key="条目">항목</s:String>
     <s:String xml:space="preserve" x:Key="收藏">즐겨찾기</s:String>
     <s:String xml:space="preserve" x:Key="展开">펼치기</s:String>
+    <s:String xml:space="preserve" x:Key="数据统计">데이터 통계</s:String>
+    <s:String xml:space="preserve" x:Key="打开数据统计面板">데이터 통계 패널 열기</s:String>
+    <s:String xml:space="preserve" x:Key="只读统计：汇总当前项目全部版本中的条目数量与分布。">읽기 전용 통계: 현재 프로젝트의 모든 버전에서 항목 수와 분포를 집계합니다.</s:String>
+    <s:String xml:space="preserve" x:Key="类型分布">유형 분포</s:String>
+    <s:String xml:space="preserve" x:Key="版本分布">버전 분포</s:String>
+    <s:String xml:space="preserve" x:Key="总条目">총 항목</s:String>
+    <s:String xml:space="preserve" x:Key="完成率">완료율</s:String>
+    <s:String xml:space="preserve" x:Key="未标记">태그 없음</s:String>
 </ResourceDictionary>

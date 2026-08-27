@@ -377,6 +377,9 @@ public partial class NewEntryDialog : UserControl
         if (Brief.Length > 500)
             return (false, LocalizationManager.T("简介不能超过 500 个字符。"));
 
+        if (Detail.Length > 2000)
+            return (false, LocalizationManager.T("详细信息不能超过 2000 个字符。"));
+
         return (true, string.Empty);
     }
 

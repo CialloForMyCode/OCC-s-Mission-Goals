@@ -28,7 +28,7 @@ public enum SearchMode
 {
     Text,    // 文字（标题 / 简要 / 详情）
     Tag,     // 类型标签
-    Setting, // 设置（项目设置 / 主题样式 / 推送设置，全局搜索）
+    Setting, // 设置（项目设置 / 主题样式 / 数据统计，全局搜索）
     Function, // 功能（新建条目 / 新建项目 / 打开项目等，全局搜索）
     File,    // 关联文件
     Date,    // 日期

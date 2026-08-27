@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace OCCMissionGoals;
@@ -9,6 +12,13 @@ public static class ThemeManager
     private static bool _isDark;
     private static string _accentHex = "#4CAF50";
     private static Color _accentColor = Color.FromRgb(0x4C, 0xAF, 0x50);
+    private static string _currentTheme = DefaultThemeName;
+
+    /// <summary>默认主题名，配置缺失时回退到它。</summary>
+    public const string DefaultThemeName = "默认主题";
+
+    /// <summary>主题文件列表（显示名，磁盘路径）。显示名取自主题 XAML 内的 __theme_name。</summary>
+    private static readonly List<(string Name, string File)> _themes = new();
 
     public static bool IsDark => _isDark;
 
@@ -23,86 +33,108 @@ public static class ThemeManager
         "#FF5722", "#FF9800", "#795548", "#607D8B"
     };
 
-    // 亮色
-    private static readonly (string Key, string Color)[] LightPalette =
-    {
-        ("ForegroundBrush",       "#8a8a8a"),
-        ("BackgroundBrush",       "#f3f3f3"),
-        ("MainBorderBrush",       "#808a8a8a"),
-        ("CardBackgroundBrush",   "#FFFFFF"),
-        ("CardBorderBrush",       "#ebebeb"),
-        ("SearchBackgroundBrush", "#e7e7e7"),
-        ("SearchBorderBrush",     "#e7e7e7"),
-        ("SearchFocusBgBrush",    "#FFFFFF"),
-        ("SearchFocusBorderBrush","#c0c0c0"),
-        ("SearchHoverBorderBrush","#d8d8d8"),
-        ("SubtleBackgroundBrush", "#e6e6e6"),
-        ("HoverBackgroundBrush",  "#e8e8e8"),
-        ("PressedBackgroundBrush","#d0d0d0"),
-        ("SelectedBackgroundBrush","#b0b0b0"),
-        ("WinControlHoverBrush",  "#e0e0e0"),
-        ("WinControlPressedBrush","#c0c0c0"),
-        ("MenuPopupBackgroundBrush","#FFFFFF"),
-        ("MenuPopupBorderBrush",  "#c8c8c8"),
-        ("DisabledForegroundBrush","#b0b0b0"),
-        ("IconStrokeBrush",       "#8a8a8a"),
-        ("RunButton",             "#8a8a8a"),
-        ("SelectedForegroundBrush","#FFFFFF"),
-        ("TerminalBackgroundBrush","#F5F5F5"),
-        ("TerminalForegroundBrush","#1E1E1E"),
-        ("TerminalScrollBarBrush", "#C0C0C0"),
-        ("TerminalScrollBarHoverBrush","#A0A0A0"),
-        ("TerminalSelectionBrush", "#ADD6FF"),
-    };
+    /// <summary>可用主题样式名（供设置下拉框使用）。</summary>
+    public static IReadOnlyList<string> ThemeNames => _themes.Select(t => t.Name).ToList();
 
-    // 暗色
-    private static readonly (string Key, string Color)[] DarkPalette =
+    /// <summary>当前选中的主题样式名。</summary>
+    public static string CurrentThemeName => _currentTheme;
+
+    static ThemeManager()
     {
-        ("ForegroundBrush",       "#b0b0b0"),
-        ("BackgroundBrush",       "#0e0e11"),
-        ("MainBorderBrush",       "#80222225"),
-        ("CardBackgroundBrush",   "#18181b"),
-        ("CardBorderBrush",       "#222225"),
-        ("SearchBackgroundBrush", "#202025"),
-        ("SearchBorderBrush",     "#222225"),
-        ("SearchFocusBgBrush",    "#18181b"),
-        ("SearchFocusBorderBrush","#3a3a40"),
-        ("SearchHoverBorderBrush","#2a2a2f"),
-        ("SubtleBackgroundBrush", "#2a2a30"),
-        ("HoverBackgroundBrush",  "#2a2a30"),
-        ("PressedBackgroundBrush","#3a3a40"),
-        ("SelectedBackgroundBrush","#696976"),
-        ("WinControlHoverBrush",  "#2a2a30"),
-        ("WinControlPressedBrush","#3a3a40"),
-        ("MenuPopupBackgroundBrush","#18181b"),
-        ("MenuPopupBorderBrush",  "#3a3a40"),
-        ("DisabledForegroundBrush","#555555"),
-        ("IconStrokeBrush",       "#b0b0b0"),
-        ("RunButton",             "#b0b0b0"),
-        ("SelectedForegroundBrush","#FFFFFF"),
-        ("TerminalBackgroundBrush","#1E1E1E"),
-        ("TerminalForegroundBrush","#D4D4D4"),
-        ("TerminalScrollBarBrush", "#424242"),
-        ("TerminalScrollBarHoverBrush","#555555"),
-        ("TerminalSelectionBrush", "#264f78"),
-    };
+        LoadThemes();
+    }
+
+    /// <summary>扫描 Themes 目录，载入所有主题 XAML（每个文件含 Light.* / Dark.* 两套配色）。</summary>
+    private static void LoadThemes()
+    {
+        _themes.Clear();
+
+        var dir = Path.Combine(AppContext.BaseDirectory, "Themes");
+        if (Directory.Exists(dir))
+        {
+            foreach (var file in Directory.GetFiles(dir, "*.xaml").OrderBy(f => f, StringComparer.Ordinal))
+            {
+                var name = ReadThemeName(file);
+                if (string.IsNullOrWhiteSpace(name))
+                    name = Path.GetFileNameWithoutExtension(file);
+                _themes.Add((name, file));
+            }
+        }
+
+        // 没有任何主题文件时退化为一个占位主题（不会应用配色）。
+        if (_themes.Count == 0)
+            _themes.Add((DefaultThemeName, string.Empty));
+    }
+
+    private static string? ReadThemeName(string file)
+    {
+        try
+        {
+            using var stream = File.OpenRead(file);
+            var rd = (ResourceDictionary)XamlReader.Load(stream);
+            return rd["__theme_name"] as string;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>选择主题样式（仅记录选择，真正应用由 ApplyTheme 完成）。</summary>
+    public static void SetThemeStyle(string name)
+    {
+        _currentTheme = ResolveTheme(name).Name;
+    }
+
+    private static (string Name, string File) ResolveTheme(string name)
+    {
+        if (_themes.Count == 0) return (DefaultThemeName, string.Empty);
+        var entry = _themes.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.Ordinal));
+        return entry.Name is null ? _themes[0] : entry;
+    }
 
     public static void ToggleTheme() => ApplyTheme(!_isDark);
 
+    /// <summary>应用当前主题样式的深色/浅色配色，并刷新主题色派生画刷。</summary>
     public static void ApplyTheme(bool dark)
     {
         _isDark = dark;
-        var palette = _isDark ? DarkPalette : LightPalette;
-        var resources = Application.Current.Resources;
 
-        foreach (var (key, colorHex) in palette)
-        {
-            var color = (Color)ColorConverter.ConvertFromString(colorHex);
-            resources[key] = new SolidColorBrush(color);
-        }
+        var entry = ResolveTheme(_currentTheme);
+        if (!string.IsNullOrEmpty(entry.File))
+            ApplyPalette(entry.File, dark);
 
         // 主题切换后重新派生主题色，使选中态跟随明暗主题。
         ApplyAccentDerived(_accentColor);
+    }
+
+    /// <summary>
+    /// 读取主题 XAML，把其中的 Light.* / Dark.* 画刷按当前明暗模式复制到应用资源。
+    /// 键去掉 "Light." / "Dark." 前缀，与界面里 {DynamicResource ForegroundBrush} 等保持一致。
+    /// </summary>
+    private static void ApplyPalette(string file, bool dark)
+    {
+        ResourceDictionary rd;
+        try
+        {
+            using var stream = File.OpenRead(file);
+            rd = (ResourceDictionary)XamlReader.Load(stream);
+        }
+        catch
+        {
+            return;
+        }
+
+        var prefix = dark ? "Dark." : "Light.";
+        var resources = Application.Current.Resources;
+
+        foreach (var keyObj in rd.Keys)
+        {
+            if (keyObj is not string key || !key.StartsWith(prefix, StringComparison.Ordinal))
+                continue;
+
+            resources[key[prefix.Length..]] = rd[keyObj];
+        }
     }
 
     /// <summary>

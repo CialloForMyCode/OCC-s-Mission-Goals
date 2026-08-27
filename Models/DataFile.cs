@@ -6,9 +6,6 @@ public class UserConfig
 {
     [JsonPropertyName("SaveLocation")]
     public List<string> SaveLocation { get; set; } = new();
-
-    [JsonPropertyName("UploadedGithub")]
-    public bool UploadedGithub { get; set; }
 }
 
 /// <summary>

@@ -25,7 +25,7 @@ public static class SearchMatcher
 
             SearchMode.Tag => entry.Type.Any(t => Contains(t, kw)),
 
-            // 设置模式是全局搜索（项目设置 / 主题 / 推送等），不按条目字段过滤
+            // 设置模式是全局搜索（项目设置 / 主题 / 数据统计等），不按条目字段过滤
             SearchMode.Setting => false,
 
             SearchMode.File => entry.RelatedFiles.Any(f =>

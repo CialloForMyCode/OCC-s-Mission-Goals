@@ -18,7 +18,11 @@ public partial class App : Application
         // 读取语言
         LocalizationManager.LoadFromConfig();
 
-        // 读取主题
+        // 读取主题样式（配色方案，每个方案都含深/浅两套配色）
+        var themeStyle = ConfigManager.Get("General", "themestyle", ThemeManager.DefaultThemeName);
+        ThemeManager.SetThemeStyle(themeStyle);
+
+        // 读取明暗主题
         var theme = ConfigManager.Get("General", "theme", "light");
         ThemeManager.ApplyTheme(theme == "dark");
 

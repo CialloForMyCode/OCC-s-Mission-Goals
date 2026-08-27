@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace OCCMissionGoals.Pages
 {
@@ -27,17 +25,6 @@ namespace OCCMissionGoals.Pages
         private bool _hasUpcomingDeadlines;
         private bool _hasRecentActivity;
 
-        // 开发者信息（GitHub 登录）
-        private bool _isLoggedIn;
-        private string _userName = string.Empty;
-        private string _userLogin = string.Empty;
-        private string _userBio = string.Empty;
-        private string _userCompany = string.Empty;
-        private string _userLocation = string.Empty;
-        private ImageSource? _userAvatar;
-        private Models.RepositoryInfo? _selectedRepository;
-        private bool _includeAuthor = true;
-        private bool _groupByDate = true;
         private string _projectName = string.Empty;
         private string _currentVersionDisplay = string.Empty;
 
@@ -80,57 +67,6 @@ namespace OCCMissionGoals.Pages
             set { _hasRecentActivity = value; OnPropertyChanged(); }
         }
 
-        public bool IsLoggedIn
-        {
-            get => _isLoggedIn;
-            set { _isLoggedIn = value; OnPropertyChanged(); }
-        }
-        public string UserName
-        {
-            get => _userName;
-            set { _userName = value; OnPropertyChanged(); }
-        }
-        public string UserLogin
-        {
-            get => _userLogin;
-            set { _userLogin = value; OnPropertyChanged(); }
-        }
-        public string UserBio
-        {
-            get => _userBio;
-            set { _userBio = value; OnPropertyChanged(); }
-        }
-        public string UserCompany
-        {
-            get => _userCompany;
-            set { _userCompany = value; OnPropertyChanged(); }
-        }
-        public string UserLocation
-        {
-            get => _userLocation;
-            set { _userLocation = value; OnPropertyChanged(); }
-        }
-        public ImageSource? UserAvatar
-        {
-            get => _userAvatar;
-            set { _userAvatar = value; OnPropertyChanged(); }
-        }
-        public ObservableCollection<Models.RepositoryInfo> Repositories { get; } = new();
-        public Models.RepositoryInfo? SelectedRepository
-        {
-            get => _selectedRepository;
-            set { _selectedRepository = value; OnPropertyChanged(); }
-        }
-        public bool IncludeAuthor
-        {
-            get => _includeAuthor;
-            set { _includeAuthor = value; OnPropertyChanged(); }
-        }
-        public bool GroupByDate
-        {
-            get => _groupByDate;
-            set { _groupByDate = value; OnPropertyChanged(); }
-        }
         public string ProjectName
         {
             get => _projectName;
@@ -158,7 +94,6 @@ namespace OCCMissionGoals.Pages
         {
             RefreshProjectInfo();
             LoadData();
-            _ = RefreshGitHubUserAsync();
         }
 
         private void RefreshProjectInfo()
@@ -171,96 +106,6 @@ namespace OCCMissionGoals.Pages
                 ? ver[..^5]
                 : ver;
             CurrentVersionDisplay = cleanVer;
-
-            // 解析 [major.minor.patch]-[tag].[iter] 格式
-            ParseVersionIntoFields(cleanVer);
-        }
-
-        private void ParseVersionIntoFields(string version)
-        {
-            VersionTagBox.Text = version;
-            var dashIdx = version.IndexOf('-');
-            string numPart, tag, tagIter;
-            if (dashIdx >= 0)
-            {
-                numPart = version[..dashIdx];
-                var tagPart = version[(dashIdx + 1)..];
-                var dotIdx = tagPart.LastIndexOf('.');
-                if (dotIdx >= 0)
-                {
-                    tag = tagPart[..dotIdx];
-                    tagIter = tagPart[(dotIdx + 1)..];
-                }
-                else
-                {
-                    tag = tagPart;
-                    tagIter = "0";
-                }
-            }
-            else
-            {
-                numPart = version;
-                tag = "alpha";
-                tagIter = "0";
-            }
-
-            var nums = numPart.Split('.');
-            VersionMajor.Text = nums.Length > 0 ? nums[0] : "0";
-            VersionMinor.Text = nums.Length > 1 ? nums[1] : "0";
-            VersionPatch.Text = nums.Length > 2 ? nums[2] : "0";
-            VersionTag.Text = tag;
-            VersionTagIter.Text = tagIter;
-        }
-
-        private string ComposeVersion()
-        {
-            var major = VersionMajor.Text.Trim();
-            var minor = VersionMinor.Text.Trim();
-            var patch = VersionPatch.Text.Trim();
-            var tag = VersionTag.Text.Trim();
-            var iter = VersionTagIter.Text.Trim();
-            if (string.IsNullOrWhiteSpace(major)) major = "0";
-            if (string.IsNullOrWhiteSpace(minor)) minor = "0";
-            if (string.IsNullOrWhiteSpace(patch)) patch = "0";
-            if (string.IsNullOrWhiteSpace(tag)) tag = "alpha";
-            if (string.IsNullOrWhiteSpace(iter)) iter = "0";
-            return $"{major}.{minor}.{patch}-{tag}.{iter}";
-        }
-
-        private void SaveVersionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var proj = Services.ProjectService.CurrentProject;
-            if (proj == null) return;
-
-            var newVersion = ComposeVersion();
-            try
-            {
-                Services.ProjectService.UpdateVersion(newVersion);
-                CurrentVersionDisplay = newVersion;
-                VersionTagBox.Text = newVersion;
-            }
-            catch { }
-        }
-
-        private void IterateVersionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var proj = Services.ProjectService.CurrentProject;
-            if (proj == null) return;
-
-            var iter = VersionTagIter.Text.Trim();
-            if (int.TryParse(iter, out var n))
-                VersionTagIter.Text = (n + 1).ToString();
-            else
-                VersionTagIter.Text = "1";
-
-            var newVersion = ComposeVersion();
-            try
-            {
-                Services.ProjectService.UpdateVersion(newVersion);
-                CurrentVersionDisplay = newVersion;
-                VersionTagBox.Text = newVersion;
-            }
-            catch { }
         }
 
         private void LoadData()
@@ -367,212 +212,6 @@ namespace OCCMissionGoals.Pages
                 RecentActivities.Add(a);
             ActivityList.ItemsSource = RecentActivities;
             HasRecentActivity = recent.Count > 0;
-
-            // ===== 推送仓库与发布设置 =====
-            Repositories.Clear();
-            foreach (var repo in Services.PushSettings.LoadRepositories())
-                Repositories.Add(repo);
-            SelectedRepository = Repositories.Count > 0 ? Repositories[0] : null;
-            IncludeAuthor = Services.PushSettings.IncludeAuthor;
-            GroupByDate = Services.PushSettings.GroupByDate;
-        }
-
-        // ======================== 开发者信息（GitHub 登录） ========================
-
-        /// <summary>登录成功后立即用已拉取的用户信息刷新界面（无需再次请求）。</summary>
-        public void ApplyGitHubUser(Services.GitHubUser user)
-        {
-            UserName = string.IsNullOrWhiteSpace(user.Name) ? user.Login : user.Name;
-            UserLogin = user.Login;
-            UserBio = user.Bio;
-            UserCompany = user.Company;
-            UserLocation = user.Location;
-            IsLoggedIn = true;
-            _ = LoadAvatarAsync(user.AvatarUrl);
-        }
-
-        /// <summary>异步拉取当前 GitHub 用户并刷新界面。</summary>
-        private async Task RefreshGitHubUserAsync()
-        {
-            if (!Services.GitHubService.HasToken)
-            {
-                SetLoggedOut();
-                return;
-            }
-
-            try
-            {
-                var user = await Services.GitHubService.FetchUserAsync(Services.GitHubService.Token);
-                ApplyGitHubUser(user);
-            }
-            catch
-            {
-                // 令牌失效或网络异常时按未登录处理。
-                SetLoggedOut();
-            }
-        }
-
-        private async Task LoadAvatarAsync(string avatarUrl)
-        {
-            UserAvatar = null;
-            if (string.IsNullOrWhiteSpace(avatarUrl)) return;
-
-            var bytes = await Services.GitHubService.DownloadBytesAsync(avatarUrl);
-            if (bytes is { Length: > 0 })
-                UserAvatar = BytesToImage(bytes);
-        }
-
-        private void SetLoggedOut()
-        {
-            IsLoggedIn = false;
-            UserName = string.Empty;
-            UserLogin = string.Empty;
-            UserBio = string.Empty;
-            UserCompany = string.Empty;
-            UserLocation = string.Empty;
-            UserAvatar = null;
-        }
-
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            (Window.GetWindow(this) as MainWindow)?.ShowGitHubLoginDialog();
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            Services.GitHubService.Logout();
-            SetLoggedOut();
-            (Window.GetWindow(this) as MainWindow)?.SetTipText(
-                LocalizationManager.T("已退出 GitHub 登录。"));
-        }
-
-        // ======================== 底部推送配置入口 ========================
-
-        private void GitHubSettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var mw = Window.GetWindow(this) as MainWindow;
-            if (!Services.GitHubService.HasToken)
-            {
-                mw?.ShowGitHubLoginDialog();
-                return;
-            }
-
-            mw?.SetTipText(LocalizationManager.T("已登录 GitHub：{0}", UserLogin));
-        }
-
-        private void PushLocationButton_Click(object sender, RoutedEventArgs e)
-            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("repos");
-
-        private void PushFileSettingsButton_Click(object sender, RoutedEventArgs e)
-            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("file");
-
-        private void MorePushSettingsButton_Click(object sender, RoutedEventArgs e)
-            => (Window.GetWindow(this) as MainWindow)?.OpenPushSettingsPage("options");
-
-        private async void PushNowButton_Click(object sender, RoutedEventArgs e)
-        {
-            var mw = Window.GetWindow(this) as MainWindow;
-
-            var proj = Services.ProjectService.CurrentProject;
-            if (proj == null)
-            {
-                mw?.SetTipText(LocalizationManager.T("没有打开的项目，无法推送。"));
-                return;
-            }
-
-            if (!Services.GitHubService.HasToken)
-            {
-                mw?.SetTipText(LocalizationManager.T("请先登录 GitHub。"));
-                mw?.ShowGitHubLoginDialog();
-                return;
-            }
-
-            if (SelectedRepository == null)
-            {
-                mw?.SetTipText(LocalizationManager.T("请先在设置中配置推送仓库。"));
-                mw?.OpenPushSettingsPage("repos");
-                return;
-            }
-
-            var remotePath = Services.PushSettings.RemotePath;
-            if (string.IsNullOrWhiteSpace(remotePath))
-            {
-                mw?.SetTipText(LocalizationManager.T("请先在设置中选择要推送的文件。"));
-                mw?.OpenPushSettingsPage("file");
-                return;
-            }
-
-            var binDir = Services.PushSettings.BinDirectory;
-            var filePath = Path.Combine(binDir, remotePath);
-            if (!File.Exists(filePath))
-            {
-                mw?.SetTipText(LocalizationManager.T("找不到要推送的文件。"));
-                return;
-            }
-
-            var content = File.ReadAllText(filePath);
-            var message = BuildCommitMessage();
-            var branch = string.IsNullOrWhiteSpace(SelectedRepository.Branch)
-                ? "main"
-                : SelectedRepository.Branch;
-
-            PushNowButton.IsEnabled = false;
-            try
-            {
-                var error = await Services.GitHubService.PushFileAsync(
-                    SelectedRepository.Url, branch, remotePath, content, message);
-
-                if (error == null)
-                {
-                    mw?.SetTipText(LocalizationManager.T("已推送到 {0}（{1}）。", SelectedRepository.Name, branch));
-                }
-                else
-                {
-                    mw?.SetTipText(LocalizationManager.T("推送失败：{0}", error));
-                }
-            }
-            finally
-            {
-                PushNowButton.IsEnabled = true;
-            }
-        }
-
-        /// <summary>根据推送设置与当前数据自动生成提交信息。</summary>
-        private string BuildCommitMessage()
-        {
-            var proj = Services.ProjectService.CurrentProject;
-            var version = proj?.CurrentVersion ?? string.Empty;
-            if (version.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                version = version[..^5];
-
-            var data = Services.DataService.Current;
-            var finished = data?.Finished?.Count ?? 0;
-            var unfinished = data?.Unfinished?.Count ?? 0;
-
-            var head = string.IsNullOrEmpty(version) ? "Update data" : version;
-            var parts = new List<string>
-            {
-                $"{head}: update data ({finished} completed, {unfinished} unfinished)"
-            };
-
-            if (GroupByDate)
-                parts.Add(DateTime.Now.ToString("yyyy-MM-dd"));
-            if (IncludeAuthor && !string.IsNullOrWhiteSpace(UserLogin))
-                parts.Add($"@{UserLogin}");
-
-            return string.Join(" · ", parts);
-        }
-
-        private static ImageSource BytesToImage(byte[] bytes)
-        {
-            var bmp = new BitmapImage();
-            using var ms = new MemoryStream(bytes);
-            bmp.BeginInit();
-            bmp.CacheOption = BitmapCacheOption.OnLoad;
-            bmp.StreamSource = ms;
-            bmp.EndInit();
-            bmp.Freeze();
-            return bmp;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

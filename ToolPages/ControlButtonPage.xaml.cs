@@ -1,10 +1,5 @@
-using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using OCCMissionGoals.Models;
-using OCCMissionGoals.Services;
-using static OCCMissionGoals.MainWindow;
 
 namespace OCCMissionGoals.ToolPages
 {
@@ -16,22 +11,6 @@ namespace OCCMissionGoals.ToolPages
         public ControlButtonPage()
         {
             InitializeComponent();
-            SyncThemeIcon();
-        }
-
-        /// <summary>根据当前主题模式同步图标。</summary>
-        public void SyncThemeIcon()
-        {
-            ThemeIcon.Data = Geometry.Parse(ThemeManager.IsDark
-                ? ColorPalette.LightIconData
-                : ColorPalette.DarkIconData);
-        }
-
-        public void ToggleTheme_Click(object sender, RoutedEventArgs e)
-        {
-            ThemeManager.ToggleTheme();
-            SyncThemeIcon();
-            ConfigManager.Set("General", "theme", ThemeManager.IsDark ? "dark" : "light");
         }
 
         private void NewEntry_Click(object sender, RoutedEventArgs e)

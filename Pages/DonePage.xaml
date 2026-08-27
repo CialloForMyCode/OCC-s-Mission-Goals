@@ -5,12 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:OCCMissionGoals.Pages"
       xmlns:loc="clr-namespace:OCCMissionGoals"
+      xmlns:svc="clr-namespace:OCCMissionGoals.Services"
       mc:Ignorable="d" 
       d:DesignHeight="758" d:DesignWidth="1240"
       Title="DonePage">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <svc:MarkdownConverter x:Key="MarkdownConverter" />
+        <svc:MarkdownInlineConverter x:Key="MarkdownInlineConverter" />
     </Page.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.IsSharedSizeScope="True">
@@ -107,19 +110,18 @@
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
-                                                        <TextBlock Grid.Column="0"
-                                                                   Text="{Binding Title, Mode=OneWay}"
-                                                                   Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="14" FontWeight="SemiBold"
-                                                                   VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="1"
-                                                                   Text="{Binding Brief, Mode=OneWay}"
-                                                                   Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="12"
-                                                                   VerticalAlignment="Center"
-                                                                   Margin="6,0,0,0"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   Visibility="{Binding IsExcerptVisible, Converter={StaticResource BoolToVis}}"/>
+                                                        <ContentControl Grid.Column="0"
+                                                                        Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}}"
+                                                                        Foreground="{DynamicResource ForegroundBrush}"
+                                                                        FontSize="14" FontWeight="SemiBold"
+                                                                        VerticalAlignment="Center"/>
+                                                        <ContentControl Grid.Column="1"
+                                                                        Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=trim}"
+                                                                        Foreground="{DynamicResource ForegroundBrush}"
+                                                                        FontSize="12"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="6,0,0,0"
+                                                                        Visibility="{Binding IsExcerptVisible, Converter={StaticResource BoolToVis}}"/>
                                                         <TextBlock Grid.Column="2"
                                                                    x:Name="ToggleLink"
                                                                    Text="{Binding DetailToggleText}"
@@ -167,10 +169,8 @@
                                                 </Grid>
 
                                                 <StackPanel x:Name="DetailPanel" Visibility="{Binding IsDetailExpanded, Converter={StaticResource BoolToVis}}">
-                                                    <TextBlock Text="{Binding Detail, Mode=OneWay}"
-                                                               Foreground="{DynamicResource ForegroundBrush}"
-                                                               FontSize="12" TextWrapping="Wrap"
-                                                               Margin="0,6,0,0"/>
+                                                    <ContentControl Content="{Binding Detail, Mode=OneWay, Converter={StaticResource MarkdownConverter}}"
+                                                                    Margin="0,6,0,0"/>
                                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
                                                                 Visibility="{Binding HasType, Converter={StaticResource BoolToVis}}">
                                                         <TextBlock Text="{loc:Loc &quot;类别&quot;}"

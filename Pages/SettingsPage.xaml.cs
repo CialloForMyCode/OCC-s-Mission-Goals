@@ -17,11 +17,6 @@ public partial class SettingsPage : Page
     private bool _isNavigating;
     private UpdateCheckResult? _latestUpdate;
 
-    private readonly List<GitHubRepo> _repoOptions = new();
-    private readonly List<string> _branchOptions = new();
-    private RepositoryInfo? _currentRepo;
-    private bool _syncingRepo;
-
     public SettingsPage()
     {
         InitializeComponent();
@@ -30,7 +25,7 @@ public partial class SettingsPage : Page
         {
             ["Appearance"] = Section_Appearance,
             ["Project"]    = Section_Project,
-            ["Push"]       = Section_Push,
+            ["Stats"]      = Section_Stats,
             ["System"]     = Section_System,
         };
 
@@ -38,7 +33,7 @@ public partial class SettingsPage : Page
         {
             ["Appearance"] = Nav_Appearance,
             ["Project"]    = Nav_Project,
-            ["Push"]       = Nav_Push,
+            ["Stats"]      = Nav_Stats,
             ["System"]     = Nav_System,
         };
 
@@ -158,6 +153,10 @@ public partial class SettingsPage : Page
             LightThemeRadio.IsChecked = !dark;
             DarkThemeRadio.IsChecked = dark;
 
+            // 主题样式（配色方案，每个方案都含深/浅两套配色）
+            BuildThemeStyleCombo();
+            SelectCurrentThemeStyle();
+
             // 语言（由 Languages/*.xml 动态生成）
             BuildLanguageCombo();
             SelectCurrentLanguage();
@@ -172,12 +171,8 @@ public partial class SettingsPage : Page
             ProjectDescBox.Text = proj?.Description ?? string.Empty;
             ProjectVersionBox.Text = proj?.CurrentVersion ?? string.Empty;
 
-            // 推送 / 仓库
-            var savedRepos = PushSettings.LoadRepositories();
-            _currentRepo = savedRepos.Count > 0 ? savedRepos[0] : null;
-            IncludeAuthorCheck.IsChecked = PushSettings.IncludeAuthor;
-            GroupByDateCheck.IsChecked = PushSettings.GroupByDate;
-            LoadBinFiles();
+            // 数据统计
+            BuildStats();
 
             // 系统 / 更新
             AutoStartCheck.IsChecked = AutoStartService.IsEnabled();
@@ -188,9 +183,6 @@ public partial class SettingsPage : Page
         {
             _loading = false;
         }
-
-        // 异步加载 GitHub 仓库与分支（避免阻塞 UI）。
-        _ = LoadReposAsync();
     }
 
     private MainWindow? MainWindow => Window.GetWindow(this) as MainWindow;
@@ -203,6 +195,48 @@ public partial class SettingsPage : Page
         if (sender is not RadioButton rb || rb.IsChecked != true) return;
 
         MainWindow?.SetTheme(rb == DarkThemeRadio);
+    }
+
+    private void ThemeStyle_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading) return;
+        if (ThemeStyleCombo.SelectedItem is not ComboBoxItem item) return;
+
+        var name = item.Tag as string ?? ThemeManager.DefaultThemeName;
+        if (name == ThemeManager.CurrentThemeName) return;
+
+        MainWindow?.SetThemeStyle(name);
+    }
+
+    /// <summary>根据 ThemeManager.ThemeNames 重建主题样式下拉。</summary>
+    private void BuildThemeStyleCombo()
+    {
+        var style = TryFindResource("DialogComboBoxItem") as Style;
+        ThemeStyleCombo.Items.Clear();
+        foreach (var name in ThemeManager.ThemeNames)
+        {
+            ThemeStyleCombo.Items.Add(new ComboBoxItem
+            {
+                Content = LocalizationManager.T(name),
+                Tag = name,
+                Style = style
+            });
+        }
+    }
+
+    private void SelectCurrentThemeStyle()
+    {
+        var current = ThemeManager.CurrentThemeName;
+        for (var i = 0; i < ThemeStyleCombo.Items.Count; i++)
+        {
+            if (ThemeStyleCombo.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, current, StringComparison.OrdinalIgnoreCase))
+            {
+                ThemeStyleCombo.SelectedIndex = i;
+                return;
+            }
+        }
+        ThemeStyleCombo.SelectedIndex = 0;
     }
 
     private void Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -337,194 +371,153 @@ public partial class SettingsPage : Page
         MainWindow?.SetTipText(LocalizationManager.T("项目设置已保存。"));
     }
 
-    // ==================== 推送 / 仓库 ====================
+    // ==================== 数据统计 ====================
 
-    private async void RefreshRepos_Click(object sender, RoutedEventArgs e)
+    /// <summary>供外部跳转：滚动到数据统计区块。</summary>
+    public void NavigateToStats() => NavigateTo("Stats");
+
+    private void BuildStats()
     {
-        await LoadReposAsync();
+        var projectDir = ProjectService.CurrentProjectDir;
+        if (string.IsNullOrEmpty(projectDir))
+        {
+            ClearStats();
+            return;
+        }
+
+        var data = DataService.ReadAllVersions(projectDir);
+        var all = data.Unfinished.Concat(data.Finished).ToList();
+        var finished = data.Finished.Count;
+        var unfinished = data.Unfinished.Count;
+        var total = finished + unfinished;
+        var favorited = all.Count(e => e.IsFavorited);
+        var rate = total > 0 ? Math.Min(1.0, (double)finished / total) : 0;
+
+        BuildStatsCards(total, unfinished, finished, rate, favorited);
+        BuildSeverityDist(all);
+        BuildTypeDist(all);
+        BuildVersionDist(all);
     }
 
-    private async Task LoadReposAsync()
+    private void ClearStats()
     {
-        RepoSelector.ItemsSource = null;
-        BranchSelector.ItemsSource = null;
-        _repoOptions.Clear();
-        _branchOptions.Clear();
-        RepoSelector.SelectedItem = null;
-        BranchSelector.Text = string.Empty;
+        StatsCardsPanel.Children.Clear();
+        SeverityDistPanel.ItemsSource = null;
+        TypeDistPanel.ItemsSource = null;
+        VersionDistPanel.ItemsSource = null;
+    }
 
-        if (!GitHubService.HasToken)
+    private void BuildStatsCards(int total, int unfinished, int finished, double rate, int favorited)
+    {
+        StatsCardsPanel.Children.Clear();
+        StatsCardsPanel.Children.Add(MakeStatCard(LocalizationManager.T("总条目"), total.ToString(), null));
+        StatsCardsPanel.Children.Add(MakeStatCard(LocalizationManager.T("未完成"), unfinished.ToString(), null));
+        StatsCardsPanel.Children.Add(MakeStatCard(LocalizationManager.T("已完成"), finished.ToString(), null));
+        StatsCardsPanel.Children.Add(MakeStatCard(LocalizationManager.T("完成率"), $"{rate:P0}", null));
+        StatsCardsPanel.Children.Add(MakeStatCard(LocalizationManager.T("收藏"), favorited.ToString(), null));
+    }
+
+    private Border MakeStatCard(string label, string value, Brush? accent)
+    {
+        var valueBlock = new TextBlock
         {
-            RepoLoginHint.Visibility = Visibility.Visible;
-            // 未登录时仅回显已保存的仓库，方便用户查看当前配置。
-            if (_currentRepo != null)
+            Text = value,
+            FontSize = 24,
+            FontWeight = FontWeights.Bold,
+            Foreground = accent ?? (Brush)FindResource("ForegroundBrush"),
+        };
+        var labelBlock = new TextBlock
+        {
+            Text = label,
+            FontSize = 12,
+            Opacity = 0.6,
+            Foreground = (Brush)FindResource("ForegroundBrush"),
+            Margin = new Thickness(0, 2, 0, 0),
+        };
+        var panel = new StackPanel();
+        panel.Children.Add(valueBlock);
+        panel.Children.Add(labelBlock);
+
+        return new Border
+        {
+            MinWidth = 92,
+            Margin = new Thickness(0, 0, 16, 8),
+            Padding = new Thickness(16, 10, 16, 10),
+            CornerRadius = new CornerRadius(8),
+            Background = (Brush)FindResource("CardBackgroundBrush"),
+            BorderBrush = (Brush)FindResource("CardBorderBrush"),
+            BorderThickness = new Thickness(1),
+            Child = panel,
+        };
+    }
+
+    private void BuildSeverityDist(List<Models.GoalEntry> all)
+    {
+        var groups = all
+            .GroupBy(e => e.Severity)
+            .OrderBy(g => g.Key)
+            .ToList();
+        var max = groups.Count > 0 ? groups.Max(g => g.Count()) : 1;
+        SeverityDistPanel.ItemsSource = groups
+            .Select(g => new SeverityStat
             {
-                _repoOptions.Add(new GitHubRepo
-                {
-                    Name = string.IsNullOrWhiteSpace(_currentRepo.Name) ? _currentRepo.Url : _currentRepo.Name,
-                    Url = _currentRepo.Url,
-                    DefaultBranch = _currentRepo.Branch,
-                });
-                RepoSelector.ItemsSource = _repoOptions;
-                RepoSelector.SelectedIndex = 0;
-                BranchSelector.Text = _currentRepo.Branch;
-            }
-            return;
-        }
-
-        RepoLoginHint.Visibility = Visibility.Collapsed;
-        try
-        {
-            _repoOptions.AddRange(await GitHubService.FetchRepositoriesAsync());
-        }
-        catch (Exception ex)
-        {
-            MainWindow?.SetTipText(LocalizationManager.T("加载仓库列表失败：{0}", ex.Message));
-            return;
-        }
-
-        RepoSelector.ItemsSource = _repoOptions;
-
-        // 尝试匹配已保存的仓库；选中会触发 RepoSelector_SelectionChanged 加载分支。
-        if (_currentRepo != null)
-        {
-            var selected = _repoOptions.FirstOrDefault(r =>
-                string.Equals(r.Name, _currentRepo.Name, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(r.Url, _currentRepo.Url, StringComparison.OrdinalIgnoreCase));
-            if (selected != null)
-                RepoSelector.SelectedItem = selected;
-        }
+                Severity = g.Key,
+                Label = Models.SeverityHelper.GetText(g.Key),
+                Count = g.Count(),
+                Ratio = (double)g.Count() / max,
+                ColorBrush = Models.SeverityHelper.GetBrush(g.Key),
+            })
+            .ToList();
     }
 
-    private async void RepoSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void BuildTypeDist(List<Models.GoalEntry> all)
     {
-        if (_loading || _syncingRepo) return;
-        if (RepoSelector.SelectedItem is not GitHubRepo repo) return;
-
-        // 切换到同一仓库时保留已保存的分支；否则回退到仓库默认分支。
-        var sameRepo = _currentRepo != null &&
-            (string.Equals(_currentRepo.Name, repo.Name, StringComparison.OrdinalIgnoreCase) ||
-             string.Equals(_currentRepo.Url, repo.Url, StringComparison.OrdinalIgnoreCase));
-        var branch = sameRepo && !string.IsNullOrWhiteSpace(_currentRepo!.Branch)
-            ? _currentRepo.Branch
-            : string.IsNullOrWhiteSpace(repo.DefaultBranch) ? "main" : repo.DefaultBranch;
-
-        _currentRepo = new RepositoryInfo { Name = repo.Name, Url = repo.Url, Branch = branch };
-        SaveCurrentRepo();
-
-        _syncingRepo = true;
-        try
-        {
-            await LoadBranchesAsync(repo);
-            BranchSelector.Text = branch;
-        }
-        finally
-        {
-            _syncingRepo = false;
-        }
+        var accent = (Brush)FindResource("PrimaryBrush");
+        var groups = all
+            .SelectMany(e => e.Type)
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .GroupBy(t => t)
+            .OrderByDescending(g => g.Count())
+            .ToList();
+        var max = groups.Count > 0 ? groups.Max(g => g.Count()) : 1;
+        TypeDistPanel.ItemsSource = groups
+            .Select(g => new SeverityStat
+            {
+                Label = g.Key,
+                Count = g.Count(),
+                Ratio = (double)g.Count() / max,
+                ColorBrush = accent,
+            })
+            .ToList();
     }
 
-    private async Task LoadBranchesAsync(GitHubRepo repo)
+    private void BuildVersionDist(List<Models.GoalEntry> all)
     {
-        BranchSelector.ItemsSource = null;
-        _branchOptions.Clear();
-        try
-        {
-            _branchOptions.AddRange(await GitHubService.FetchBranchesAsync(repo.Url));
-        }
-        catch
-        {
-            // 分支获取失败时保留为空，仍允许用户手动输入分支名。
-        }
-        BranchSelector.ItemsSource = _branchOptions;
-    }
-
-    private void BranchSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_loading || _syncingRepo) return;
-        ApplyBranchText();
-    }
-
-    private void BranchSelector_LostFocus(object sender, RoutedEventArgs e)
-    {
-        if (_loading || _syncingRepo) return;
-        ApplyBranchText();
-    }
-
-    private void ApplyBranchText()
-    {
-        var branch = BranchSelector.Text?.Trim();
-        if (string.IsNullOrWhiteSpace(branch) || _currentRepo == null) return;
-
-        if (_currentRepo.Branch == branch) return;
-        _currentRepo.Branch = branch;
-        SaveCurrentRepo();
-    }
-
-    private void SaveCurrentRepo()
-    {
-        if (ProjectService.CurrentProject == null) return;
-        PushSettings.SaveRepositories(_currentRepo == null
-            ? new List<RepositoryInfo>()
-            : new List<RepositoryInfo> { _currentRepo });
-    }
-
-    private void IncludeAuthor_Changed(object sender, RoutedEventArgs e)
-    {
-        if (_loading) return;
-        PushSettings.IncludeAuthor = IncludeAuthorCheck.IsChecked == true;
-    }
-
-    private void GroupByDate_Changed(object sender, RoutedEventArgs e)
-    {
-        if (_loading) return;
-        PushSettings.GroupByDate = GroupByDateCheck.IsChecked == true;
-    }
-
-    private void RefreshBinFiles_Click(object sender, RoutedEventArgs e)
-    {
-        LoadBinFiles();
-    }
-
-    private void LoadBinFiles()
-    {
-        var files = PushSettings.ListBinFiles();
-        RemotePathCombo.ItemsSource = files;
-
-        var current = PushSettings.RemotePath;
-        _loading = true;
-        try
-        {
-            RemotePathCombo.SelectedItem = files.Contains(current) ? current : null;
-        }
-        finally
-        {
-            _loading = false;
-        }
-    }
-
-    private void RemotePath_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_loading) return;
-        if (RemotePathCombo.SelectedItem is not string file) return;
-        PushSettings.RemotePath = file;
+        var accent = (Brush)FindResource("PrimaryBrush");
+        var groups = all
+            .GroupBy(e => string.IsNullOrWhiteSpace(e.Version) ? LocalizationManager.T("未标记") : e.Version)
+            .OrderByDescending(g => g.Count())
+            .ToList();
+        var max = groups.Count > 0 ? groups.Max(g => g.Count()) : 1;
+        VersionDistPanel.ItemsSource = groups
+            .Select(g => new SeverityStat
+            {
+                Label = g.Key,
+                Count = g.Count(),
+                Ratio = (double)g.Count() / max,
+                ColorBrush = accent,
+            })
+            .ToList();
     }
 
     /// <summary>
-    /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Push / System）。
-    /// anchor 可定位推送区块的子区块（repos / file / options）。
+    /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Stats / System）。
     /// </summary>
     public void NavigateTo(string tag, string? anchor = null)
     {
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
         {
-            FrameworkElement? target = anchor switch
-            {
-                "file" => RemotePathRow,
-                "options" => CommitOptionsHeader,
-                "repos" => ReposHeader,
-                _ => _sectionMap.TryGetValue(tag, out var section) ? section : null,
-            };
+            var target = _sectionMap.TryGetValue(tag, out var section) ? section : null;
 
             if (target is null || !target.IsLoaded) return;
 
@@ -534,9 +527,6 @@ public partial class SettingsPage : Page
             _isNavigating = false;
         }));
     }
-
-    /// <summary>供「更新日志」页跳转：滚动到推送设置的指定子区块（repos / file / options）。</summary>
-    public void NavigateToPush(string anchor = "repos") => NavigateTo("Push", anchor);
 
     // ==================== 系统 / 更新 ====================
 
