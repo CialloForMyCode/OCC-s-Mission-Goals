@@ -14,7 +14,7 @@
 #endif
 
 #define MyAppName "OCC's Mission & Goals"
-#define MyAppVersion "0.1.10-Beta"
+#define MyAppVersion "0.2.0-Beta"
 #define MyAppPublisher "Harvnyx"
 #define MyAppURL "https://github.com/CialloForMyCode/OCC-s-Mission-Goals"
 #define MyAppExeName "OCCMissionGoals.exe"
@@ -61,8 +61,8 @@ ArchitecturesAllowed=x86compatible
 #endif
 
 ; setup.exe 自身的版本信息（Windows 要求纯数字版本段）
-VersionInfoVersion=0.1.10.0
-VersionInfoProductVersion=0.1.10.0
+VersionInfoVersion=0.2.0.0
+VersionInfoProductVersion=0.2.0.0
 VersionInfoTextVersion={#MyAppVersion}
 VersionInfoProductTextVersion={#MyAppVersion}
 
@@ -77,8 +77,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "publish\win-{#Arch}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-; 主题配色文件（Themes/*.xaml，每个文件含深/浅两套配色）
-Source: "publish\win-{#Arch}\Themes\*.xaml"; DestDir: "{app}\Themes"; Flags: ignoreversion
+; 主题配色文件：安装包只自带内置默认主题 Default.xaml，其余主题作为扩展中心可下载主题，不打包进安装程序
+Source: "publish\win-{#Arch}\Themes\Default.xaml"; DestDir: "{app}\Themes"; Flags: ignoreversion
 ; 安装包只自带中文与英语，其余语言（日/韩/俄）作为扩展中心的可下载语言包，不打包进安装程序
 Source: "publish\win-{#Arch}\Languages\zh.xaml"; DestDir: "{app}\Languages"; Flags: ignoreversion
 Source: "publish\win-{#Arch}\Languages\en.xaml"; DestDir: "{app}\Languages"; Flags: ignoreversion
