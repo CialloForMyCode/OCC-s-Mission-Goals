@@ -14,7 +14,7 @@
 #endif
 
 #define MyAppName "OCC's Mission & Goals"
-#define MyAppVersion "0.2.0-Beta"
+#define MyAppVersion "0.2.0-rc"
 #define MyAppPublisher "Harvnyx"
 #define MyAppURL "https://github.com/CialloForMyCode/OCC-s-Mission-Goals"
 #define MyAppExeName "OCCMissionGoals.exe"
