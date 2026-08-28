@@ -6,6 +6,8 @@
     <!-- Русский (ru) -->
     <s:String x:Key="__lang_code">ru</s:String>
     <s:String x:Key="__lang_name">Русский</s:String>
+    <s:String x:Key="__lang_author">I-AM-SOLO</s:String>
+    <s:String x:Key="__lang_description">Русский языковой пакет интерфейса</s:String>
     <s:String xml:space="preserve" x:Key="      例如: 0.1.0-alpha.0">      например 0.1.0-alpha.0</s:String>
     <s:String xml:space="preserve" x:Key="# 归档 — {0}"># Архив — {0}</s:String>
     <s:String xml:space="preserve" x:Key="-a 数据格式示例">-a пример формата данных</s:String>

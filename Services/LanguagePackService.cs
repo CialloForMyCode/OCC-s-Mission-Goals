@@ -14,7 +14,7 @@ using System.Windows.Markup;
 namespace OCCMissionGoals.Services;
 
 /// <summary>一个可下载的语言包（对应仓库 Languages 目录下的一个 *.xaml 文件）。</summary>
-public sealed record LanguagePack(string Code, string Name, string FileName, string DownloadUrl);
+public sealed record LanguagePack(string Code, string Name, string Author, string Description, string FileName, string DownloadUrl);
 
 /// <summary>
 /// 语言包服务：从 GitHub 仓库的 Languages 目录列出、下载安装与卸载语言包。
@@ -70,21 +70,27 @@ public static class LanguagePackService
             var downloadUrl = GetString(element, "download_url");
             var fallbackCode = Path.GetFileNameWithoutExtension(fileName);
 
-            // 已安装 → 直接用 LocalizationManager 解析出的代码与显示名。
-            var installed = LocalizationManager.Instance.AvailableLanguages.FirstOrDefault(
-                l => string.Equals(l.Code, fallbackCode, StringComparison.OrdinalIgnoreCase));
-
-            if (!string.IsNullOrEmpty(installed.Code))
+            // 已安装 → 直接从本地文件解析元数据（代码、显示名、作者、简介）。
+            var local = ReadLocalMetadata(fileName);
+            if (local is not null)
             {
-                result.Add(new LanguagePack(installed.Code, installed.Name, fileName, downloadUrl));
+                result.Add(new LanguagePack(
+                    string.IsNullOrWhiteSpace(local.Value.Code) ? fallbackCode : local.Value.Code,
+                    string.IsNullOrWhiteSpace(local.Value.Name) ? fallbackCode : local.Value.Name,
+                    local.Value.Author ?? string.Empty,
+                    local.Value.Description ?? string.Empty,
+                    fileName,
+                    downloadUrl));
                 continue;
             }
 
-            // 未安装 → 下载文件内容以读取 __lang_code / __lang_name。
+            // 未安装 → 下载文件内容以读取 __lang_code / __lang_name / __lang_author / __lang_description。
             var meta = await FetchRemoteMetadataAsync(fileName, client, cancellationToken);
             result.Add(new LanguagePack(
-                meta?.Code ?? fallbackCode,
-                meta?.Name ?? fallbackCode,
+                string.IsNullOrWhiteSpace(meta?.Code) ? fallbackCode : meta.Value.Code,
+                string.IsNullOrWhiteSpace(meta?.Name) ? fallbackCode : meta.Value.Name,
+                meta?.Author ?? string.Empty,
+                meta?.Description ?? string.Empty,
                 fileName,
                 downloadUrl));
         }
@@ -197,8 +203,30 @@ public static class LanguagePackService
         return await client.SendAsync(request, cancellationToken);
     }
 
-    /// <summary>下载远程 *.xaml 并解析 __lang_code / __lang_name；失败返回 null。</summary>
-    private static async Task<(string? Code, string? Name)?> FetchRemoteMetadataAsync(
+    /// <summary>读取本地语言包文件的元数据（代码、显示名、作者、简介）；不存在或解析失败返回 null。</summary>
+    private static (string? Code, string? Name, string? Author, string? Description)? ReadLocalMetadata(string fileName)
+    {
+        var path = Path.Combine(LocalLanguagesDirectory, fileName);
+        if (!File.Exists(path)) return null;
+
+        try
+        {
+            using var stream = File.OpenRead(path);
+            var rd = (ResourceDictionary)XamlReader.Load(stream);
+            return (
+                rd["__lang_code"] as string,
+                rd["__lang_name"] as string,
+                rd["__lang_author"] as string,
+                rd["__lang_description"] as string);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>下载远程 *.xaml 并解析 __lang_code / __lang_name / __lang_author / __lang_description；失败返回 null。</summary>
+    private static async Task<(string? Code, string? Name, string? Author, string? Description)?> FetchRemoteMetadataAsync(
         string fileName,
         HttpClient client,
         CancellationToken cancellationToken)
@@ -212,7 +240,11 @@ public static class LanguagePackService
             var text = await response.Content.ReadAsStringAsync(cancellationToken);
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(text));
             var rd = (ResourceDictionary)XamlReader.Load(stream);
-            return (rd["__lang_code"] as string, rd["__lang_name"] as string);
+            return (
+                rd["__lang_code"] as string,
+                rd["__lang_name"] as string,
+                rd["__lang_author"] as string,
+                rd["__lang_description"] as string);
         }
         catch
         {

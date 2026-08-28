@@ -6,6 +6,8 @@
     <!-- 日本語 (ja) -->
     <s:String x:Key="__lang_code">ja</s:String>
     <s:String x:Key="__lang_name">日本語</s:String>
+    <s:String x:Key="__lang_author">I-AM-SOLO</s:String>
+    <s:String x:Key="__lang_description">日本語 UI 言語パック</s:String>
     <s:String xml:space="preserve" x:Key="      例如: 0.1.0-alpha.0">      例: 0.1.0-alpha.0</s:String>
     <s:String xml:space="preserve" x:Key="# 归档 — {0}"># アーカイブ — {0}</s:String>
     <s:String xml:space="preserve" x:Key="-a 数据格式示例">-a データ形式の例</s:String>

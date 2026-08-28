@@ -6,6 +6,8 @@
     <!-- 한국어 (ko) -->
     <s:String x:Key="__lang_code">ko</s:String>
     <s:String x:Key="__lang_name">한국어</s:String>
+    <s:String x:Key="__lang_author">I-AM-SOLO</s:String>
+    <s:String x:Key="__lang_description">한국어 UI 언어 팩</s:String>
     <s:String xml:space="preserve" x:Key="      例如: 0.1.0-alpha.0">      예: 0.1.0-alpha.0</s:String>
     <s:String xml:space="preserve" x:Key="# 归档 — {0}"># 보관 — {0}</s:String>
     <s:String xml:space="preserve" x:Key="-a 数据格式示例">-a 데이터 형식 예시</s:String>

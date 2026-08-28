@@ -6,6 +6,8 @@
     <!-- English (en) -->
     <s:String x:Key="__lang_code">en</s:String>
     <s:String x:Key="__lang_name">English</s:String>
+    <s:String x:Key="__lang_author">I-AM-SOLO</s:String>
+    <s:String x:Key="__lang_description">English UI language pack</s:String>
     <s:String xml:space="preserve" x:Key="      例如: 0.1.0-alpha.0">      e.g. 0.1.0-alpha.0</s:String>
     <s:String xml:space="preserve" x:Key="# 归档 — {0}"># Archive — {0}</s:String>
     <s:String xml:space="preserve" x:Key="-a 数据格式示例">-a data format example</s:String>

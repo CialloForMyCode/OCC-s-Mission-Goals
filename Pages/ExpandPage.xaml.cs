@@ -125,8 +125,12 @@ public partial class ExpandPage : Page
         Id = "lang:" + pack.Code,
         Name = pack.Name,
         Icon = "",
-        Description = LanguagePackDescription(pack),
-        Author = LanguagePackService.RepoOwner,
+        Description = string.IsNullOrWhiteSpace(pack.Description)
+            ? LanguagePackDescription(pack)
+            : pack.Description,
+        Author = string.IsNullOrWhiteSpace(pack.Author)
+            ? LocalizationManager.T("匿名开发者")
+            : pack.Author,
         Version = "",
         Category = LanguagePackCategory,
         CategoryName = LocalizationManager.T("语言包"),
@@ -382,7 +386,7 @@ public partial class ExpandPage : Page
             : plugin.FileName.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)
                 ? plugin.FileName[..^5]
                 : plugin.Id;
-        return new LanguagePack(code, plugin.Name, plugin.FileName, plugin.DownloadUrl);
+        return new LanguagePack(code, plugin.Name, plugin.Author, plugin.Description, plugin.FileName, plugin.DownloadUrl);
     }
 
     /// <summary>从目录项还原主题包（用于安装 / 卸载时定位远程文件）。</summary>
