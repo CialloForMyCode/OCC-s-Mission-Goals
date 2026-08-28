@@ -121,6 +121,7 @@
     <s:String xml:space="preserve" x:Key="仪表盘（LogPage）">Панель управления (LogPage)</s:String>
     <s:String xml:space="preserve" x:Key="任务变更影响度量">Мера влияния изменений</s:String>
     <s:String xml:space="preserve" x:Key="作者:">Автор: </s:String>
+    <s:String xml:space="preserve" x:Key="匿名开发者">Анонимный разработчик</s:String>
     <s:String xml:space="preserve" x:Key="保存">Сохранить</s:String>
     <s:String xml:space="preserve" x:Key="保存项目信息">Сохранить информацию о проекте</s:String>
     <s:String xml:space="preserve" x:Key="保存项目设置失败：{0}">Не удалось сохранить настройки проекта: {0}</s:String>
@@ -191,6 +192,7 @@
     <s:String xml:space="preserve" x:Key="全部">Все</s:String>
     <s:String xml:space="preserve" x:Key="已安装">Установлено</s:String>
     <s:String xml:space="preserve" x:Key="语言包">Языковой пакет</s:String>
+    <s:String xml:space="preserve" x:Key="主题">Тема</s:String>
     <s:String xml:space="preserve" x:Key="已完成">Завершено</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目">Завершённые</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">Завершённые (DonePage)</s:String>

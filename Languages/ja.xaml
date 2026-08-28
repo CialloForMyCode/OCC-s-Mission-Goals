@@ -121,6 +121,7 @@
     <s:String xml:space="preserve" x:Key="仪表盘（LogPage）">ダッシュボード（LogPage）</s:String>
     <s:String xml:space="preserve" x:Key="任务变更影响度量">タスク変更の影響度の測定</s:String>
     <s:String xml:space="preserve" x:Key="作者:">作者:</s:String>
+    <s:String xml:space="preserve" x:Key="匿名开发者">匿名の開発者</s:String>
     <s:String xml:space="preserve" x:Key="保存">保存</s:String>
     <s:String xml:space="preserve" x:Key="保存项目信息">プロジェクト情報を保存</s:String>
     <s:String xml:space="preserve" x:Key="保存项目设置失败：{0}">プロジェクト設定の保存に失敗：{0}</s:String>
@@ -191,6 +192,7 @@
     <s:String xml:space="preserve" x:Key="全部">すべて</s:String>
     <s:String xml:space="preserve" x:Key="已安装">インストール済み</s:String>
     <s:String xml:space="preserve" x:Key="语言包">言語パック</s:String>
+    <s:String xml:space="preserve" x:Key="主题">テーマ</s:String>
     <s:String xml:space="preserve" x:Key="已完成">完了済み</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目">完了済みエントリ</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">完了済みエントリ（DonePage）</s:String>

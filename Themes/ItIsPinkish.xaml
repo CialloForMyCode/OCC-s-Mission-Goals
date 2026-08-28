@@ -3,8 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="clr-namespace:System;assembly=mscorlib">
 
-    <!-- 主题元数据：显示名（作为本地化键，UI 通过 LocalizationManager.T 翻译） -->
+    <!-- 主题元数据：显示名 -->
     <s:String x:Key="__theme_name">可爱粉</s:String>
+
+    <!-- 作者（可选）：扩展中心「作者」栏目显示；不填或删除此行则显示「匿名开发者」 -->
+    <s:String x:Key="__theme_author">Harvnyx</s:String>
 
     <!-- 推荐强调色：切换到此主题时，按钮/进度/选中态自动切换为糖果粉 -->
     <s:String x:Key="__theme_accent">#FF5FA8</s:String>

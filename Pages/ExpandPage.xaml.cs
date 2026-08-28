@@ -142,7 +142,9 @@ public partial class ExpandPage : Page
         Name = theme.Name,
         Icon = "",
         Description = LocalizationManager.T("主题"),
-        Author = ThemePackService.RepoOwner,
+        Author = string.IsNullOrWhiteSpace(theme.Author)
+            ? LocalizationManager.T("匿名开发者")
+            : theme.Author,
         Version = "",
         Category = ThemePackCategory,
         CategoryName = LocalizationManager.T("主题"),
@@ -299,6 +301,7 @@ public partial class ExpandPage : Page
             }
 
             LocalizationManager.Instance.Reload();
+            RebuildCatalog();
             ShowTip(LocalizationManager.T("已卸载语言包「{0}」。", plugin.Name));
             return;
         }
@@ -314,6 +317,7 @@ public partial class ExpandPage : Page
 
             // 重新扫描语言目录，让新语言立即出现在设置页并可切换。
             LocalizationManager.Instance.Reload();
+            RebuildCatalog();
             ShowTip(LocalizationManager.T("语言包「{0}」安装成功，可在「设置 → 语言」中切换。", plugin.Name));
         }
         catch (Exception ex)
@@ -342,6 +346,7 @@ public partial class ExpandPage : Page
             }
 
             ThemeManager.Reload();
+            RebuildCatalog();
             ShowTip(LocalizationManager.T("已卸载主题「{0}」。", plugin.Name));
             return;
         }
@@ -356,6 +361,7 @@ public partial class ExpandPage : Page
             }
 
             ThemeManager.Reload();
+            RebuildCatalog();
             ShowTip(LocalizationManager.T("主题「{0}」安装成功，可在「设置 → 主题样式」中切换。", plugin.Name));
         }
         catch (Exception ex)
@@ -379,7 +385,7 @@ public partial class ExpandPage : Page
 
     /// <summary>从目录项还原主题包（用于安装 / 卸载时定位远程文件）。</summary>
     private static ThemePack ToThemePack(PluginInfo plugin) =>
-        new(plugin.Name, plugin.FileName, plugin.DownloadUrl);
+        new(plugin.Name, plugin.Author, plugin.FileName, plugin.DownloadUrl);
 
     /// <summary>在状态栏显示一条非阻塞提示（替代安装 / 卸载弹窗）。</summary>
     private void ShowTip(string message) =>

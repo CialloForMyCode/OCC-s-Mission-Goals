@@ -9,7 +9,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>OCCMissionGoals</AssemblyName>
     <Title>OCC's Mission &amp; Goals</Title>
-    <Version>0.1.10-Beta</Version>
+    <Version>0.2.0-Beta</Version>
     <Authors>I-AM-SOLO</Authors>
     <Company>Harvnyx</Company>
     <Description>一款为 ONC Compiler Collection 开发的更新/修复管理工具，为了帮助患有健忘症的我更加快速的开发 ONC Compiler Collection。该工具旨在简化在MD中填写错误然后一个个找哪个没完成的流程，提高效率，并治好我的健忘症。</Description>
@@ -58,6 +58,7 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Page Remove="Themes\**\*.xaml" />
     <Folder Include="Themes\" />
   </ItemGroup>
 

@@ -121,6 +121,7 @@
     <s:String xml:space="preserve" x:Key="仪表盘（LogPage）">Dashboard (LogPage)</s:String>
     <s:String xml:space="preserve" x:Key="任务变更影响度量">Measuring task change impact</s:String>
     <s:String xml:space="preserve" x:Key="作者:">Author:</s:String>
+    <s:String xml:space="preserve" x:Key="匿名开发者">Anonymous developer</s:String>
     <s:String xml:space="preserve" x:Key="保存">Save</s:String>
     <s:String xml:space="preserve" x:Key="保存项目信息">Save Project Info</s:String>
     <s:String xml:space="preserve" x:Key="保存项目设置失败：{0}">Failed to save project settings: {0}</s:String>
@@ -191,6 +192,7 @@
     <s:String xml:space="preserve" x:Key="全部">All</s:String>
     <s:String xml:space="preserve" x:Key="已安装">Installed</s:String>
     <s:String xml:space="preserve" x:Key="语言包">Language pack</s:String>
+    <s:String xml:space="preserve" x:Key="主题">Theme</s:String>
     <s:String xml:space="preserve" x:Key="已完成">Finished</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目">Finished</s:String>
     <s:String xml:space="preserve" x:Key="已完成条目（DonePage）">Finished (DonePage)</s:String>

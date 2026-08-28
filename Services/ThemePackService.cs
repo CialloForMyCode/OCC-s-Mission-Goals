@@ -13,7 +13,7 @@ using System.Windows.Markup;
 namespace OCCMissionGoals.Services;
 
 /// <summary>一个可下载的主题（对应仓库 Themes 目录下的一个 *.xaml 文件）。</summary>
-public sealed record ThemePack(string Name, string FileName, string DownloadUrl);
+public sealed record ThemePack(string Name, string Author, string FileName, string DownloadUrl);
 
 /// <summary>
 /// 主题包服务：从 GitHub 仓库的 Themes 目录列出、下载安装与卸载主题。
@@ -76,18 +76,23 @@ public static class ThemePackService
             var downloadUrl = GetString(element, "download_url");
             var fallbackName = Path.GetFileNameWithoutExtension(fileName);
 
-            // 已安装 → 直接用本地文件解析出的显示名。
-            var localName = ReadLocalThemeName(fileName);
-            if (!string.IsNullOrWhiteSpace(localName))
+            // 已安装 → 直接用本地文件解析出的显示名与作者。
+            var local = ReadLocalThemeMeta(fileName);
+            if (local is not null)
             {
-                result.Add(new ThemePack(localName, fileName, downloadUrl));
+                result.Add(new ThemePack(
+                    string.IsNullOrWhiteSpace(local.Value.Name) ? fallbackName : local.Value.Name,
+                    local.Value.Author ?? string.Empty,
+                    fileName,
+                    downloadUrl));
                 continue;
             }
 
-            // 未安装 → 下载文件内容以读取 __theme_name。
-            var name = await FetchRemoteThemeNameAsync(fileName, client, cancellationToken);
+            // 未安装 → 下载文件内容以读取 __theme_name / __theme_author。
+            var remote = await FetchRemoteThemeMetaAsync(fileName, client, cancellationToken);
             result.Add(new ThemePack(
-                string.IsNullOrWhiteSpace(name) ? fallbackName : name,
+                string.IsNullOrWhiteSpace(remote?.Name) ? fallbackName : remote.Value.Name,
+                remote?.Author ?? string.Empty,
                 fileName,
                 downloadUrl));
         }
@@ -154,8 +159,8 @@ public static class ThemePackService
 
                 try
                 {
-                    var name = ReadThemeName(file);
-                    if (string.Equals(name, pack.Name, StringComparison.Ordinal))
+                    var meta = ReadThemeMeta(file);
+                    if (meta is not null && string.Equals(meta.Value.Name, pack.Name, StringComparison.Ordinal))
                     {
                         File.Delete(file);
                         return null;
@@ -200,21 +205,21 @@ public static class ThemePackService
         return await client.SendAsync(request, cancellationToken);
     }
 
-    /// <summary>读取本地主题文件的显示名（__theme_name）；不存在或解析失败返回 null。</summary>
-    private static string? ReadLocalThemeName(string fileName)
+    /// <summary>读取本地主题文件的元数据（显示名与作者）；不存在或解析失败返回 null。</summary>
+    private static (string? Name, string? Author)? ReadLocalThemeMeta(string fileName)
     {
         var path = Path.Combine(LocalThemesDirectory, fileName);
         if (!File.Exists(path)) return null;
-        return ReadThemeName(path);
+        return ReadThemeMeta(path);
     }
 
-    private static string? ReadThemeName(string file)
+    private static (string? Name, string? Author)? ReadThemeMeta(string file)
     {
         try
         {
             using var stream = File.OpenRead(file);
             var rd = (ResourceDictionary)XamlReader.Load(stream);
-            return rd["__theme_name"] as string;
+            return (rd["__theme_name"] as string, rd["__theme_author"] as string);
         }
         catch
         {
@@ -222,8 +227,8 @@ public static class ThemePackService
         }
     }
 
-    /// <summary>下载远程 *.xaml 并解析 __theme_name；失败返回 null。</summary>
-    private static async Task<string?> FetchRemoteThemeNameAsync(
+    /// <summary>下载远程 *.xaml 并解析 __theme_name / __theme_author；失败返回 null。</summary>
+    private static async Task<(string? Name, string? Author)?> FetchRemoteThemeMetaAsync(
         string fileName,
         HttpClient client,
         CancellationToken cancellationToken)
@@ -237,7 +242,7 @@ public static class ThemePackService
             var text = await response.Content.ReadAsStringAsync(cancellationToken);
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(text));
             var rd = (ResourceDictionary)XamlReader.Load(stream);
-            return rd["__theme_name"] as string;
+            return (rd["__theme_name"] as string, rd["__theme_author"] as string);
         }
         catch
         {
