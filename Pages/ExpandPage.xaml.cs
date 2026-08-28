@@ -141,7 +141,9 @@ public partial class ExpandPage : Page
         Id = "theme:" + theme.Name,
         Name = theme.Name,
         Icon = "",
-        Description = LocalizationManager.T("主题"),
+        Description = string.IsNullOrWhiteSpace(theme.Description)
+            ? LocalizationManager.T("主题")
+            : theme.Description,
         Author = string.IsNullOrWhiteSpace(theme.Author)
             ? LocalizationManager.T("匿名开发者")
             : theme.Author,
@@ -385,7 +387,7 @@ public partial class ExpandPage : Page
 
     /// <summary>从目录项还原主题包（用于安装 / 卸载时定位远程文件）。</summary>
     private static ThemePack ToThemePack(PluginInfo plugin) =>
-        new(plugin.Name, plugin.Author, plugin.FileName, plugin.DownloadUrl);
+        new(plugin.Name, plugin.Author, plugin.Description, plugin.FileName, plugin.DownloadUrl);
 
     /// <summary>在状态栏显示一条非阻塞提示（替代安装 / 卸载弹窗）。</summary>
     private void ShowTip(string message) =>

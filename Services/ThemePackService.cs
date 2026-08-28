@@ -13,7 +13,7 @@ using System.Windows.Markup;
 namespace OCCMissionGoals.Services;
 
 /// <summary>一个可下载的主题（对应仓库 Themes 目录下的一个 *.xaml 文件）。</summary>
-public sealed record ThemePack(string Name, string Author, string FileName, string DownloadUrl);
+public sealed record ThemePack(string Name, string Author, string Description, string FileName, string DownloadUrl);
 
 /// <summary>
 /// 主题包服务：从 GitHub 仓库的 Themes 目录列出、下载安装与卸载主题。
@@ -76,23 +76,25 @@ public static class ThemePackService
             var downloadUrl = GetString(element, "download_url");
             var fallbackName = Path.GetFileNameWithoutExtension(fileName);
 
-            // 已安装 → 直接用本地文件解析出的显示名与作者。
+            // 已安装 → 直接用本地文件解析出的显示名、作者与简介。
             var local = ReadLocalThemeMeta(fileName);
             if (local is not null)
             {
                 result.Add(new ThemePack(
                     string.IsNullOrWhiteSpace(local.Value.Name) ? fallbackName : local.Value.Name,
                     local.Value.Author ?? string.Empty,
+                    local.Value.Description ?? string.Empty,
                     fileName,
                     downloadUrl));
                 continue;
             }
 
-            // 未安装 → 下载文件内容以读取 __theme_name / __theme_author。
+            // 未安装 → 下载文件内容以读取 __theme_name / __theme_author / __theme_description。
             var remote = await FetchRemoteThemeMetaAsync(fileName, client, cancellationToken);
             result.Add(new ThemePack(
                 string.IsNullOrWhiteSpace(remote?.Name) ? fallbackName : remote.Value.Name,
                 remote?.Author ?? string.Empty,
+                remote?.Description ?? string.Empty,
                 fileName,
                 downloadUrl));
         }
@@ -205,21 +207,24 @@ public static class ThemePackService
         return await client.SendAsync(request, cancellationToken);
     }
 
-    /// <summary>读取本地主题文件的元数据（显示名与作者）；不存在或解析失败返回 null。</summary>
-    private static (string? Name, string? Author)? ReadLocalThemeMeta(string fileName)
+    /// <summary>读取本地主题文件的元数据（显示名、作者与简介）；不存在或解析失败返回 null。</summary>
+    private static (string? Name, string? Author, string? Description)? ReadLocalThemeMeta(string fileName)
     {
         var path = Path.Combine(LocalThemesDirectory, fileName);
         if (!File.Exists(path)) return null;
         return ReadThemeMeta(path);
     }
 
-    private static (string? Name, string? Author)? ReadThemeMeta(string file)
+    private static (string? Name, string? Author, string? Description)? ReadThemeMeta(string file)
     {
         try
         {
             using var stream = File.OpenRead(file);
             var rd = (ResourceDictionary)XamlReader.Load(stream);
-            return (rd["__theme_name"] as string, rd["__theme_author"] as string);
+            return (
+                rd["__theme_name"] as string,
+                rd["__theme_author"] as string,
+                rd["__theme_description"] as string);
         }
         catch
         {
@@ -227,8 +232,8 @@ public static class ThemePackService
         }
     }
 
-    /// <summary>下载远程 *.xaml 并解析 __theme_name / __theme_author；失败返回 null。</summary>
-    private static async Task<(string? Name, string? Author)?> FetchRemoteThemeMetaAsync(
+    /// <summary>下载远程 *.xaml 并解析 __theme_name / __theme_author / __theme_description；失败返回 null。</summary>
+    private static async Task<(string? Name, string? Author, string? Description)?> FetchRemoteThemeMetaAsync(
         string fileName,
         HttpClient client,
         CancellationToken cancellationToken)
@@ -242,7 +247,10 @@ public static class ThemePackService
             var text = await response.Content.ReadAsStringAsync(cancellationToken);
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(text));
             var rd = (ResourceDictionary)XamlReader.Load(stream);
-            return (rd["__theme_name"] as string, rd["__theme_author"] as string);
+            return (
+                rd["__theme_name"] as string,
+                rd["__theme_author"] as string,
+                rd["__theme_description"] as string);
         }
         catch
         {

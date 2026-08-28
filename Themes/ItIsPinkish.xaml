@@ -9,6 +9,9 @@
     <!-- 作者（可选）：扩展中心「作者」栏目显示；不填或删除此行则显示「匿名开发者」 -->
     <s:String x:Key="__theme_author">Harvnyx</s:String>
 
+    <!-- 简介（可选）：扩展中心简介栏目显示；不填则回退为分类名「主题」 -->
+    <s:String x:Key="__theme_description">糖果粉配色主题，樱花奶白浅色与深色两套外观，切换后自动应用糖果粉强调色。</s:String>
+
     <!-- 推荐强调色：切换到此主题时，按钮/进度/选中态自动切换为糖果粉 -->
     <s:String x:Key="__theme_accent">#FF5FA8</s:String>
 
