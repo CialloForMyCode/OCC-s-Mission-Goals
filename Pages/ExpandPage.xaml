@@ -15,18 +15,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
 
-            <!-- 标题 -->
-            <Border CornerRadius="8"
-                    Background="{DynamicResource CardBackgroundBrush}"
-                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
-                    Padding="16" Margin="0,0,0,5">
-                <TextBlock Text="{loc:Loc &quot;扩展中心&quot;}"
-                           FontSize="22" FontWeight="Bold"
-                           Foreground="{DynamicResource ForegroundBrush}"
-                           Margin="16,0,0,6"/>
-            </Border>
-
-            <!-- 搜索栏 -->
+            <!-- 标题 + 刷新 -->
             <Border CornerRadius="8"
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
@@ -36,39 +25,14 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="SearchBox"
-                             Grid.Column="0"
-                             Background="{DynamicResource SearchBackgroundBrush}"
-                             Foreground="{DynamicResource ForegroundBrush}"
-                             BorderThickness="0" Padding="10,8"
-                             FontSize="13" VerticalAlignment="Center"
-                             TextChanged="SearchBox_TextChanged">
-                        <TextBox.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="6"/>
-                            </Style>
-                        </TextBox.Resources>
-                    </TextBox>
-                    <TextBlock Grid.Column="0"
-                               Text="{loc:Loc &quot;搜索扩展...&quot;}"
+                    <TextBlock Text="{loc:Loc &quot;扩展中心&quot;}"
+                               Grid.Column="0"
+                               FontSize="22" FontWeight="Bold"
                                Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="13" Opacity="0.4"
-                               VerticalAlignment="Center" Margin="12,0,0,0"
-                               IsHitTestVisible="False">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                               VerticalAlignment="Center"
+                               Margin="16,0,0,6"/>
                     <Button Grid.Column="1"
                             Content="{loc:Loc &quot;刷新&quot;}" Width="72" Height="32"
-                            Margin="12,0,0,0"
                             Style="{StaticResource CardActionBtn}"
                             Click="RefreshButton_Click"/>
                 </Grid>

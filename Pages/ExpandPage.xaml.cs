@@ -38,7 +38,6 @@ public partial class ExpandPage : Page
     private List<LanguagePack> _packs = new();
     private List<ThemePack> _themes = new();
     private string _currentCategory = "all";
-    private string _currentSearch = "";
     private bool _loading;
     private bool _hasLoaded;
 
@@ -213,16 +212,6 @@ public partial class ExpandPage : Page
         else if (_currentCategory != "all")
             filtered = filtered.Where(p => p.Category == _currentCategory);
 
-        // 搜索筛选
-        if (!string.IsNullOrWhiteSpace(_currentSearch))
-        {
-            var kw = _currentSearch.Trim();
-            filtered = filtered.Where(p =>
-                p.Name.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                p.Description.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                p.Author.Contains(kw, StringComparison.OrdinalIgnoreCase));
-        }
-
         PluginList.ItemsSource = filtered.ToList();
     }
 
@@ -239,12 +228,6 @@ public partial class ExpandPage : Page
     }
 
     // ==================== 事件处理 ====================
-
-    private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        _currentSearch = SearchBox.Text;
-        ApplyFilter();
-    }
 
     private void CategoryButton_Click(object sender, RoutedEventArgs e)
     {
