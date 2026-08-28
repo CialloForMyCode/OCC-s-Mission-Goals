@@ -8,7 +8,7 @@
         xmlns:dialogs="clr-namespace:OCCMissionGoals.Dialogs"
         mc:Ignorable="d" Background="Transparent"
         AllowsTransparency="True" WindowStyle="None"
-        Title="MainWindow" Height="766" Width="1250">
+        Title="OCC's Mission &amp; Goals" Height="766" Width="1250">
 
     <Border x:Name="MainBorder" Background="{DynamicResource BackgroundBrush}"
         BorderBrush="{DynamicResource MainBorderBrush}" CornerRadius="10"

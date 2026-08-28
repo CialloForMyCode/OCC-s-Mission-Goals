@@ -1,0 +1,132 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
+    <!-- 主题元数据：显示名（作为本地化键，UI 通过 LocalizationManager.T 翻译） -->
+    <s:String x:Key="__theme_name">可爱粉</s:String>
+
+    <!-- 推荐强调色：切换到此主题时，按钮/进度/选中态自动切换为糖果粉 -->
+    <s:String x:Key="__theme_accent">#FF5FA8</s:String>
+
+    <!-- ================================================================
+         浅色配色（Light.*）—— 樱花奶白 + 糖果粉
+    ================================================================ -->
+
+    <!-- 文字/图标 -->
+    <SolidColorBrush x:Key="Light.ForegroundBrush" Color="#D94F7C"/>
+
+    <!-- 主背景 -->
+    <SolidColorBrush x:Key="Light.BackgroundBrush"     Color="#FFE3EE"/>
+    <SolidColorBrush x:Key="Light.MainBorderBrush"     Color="#80F9A8C4"/>
+
+    <!-- 卡片/面板 -->
+    <SolidColorBrush x:Key="Light.CardBackgroundBrush" Color="#FFF7FB"/>
+    <SolidColorBrush x:Key="Light.CardBorderBrush"     Color="#FFC4DA"/>
+
+    <!-- 搜索框 -->
+    <SolidColorBrush x:Key="Light.SearchBackgroundBrush"  Color="#FFD3E3"/>
+    <SolidColorBrush x:Key="Light.SearchBorderBrush"      Color="#FFC4DA"/>
+    <SolidColorBrush x:Key="Light.SearchFocusBgBrush"     Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Light.SearchFocusBorderBrush" Color="#FF6FA9"/>
+    <SolidColorBrush x:Key="Light.SearchHoverBorderBrush" Color="#FF9CC2"/>
+
+    <!-- 交互状态 -->
+    <SolidColorBrush x:Key="Light.SubtleBackgroundBrush"   Color="#FFD9E8"/>
+    <SolidColorBrush x:Key="Light.HoverBackgroundBrush"    Color="#FFE1EE"/>
+    <SolidColorBrush x:Key="Light.PressedBackgroundBrush"  Color="#FFBED6"/>
+    <SolidColorBrush x:Key="Light.SelectedBackgroundBrush" Color="#FF9EC9"/>
+
+    <!-- 窗口控制 -->
+    <SolidColorBrush x:Key="Light.WinControlHoverBrush"   Color="#FFD5E5"/>
+    <SolidColorBrush x:Key="Light.WinControlPressedBrush" Color="#FFBBD4"/>
+
+    <!-- 菜单弹出层 -->
+    <SolidColorBrush x:Key="Light.MenuPopupBackgroundBrush" Color="#FFF7FB"/>
+    <SolidColorBrush x:Key="Light.MenuPopupBorderBrush"     Color="#FFADD0"/>
+    <SolidColorBrush x:Key="Light.DisabledForegroundBrush"  Color="#E3A4BC"/>
+
+    <!-- 分隔线 -->
+    <SolidColorBrush x:Key="Light.SeparatorBrush" Color="#FFC7DC"/>
+
+    <!-- 路径/图标描边 -->
+    <SolidColorBrush x:Key="Light.IconStrokeBrush" Color="#E0518B"/>
+
+    <!-- 启动按钮 -->
+    <SolidColorBrush x:Key="Light.RunButton" Color="#E0518B"/>
+
+    <!-- 选中态前景色 -->
+    <SolidColorBrush x:Key="Light.SelectedForegroundBrush" Color="#FFFFFF"/>
+
+    <!-- 代码（Markdown 内联代码 / 代码块） -->
+    <SolidColorBrush x:Key="Light.CodeBackgroundBrush" Color="#FFEBF4"/>
+    <SolidColorBrush x:Key="Light.CodeBorderBrush"     Color="#FFC7DC"/>
+
+    <!-- 终端/控制台 -->
+    <SolidColorBrush x:Key="Light.TerminalBackgroundBrush"     Color="#FFF0F7"/>
+    <SolidColorBrush x:Key="Light.TerminalForegroundBrush"     Color="#7A3550"/>
+    <SolidColorBrush x:Key="Light.TerminalScrollBarBrush"      Color="#F5B7CF"/>
+    <SolidColorBrush x:Key="Light.TerminalScrollBarHoverBrush" Color="#ED8FB4"/>
+    <SolidColorBrush x:Key="Light.TerminalSelectionBrush"      Color="#FFBFDA"/>
+
+    <!-- ================================================================
+         深色配色（Dark.*）—— 暖粉紫黑 + 糖果粉灰
+    ================================================================ -->
+
+    <!-- 文字/图标 -->
+    <SolidColorBrush x:Key="Dark.ForegroundBrush" Color="#FFB8CF"/>
+
+    <!-- 主背景 -->
+    <SolidColorBrush x:Key="Dark.BackgroundBrush"     Color="#2B1220"/>
+    <SolidColorBrush x:Key="Dark.MainBorderBrush"     Color="#803F2130"/>
+
+    <!-- 卡片/面板 -->
+    <SolidColorBrush x:Key="Dark.CardBackgroundBrush" Color="#3A1A2A"/>
+    <SolidColorBrush x:Key="Dark.CardBorderBrush"     Color="#512637"/>
+
+    <!-- 搜索框 -->
+    <SolidColorBrush x:Key="Dark.SearchBackgroundBrush"  Color="#4A2233"/>
+    <SolidColorBrush x:Key="Dark.SearchBorderBrush"      Color="#512637"/>
+    <SolidColorBrush x:Key="Dark.SearchFocusBgBrush"     Color="#3A1A2A"/>
+    <SolidColorBrush x:Key="Dark.SearchFocusBorderBrush" Color="#B44A78"/>
+    <SolidColorBrush x:Key="Dark.SearchHoverBorderBrush" Color="#632C45"/>
+
+    <!-- 交互状态 -->
+    <SolidColorBrush x:Key="Dark.SubtleBackgroundBrush"   Color="#58293C"/>
+    <SolidColorBrush x:Key="Dark.HoverBackgroundBrush"    Color="#58293C"/>
+    <SolidColorBrush x:Key="Dark.PressedBackgroundBrush"  Color="#6E3044"/>
+    <SolidColorBrush x:Key="Dark.SelectedBackgroundBrush" Color="#B05078"/>
+
+    <!-- 窗口控制 -->
+    <SolidColorBrush x:Key="Dark.WinControlHoverBrush"   Color="#58293C"/>
+    <SolidColorBrush x:Key="Dark.WinControlPressedBrush" Color="#6E3044"/>
+
+    <!-- 菜单弹出层 -->
+    <SolidColorBrush x:Key="Dark.MenuPopupBackgroundBrush" Color="#3A1A2A"/>
+    <SolidColorBrush x:Key="Dark.MenuPopupBorderBrush"     Color="#B44A78"/>
+    <SolidColorBrush x:Key="Dark.DisabledForegroundBrush"  Color="#9A6B80"/>
+
+    <!-- 分隔线 -->
+    <SolidColorBrush x:Key="Dark.SeparatorBrush" Color="#6E3044"/>
+
+    <!-- 路径/图标描边 -->
+    <SolidColorBrush x:Key="Dark.IconStrokeBrush" Color="#FFB8CF"/>
+
+    <!-- 启动按钮 -->
+    <SolidColorBrush x:Key="Dark.RunButton" Color="#FFB8CF"/>
+
+    <!-- 选中态前景色 -->
+    <SolidColorBrush x:Key="Dark.SelectedForegroundBrush" Color="#FFFFFF"/>
+
+    <!-- 代码（Markdown 内联代码 / 代码块） -->
+    <SolidColorBrush x:Key="Dark.CodeBackgroundBrush" Color="#4A2233"/>
+    <SolidColorBrush x:Key="Dark.CodeBorderBrush"     Color="#632C45"/>
+
+    <!-- 终端/控制台 -->
+    <SolidColorBrush x:Key="Dark.TerminalBackgroundBrush"     Color="#2B1220"/>
+    <SolidColorBrush x:Key="Dark.TerminalForegroundBrush"     Color="#FFC2D6"/>
+    <SolidColorBrush x:Key="Dark.TerminalScrollBarBrush"      Color="#6E3044"/>
+    <SolidColorBrush x:Key="Dark.TerminalScrollBarHoverBrush" Color="#B44A78"/>
+    <SolidColorBrush x:Key="Dark.TerminalSelectionBrush"      Color="#B44A78"/>
+
+</ResourceDictionary>

@@ -39,6 +39,9 @@ public static class ThemeManager
     /// <summary>当前选中的主题样式名。</summary>
     public static string CurrentThemeName => _currentTheme;
 
+    /// <summary>当前主题样式推荐的强调色（#RRGGBB）；主题未指定时为 null。</summary>
+    public static string? CurrentThemeAccent { get; private set; }
+
     static ThemeManager()
     {
         LoadThemes();
@@ -86,6 +89,17 @@ public static class ThemeManager
         _currentTheme = ResolveTheme(name).Name;
     }
 
+    /// <summary>
+    /// 重新扫描 Themes 目录并重建主题列表（安装 / 卸载主题后调用）。
+    /// 当前主题名若已不存在则回退到列表首个，并重新应用配色。
+    /// </summary>
+    public static void Reload()
+    {
+        LoadThemes();
+        _currentTheme = ResolveTheme(_currentTheme).Name;
+        ApplyTheme(_isDark);
+    }
+
     private static (string Name, string File) ResolveTheme(string name)
     {
         if (_themes.Count == 0) return (DefaultThemeName, string.Empty);
@@ -101,6 +115,7 @@ public static class ThemeManager
         _isDark = dark;
 
         var entry = ResolveTheme(_currentTheme);
+        CurrentThemeAccent = null;
         if (!string.IsNullOrEmpty(entry.File))
             ApplyPalette(entry.File, dark);
 
@@ -127,6 +142,8 @@ public static class ThemeManager
 
         var prefix = dark ? "Dark." : "Light.";
         var resources = Application.Current.Resources;
+
+        CurrentThemeAccent = NormalizeAccent(rd["__theme_accent"] as string);
 
         foreach (var keyObj in rd.Keys)
         {
@@ -186,6 +203,13 @@ public static class ThemeManager
         {
             return null;
         }
+    }
+
+    /// <summary>把主题里推荐强调色规范化为 #RRGGBB；无效或为空返回 null。</summary>
+    private static string? NormalizeAccent(string? value)
+    {
+        var color = ParseColor(value);
+        return color is null ? null : $"#{color.Value.R:X2}{color.Value.G:X2}{color.Value.B:X2}";
     }
 
     /// <summary>把 <paramref name="color"/> 向 <paramref name="target"/> 按比例 t (0~1) 混合。</summary>

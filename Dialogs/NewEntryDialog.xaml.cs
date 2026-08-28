@@ -389,7 +389,8 @@ public partial class NewEntryDialog : UserControl
         {
             Title = LocalizationManager.T("选择要关联的文件"),
             Multiselect = true,
-            Filter = LocalizationManager.T("所有文件 (*.*)|*.*")
+            Filter = LocalizationManager.T("所有文件 (*.*)|*.*"),
+            InitialDirectory = AppContext.BaseDirectory
         };
 
         if (dlg.ShowDialog() == true)

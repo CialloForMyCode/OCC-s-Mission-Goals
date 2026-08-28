@@ -209,6 +209,21 @@ public static class Markdown
         return tb;
     }
 
+    /// <summary>简介在条目卡片中最多显示的字符数，超出部分以 "..." 结尾。</summary>
+    public const int BriefExcerptMaxLength = 60;
+
+    /// <summary>把简介文本截断到固定显示长度；超出时在末尾追加 "..."（避免破坏代理对）。</summary>
+    public static string TruncateExcerpt(string? text)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= BriefExcerptMaxLength)
+            return text ?? string.Empty;
+
+        var end = BriefExcerptMaxLength;
+        if (char.IsHighSurrogate(text[end - 1]))
+            end--;
+        return text.Substring(0, end) + "...";
+    }
+
     private static bool IsBlockStart(string line)
     {
         var t = line.TrimStart();
@@ -718,8 +733,18 @@ public sealed class MarkdownInlineConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var trim = string.Equals(parameter as string, "trim", StringComparison.OrdinalIgnoreCase);
-        return Markdown.RenderInline(value as string, trim);
+        var text = value as string;
+        var p = parameter as string;
+        var trim = string.Equals(p, "trim", StringComparison.OrdinalIgnoreCase);
+
+        // "excerpt"：用于简介，固定显示长度 + 省略号（超出部分用 "..." 代替）。
+        if (string.Equals(p, "excerpt", StringComparison.OrdinalIgnoreCase))
+        {
+            trim = true;
+            text = Markdown.TruncateExcerpt(text);
+        }
+
+        return Markdown.RenderInline(text, trim);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

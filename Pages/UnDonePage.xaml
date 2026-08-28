@@ -138,12 +138,13 @@
                                                                         HorizontalAlignment="Left"
                                                                         VerticalAlignment="Center"/>
                                                         <ContentControl Grid.Column="1"
-                                                                        Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=trim}"
+                                                                        Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=excerpt}"
                                                                         Foreground="{DynamicResource ForegroundBrush}"
                                                                         FontSize="12"
                                                                         VerticalAlignment="Center"
                                                                         Margin="10,0,0,0"
-                                                                        HorizontalAlignment="Left"
+                                                                        HorizontalAlignment="Stretch"
+                                                                        HorizontalContentAlignment="Stretch"
                                                                         Visibility="{Binding IsExcerptVisible, Converter={StaticResource BoolToVis}}"/>
                                                         <TextBlock Grid.Column="2"
                                                                    x:Name="ToggleLink"

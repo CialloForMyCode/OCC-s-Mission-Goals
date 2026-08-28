@@ -76,6 +76,8 @@ namespace OCCMissionGoals
                 }
             }
 
+            UpdateWindowTitle();
+
             _sortPage = new ToolPages.SortPage();
             ToolPage.Navigate(_sortPage);
             _switchPage = new ToolPages.SwitchPage();
@@ -696,6 +698,16 @@ namespace OCCMissionGoals
         public void SetThemeStyle(string name)
         {
             ThemeManager.SetThemeStyle(name);
+            // 立即应用新配色（SetThemeStyle 仅记录选择，真正生效需 ApplyTheme）。
+            ThemeManager.ApplyTheme(ThemeManager.IsDark);
+
+            // 主题若推荐强调色，则随之切换并持久化，让按钮/选中态与主题协调。
+            if (!string.IsNullOrWhiteSpace(ThemeManager.CurrentThemeAccent))
+            {
+                ThemeManager.ApplyAccentColor(ThemeManager.CurrentThemeAccent);
+                ConfigManager.Set("General", "accent", ThemeManager.AccentColorHex);
+            }
+
             ConfigManager.Set("General", "themestyle", ThemeManager.CurrentThemeName);
             RefreshAllViews();
         }
@@ -1517,7 +1529,29 @@ namespace OCCMissionGoals
                     reg.OnRefresh?.Invoke(page);
             }
             RefreshVersionCombo();
+            UpdateWindowTitle();
             RestartFileWatcher();
+        }
+
+        /// <summary>更新窗口标题（即任务栏显示的名称），格式：OCC's Mission &amp; Goals - [项目名:版本号]。</summary>
+        private void UpdateWindowTitle()
+        {
+            var proj = Services.ProjectService.CurrentProject;
+            if (proj == null || string.IsNullOrWhiteSpace(proj.Name))
+            {
+                Title = "OCC's Mission & Goals";
+                return;
+            }
+
+            // 兼容旧格式（版本号可能带 .json 后缀）
+            var ver = proj.CurrentVersion ?? string.Empty;
+            var cleanVer = ver.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                ? ver[..^5]
+                : ver;
+
+            Title = string.IsNullOrWhiteSpace(cleanVer)
+                ? $"OCC's Mission & Goals - [{proj.Name}]"
+                : $"OCC's Mission & Goals - [{proj.Name}:{cleanVer}]";
         }
 
         /// <summary>展开所有条目详情。</summary>

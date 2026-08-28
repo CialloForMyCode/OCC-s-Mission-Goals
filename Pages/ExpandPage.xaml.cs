@@ -22,6 +22,9 @@ public partial class ExpandPage : Page
     /// <summary>语言包在扩展中心里的稳定分类键（用于筛选，显示名见 <see cref="PluginInfo.CategoryName"/>）。</summary>
     private const string LanguagePackCategory = "language-pack";
 
+    /// <summary>主题在扩展中心里的稳定分类键。</summary>
+    private const string ThemePackCategory = "theme";
+
     /// <summary>语言代码 → 中文语言名（用于生成「中文语言包 / 英文语言包」这类简介）。</summary>
     private static readonly Dictionary<string, string> _languageNames = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -33,6 +36,7 @@ public partial class ExpandPage : Page
     };
 
     private List<LanguagePack> _packs = new();
+    private List<ThemePack> _themes = new();
     private string _currentCategory = "all";
     private string _currentSearch = "";
     private bool _loading;
@@ -74,10 +78,12 @@ public partial class ExpandPage : Page
         SetEmptyHint(LocalizationManager.T("正在加载扩展…"));
 
         List<LanguagePack>? packs = null;
+        List<ThemePack>? themes = null;
         string? error = null;
         try
         {
             packs = await LanguagePackService.FetchAvailableAsync();
+            themes = await ThemePackService.FetchAvailableAsync();
         }
         catch (Exception ex)
         {
@@ -96,16 +102,19 @@ public partial class ExpandPage : Page
         }
 
         _packs = packs ?? new List<LanguagePack>();
+        _themes = themes ?? new List<ThemePack>();
         _hasLoaded = true;
         RebuildCatalog();
     }
 
-    /// <summary>用已拉取的语言包重建目录（含本地化文案与安装状态）并重新应用筛选。</summary>
+    /// <summary>用已拉取的语言包与主题重建目录（含本地化文案与安装状态）并重新应用筛选。</summary>
     private void RebuildCatalog()
     {
         PluginCatalog.All.Clear();
         foreach (var pack in _packs)
             PluginCatalog.All.Add(BuildPlugin(pack));
+        foreach (var theme in _themes)
+            PluginCatalog.All.Add(BuildThemePlugin(theme));
 
         BuildCategories();
         ApplyFilter();
@@ -125,6 +134,22 @@ public partial class ExpandPage : Page
         IsInstalled = LanguagePackService.IsInstalled(pack.Code),
         DownloadUrl = pack.DownloadUrl,
         FileName = pack.FileName,
+    };
+
+    private static PluginInfo BuildThemePlugin(ThemePack theme) => new()
+    {
+        Id = "theme:" + theme.Name,
+        Name = theme.Name,
+        Icon = "",
+        Description = LocalizationManager.T("主题"),
+        Author = ThemePackService.RepoOwner,
+        Version = "",
+        Category = ThemePackCategory,
+        CategoryName = LocalizationManager.T("主题"),
+        Downloads = 0,
+        IsInstalled = ThemePackService.IsInstalled(theme.FileName),
+        DownloadUrl = theme.DownloadUrl,
+        FileName = theme.FileName,
     };
 
     /// <summary>生成语言包简介，例如「中文语言包」「英文语言包」。</summary>
@@ -255,6 +280,12 @@ public partial class ExpandPage : Page
     /// <summary>安装 / 卸载插件（供右键菜单使用，不依赖具体按钮）。</summary>
     public async Task ToggleInstall(PluginInfo plugin)
     {
+        if (plugin.Category == ThemePackCategory)
+        {
+            await ToggleThemeInstall(plugin);
+            return;
+        }
+
         var pack = ToPack(plugin);
 
         if (plugin.IsInstalled)
@@ -296,6 +327,43 @@ public partial class ExpandPage : Page
         await LoadAsync();
     }
 
+    /// <summary>安装 / 卸载主题：写入或删除本地 Themes 目录，并让主题下拉立即生效。</summary>
+    private async Task ToggleThemeInstall(PluginInfo plugin)
+    {
+        var theme = ToThemePack(plugin);
+
+        if (plugin.IsInstalled)
+        {
+            var error = ThemePackService.Uninstall(theme);
+            if (error != null)
+            {
+                ShowTip(error);
+                return;
+            }
+
+            ThemeManager.Reload();
+            ShowTip(LocalizationManager.T("已卸载主题「{0}」。", plugin.Name));
+            return;
+        }
+
+        try
+        {
+            var error = await ThemePackService.InstallAsync(theme);
+            if (error != null)
+            {
+                ShowTip(error);
+                return;
+            }
+
+            ThemeManager.Reload();
+            ShowTip(LocalizationManager.T("主题「{0}」安装成功，可在「设置 → 主题样式」中切换。", plugin.Name));
+        }
+        catch (Exception ex)
+        {
+            ShowTip(LocalizationManager.T("安装失败：{0}", ex.Message));
+        }
+    }
+
     // ==================== 内部辅助 ====================
 
     /// <summary>从目录项还原语言包（用于安装 / 卸载时定位远程文件）。</summary>
@@ -308,6 +376,10 @@ public partial class ExpandPage : Page
                 : plugin.Id;
         return new LanguagePack(code, plugin.Name, plugin.FileName, plugin.DownloadUrl);
     }
+
+    /// <summary>从目录项还原主题包（用于安装 / 卸载时定位远程文件）。</summary>
+    private static ThemePack ToThemePack(PluginInfo plugin) =>
+        new(plugin.Name, plugin.FileName, plugin.DownloadUrl);
 
     /// <summary>在状态栏显示一条非阻塞提示（替代安装 / 卸载弹窗）。</summary>
     private void ShowTip(string message) =>
