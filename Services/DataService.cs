@@ -29,6 +29,13 @@ public static class DataService
     /// <summary>获取当前数据文件路径，可能为 null。</summary>
     public static string? GetFilePath() => _path;
 
+    /// <summary>清空数据服务状态（关闭/删除项目后调用）：清除文件路径与内存数据。</summary>
+    public static void Reset()
+    {
+        _path = null;
+        Current = new DataFile();
+    }
+
     /// <summary>从当前路径加载数据（加跨进程锁，避免读到写了一半的文件）。</summary>
     public static void Load()
     {
@@ -128,6 +135,51 @@ public static class DataService
             }
         }
         return merged;
+    }
+
+    /// <summary>
+    /// 在当前项目所有版本中重命名（newTag 非空）或移除（newTag 为 null）某类型标签。
+    /// 对每个条目按大小写不敏感匹配并更新其 Type 列表。
+    /// </summary>
+    public static void UpdateTypeTagAcrossVersions(string projectDir, string oldTag, string? newTag)
+    {
+        if (string.IsNullOrEmpty(projectDir)) return;
+        var versionsDir = ProjectService.GetVersionsDir(projectDir);
+        if (!Directory.Exists(versionsDir)) return;
+
+        using (FileLock.Acquire())
+        {
+            foreach (var file in Directory.GetFiles(versionsDir, "*.json"))
+            {
+                string json;
+                try { json = File.ReadAllText(file); }
+                catch { continue; }
+
+                var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
+                if (data == null) continue;
+
+                var changed = false;
+                foreach (var entry in data.Unfinished.Concat(data.Finished))
+                {
+                    for (var i = entry.Type.Count - 1; i >= 0; i--)
+                    {
+                        if (!string.Equals(entry.Type[i], oldTag, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        changed = true;
+                        if (newTag == null) entry.Type.RemoveAt(i);
+                        else entry.Type[i] = newTag;
+                    }
+                }
+
+                if (changed)
+                {
+                    IsInternalSave = true;
+                    try { File.WriteAllText(file, JsonSerializer.Serialize(data, _jsonOptions)); }
+                    finally { IsInternalSave = false; }
+                }
+            }
+        }
     }
 
     /// <summary>

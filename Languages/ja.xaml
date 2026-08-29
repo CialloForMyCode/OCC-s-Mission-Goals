@@ -30,6 +30,7 @@
     <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。">Setting: モードはエントリ一覧を絞り込まず、結果ボードに設定のショートカット項目を一覧表示します。キーワードが空でも全設定項目を表示します。クリックすると直接実行できます：ダーク/ライトテーマの切り替え、プロジェクト設定を開く、データ統計を開く。</s:String>
     <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: 設定</s:String>
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: タグ</s:String>
+    <s:String xml:space="preserve" x:Key="Type: 类别">Type: タイプ</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: テキスト</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}个月前">{0}か月前</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0}分前</s:String>
@@ -254,6 +255,7 @@
     <s:String xml:space="preserve" x:Key="按照截止日期降序排序">期限の降順で並べ替え</s:String>
     <s:String xml:space="preserve" x:Key="按照版本升序排序">バージョンの昇順で並べ替え</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">バージョンの降順で並べ替え</s:String>
+    <s:String xml:space="preserve" x:Key="按照类别排序">タイプの昇順で並べ替え</s:String>
     <s:String xml:space="preserve" x:Key="排序方式：">並べ替え方法：</s:String>
     <s:String xml:space="preserve" x:Key="提示">ヒント</s:String>
     <s:String xml:space="preserve" x:Key="插件与功能扩展管理">プラグインと機能拡張の管理</s:String>
@@ -367,6 +369,17 @@
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">概要 —— 任意、一言の説明</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">未完了の目標タスクをすべて管理</s:String>
     <s:String xml:space="preserve" x:Key="类别">カテゴリ</s:String>
+    <s:String xml:space="preserve" x:Key="标签管理">タグ管理</s:String>
+    <s:String xml:space="preserve" x:Key="标签名">タグ名</s:String>
+    <s:String xml:space="preserve" x:Key="颜色">色</s:String>
+    <s:String xml:space="preserve" x:Key="标签名称不能为空。">タグ名を空にすることはできません。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已存在。">このタグは既に存在します。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已添加。">タグを追加しました。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已更新。">タグを更新しました。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已删除。">タグを削除しました。</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。">タグ「{0}」を削除しますか？すべてのバージョンのすべてのエントリから削除されます。</s:String>
+    <s:String xml:space="preserve" x:Key="暂无标签，请在上方添加。">タグはまだありません。上から追加してください。</s:String>
+    <s:String xml:space="preserve" x:Key="管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。">現在のプロジェクトのタイプタグを管理します。タグの追加・名前変更・削除と色の設定ができ、変更はすべてのバージョンのエントリに反映されます。</s:String>
     <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">タイプタグ —— 複数選択可。例：bug、feature、refactor など</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码列号（可选）">正確なコード列番号（任意）</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码行号（可选）">正確なコード行番号（任意）</s:String>
@@ -456,4 +469,17 @@
     <s:String xml:space="preserve" x:Key="总条目">総エントリ</s:String>
     <s:String xml:space="preserve" x:Key="完成率">完了率</s:String>
     <s:String xml:space="preserve" x:Key="未标记">タグなし</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目">プロジェクトを削除</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。">プロジェクト「{0}」を削除しますか？この操作はプロジェクトのすべてのバージョンとエントリを完全に削除し、元に戻せません。</s:String>
+    <s:String xml:space="preserve" x:Key="项目「{0}」已删除。">プロジェクト「{0}」を削除しました。</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目失败：{0}">プロジェクトの削除に失敗しました：{0}</s:String>
+    <s:String xml:space="preserve" x:Key="在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。">「設定 → プロジェクト情報」でプロジェクト名と説明を編集・保存でき、現在のプロジェクトをワンクリックで削除することもできます。プロジェクトを削除すると、すべてのバージョンとエントリが完全に削除され、元に戻せません。</s:String>
+    <s:String xml:space="preserve" x:Key="标签操作">タグ操作</s:String>
+    <s:String xml:space="preserve" x:Key="tag add &lt;名称&gt; [--color &lt;hex&gt;]">tag add &lt;名前&gt; [--color &lt;hex&gt;]</s:String>
+    <s:String xml:space="preserve" x:Key="tag delete &lt;名称&gt;">tag delete &lt;名前&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="tag rename &lt;旧名称&gt; &lt;新名称&gt;">tag rename &lt;旧名&gt; &lt;新名&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="列出所有标签（含颜色）。">すべてのタグを一覧表示します（色付き）。</s:String>
+    <s:String xml:space="preserve" x:Key="新建标签，可指定颜色。">タグを新規作成します。色も指定できます。</s:String>
+    <s:String xml:space="preserve" x:Key="删除标签，并从所有版本条目中移除。">タグを削除し、全バージョンのエントリから除去します。</s:String>
+    <s:String xml:space="preserve" x:Key="重命名标签，并同步所有版本条目。">タグをリネームし、全バージョンのエントリへ同期します。</s:String>
 </ResourceDictionary>

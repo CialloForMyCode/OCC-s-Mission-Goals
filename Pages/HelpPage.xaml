@@ -888,6 +888,15 @@
                                 <Run Text="{loc:Loc &quot;• 文件均为纯文本 JSON，可直接用 Git 进行版本追踪和团队协作&quot;}"/>
                             </TextBlock>
 
+                            <TextBlock Text="{loc:Loc &quot;删除项目&quot;}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       Margin="0,0,0,6"/>
+                            <TextBlock Text="{loc:Loc &quot;在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。&quot;}"
+                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       TextWrapping="Wrap" Margin="6,0,0,12"/>
+
                             <TextBlock Text="{loc:Loc &quot;CLI 命令行模式&quot;}"
                                        FontSize="13" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
@@ -1100,6 +1109,70 @@
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="3" Grid.Column="1"
                                            Text="{loc:Loc &quot;归档指定版本 → versions/archive/ 目录。需版本内全部条目均已完成，不能归档当前版本。&quot;}"
+                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            </Grid>
+
+                            <!-- 标签操作 -->
+                            <TextBlock Text="{loc:Loc &quot;标签操作&quot;}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundBrush}"
+                                       Margin="0,0,0,8"/>
+
+                            <Grid Margin="6,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           Opacity="0.6" Margin="0,4,0,0">
+                                    tag list
+                                </TextBlock>
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                           Text="{loc:Loc &quot;列出所有标签（含颜色）。&quot;}"
+                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="{loc:Loc &quot;tag add &lt;名称&gt; [--color &lt;hex&gt;]&quot;}"
+                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           Opacity="0.6" Margin="0,4,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                           Text="{loc:Loc &quot;新建标签，可指定颜色。&quot;}"
+                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="{loc:Loc &quot;tag delete &lt;名称&gt;&quot;}"
+                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           Opacity="0.6" Margin="0,4,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{loc:Loc &quot;删除标签，并从所有版本条目中移除。&quot;}"
+                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0"
+                                           Text="{loc:Loc &quot;tag rename &lt;旧名称&gt; &lt;新名称&gt;&quot;}"
+                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           Opacity="0.6" Margin="0,4,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1"
+                                           Text="{loc:Loc &quot;重命名标签，并同步所有版本条目。&quot;}"
                                            FontSize="12" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>

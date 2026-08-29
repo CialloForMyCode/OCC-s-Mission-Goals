@@ -1771,6 +1771,177 @@
         </Setter>
     </Style>
 
+    <!-- 颜色选择下拉框：不显示滚动条，一次性展示全部预设色 -->
+    <Style x:Key="DialogColorComboBox" TargetType="ComboBox">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="8,3"/>
+        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Border x:Name="RootBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="28"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- 只读模式：全宽 ToggleButton -->
+                            <ToggleButton x:Name="ToggleButton"
+                                          Grid.ColumnSpan="2"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          Cursor="Hand"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Center"
+                                          Padding="{TemplateBinding Padding}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter Grid.Column="0"
+                                                              Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                              ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                              ContentStringFormat="{Binding SelectionBoxItemStringFormat, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                              Margin="{TemplateBinding Padding}"
+                                                              VerticalAlignment="Center">
+                                                <TextBlock.Foreground>
+                                                    <PriorityBinding>
+                                                        <Binding Path="SelectedItem.Foreground" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                                        <Binding Path="Foreground" RelativeSource="{RelativeSource AncestorType=ComboBox}"/>
+                                                    </PriorityBinding>
+                                                </TextBlock.Foreground>
+                                            </ContentPresenter>
+                                            <Path Grid.Column="1"
+                                                  Data="M 0,0 L 4,4 L 8,0"
+                                                  Stroke="{DynamicResource IconStrokeBrush}"
+                                                  StrokeThickness="1.5"
+                                                  Width="8" Height="5"
+                                                  Stretch="Uniform"
+                                                  Margin="0,0,10,0"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <!-- 可编辑模式：TextBox -->
+                            <TextBox x:Name="PART_EditableTextBox"
+                                     Grid.Column="0"
+                                     Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="Transparent"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     CaretBrush="{TemplateBinding Foreground}"
+                                     VerticalAlignment="Center"
+                                     Margin="{TemplateBinding Padding}"
+                                     BorderThickness="0"
+                                     Padding="0"
+                                     Visibility="Hidden"/>
+
+                            <!-- 可编辑模式：下拉按钮 -->
+                            <ToggleButton x:Name="EditableToggle"
+                                          Grid.Column="1"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          Cursor="Hand"
+                                          Visibility="Collapsed">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="ArrowBorder"
+                                                CornerRadius="0,5,5,0"
+                                                Background="Transparent">
+                                            <Path x:Name="ArrowPath"
+                                                  Data="M 0,0 L 4,4 L 8,0"
+                                                  Stroke="{DynamicResource IconStrokeBrush}"
+                                                  StrokeThickness="1.5"
+                                                  Width="8" Height="5"
+                                                  Stretch="Uniform"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ArrowBorder" Property="Background"
+                                                        Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                <Setter TargetName="ArrowPath" Property="Stroke"
+                                                        Value="{DynamicResource ForegroundBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="ArrowBorder" Property="Background"
+                                                        Value="{DynamicResource PressedBackgroundBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="ArrowBorder" Property="Background"
+                                                        Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                <Setter TargetName="ArrowPath" Property="Stroke"
+                                                        Value="{DynamicResource ForegroundBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <Popup x:Name="PART_Popup"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide"
+                                   Placement="Bottom"
+                                   PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border Background="{DynamicResource CardBackgroundBrush}"
+                                        BorderBrush="{DynamicResource CardBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Margin="0,2,0,0"
+                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}">
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden" MaxHeight="500">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEditable" Value="True">
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="EditableToggle" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ToggleButton" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="BorderBrush"
+                                    Value="{DynamicResource PressedBackgroundBrush}"/>
+                            <Setter TargetName="RootBorder" Property="Background"
+                                    Value="{DynamicResource HoverBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="RootBorder" Property="BorderBrush"
+                                    Value="{DynamicResource PressedBackgroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                            <Setter TargetName="RootBorder" Property="BorderThickness" Value="1.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- 弹窗内 ComboBoxItem（不含默认 Foreground，由代码按严重程度设置） -->
     <Style x:Key="DialogComboBoxItem" TargetType="ComboBoxItem">
         <Setter Property="Background" Value="Transparent"/>

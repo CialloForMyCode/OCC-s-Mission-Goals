@@ -59,6 +59,7 @@ Aucune dépendance NuGet tierce — pur .NET 8 + WPF, prêt à l'emploi.
 3. **Ajouter des entrées** — Barre d'outils → Nouvelle entrée : titre, sévérité, échéance, fichiers liés, etc.
 4. **Suivre la progression** — Parcourir et gérer les entrées sur la page « En cours »
 5. **Terminer et archiver** — Après marquage terminé, les entrées apparaissent sur la page « Terminées ». Lorsque toutes les entrées d'une version sont terminées, archiver en un clic.
+6. **Gérer le projet** — Paramètres → Informations du projet : modifier le nom et la description, ou supprimer le projet actuel (supprime définitivement toutes les versions et entrées, irréversible)
 
 ### Pages
 
@@ -72,7 +73,7 @@ Aucune dépendance NuGet tierce — pur .NET 8 + WPF, prêt à l'emploi.
 
 ### Options de tri
 
-La barre d'outils inférieure propose 7 modes de tri :
+La barre d'outils inférieure propose 8 modes de tri :
 
 | Tri | Description |
 |-----|-------------|
@@ -83,6 +84,7 @@ La barre d'outils inférieure propose 7 modes de tri :
 | Version croissante | Ordre alphabétique des versions |
 | Version décroissante | Ordre inverse des versions |
 | Favoris uniquement | Entrées favorites seulement, triées par sévérité |
+| Type croissant | Par étiquette de type (première), ordre alphabétique |
 
 ### Niveaux de sévérité
 
@@ -144,6 +146,17 @@ OCCMissionGoals.exe [-p <projet>] [-v <version>] <commande> [args]
 | `-v Iterate` | Incrémenter le numéro d'itération (ex. `alpha.0` → `alpha.1`) |
 | `-v Delete <version>` | Supprimer le fichier de version (impossible pour la version courante) |
 | `-v Archive <version>` | Archiver la version vers `versions/archive/` (toutes les entrées doivent être terminées ; impossible pour la version courante) |
+
+### Commandes d'étiquettes (`tag`)
+
+Gérer les étiquettes de type (catégories) du projet courant. Les changements se propagent à toutes les entrées de toutes les versions.
+
+| Usage | Description |
+|-------|-------------|
+| `tag list` | Lister toutes les étiquettes (avec couleurs) |
+| `tag add <nom> [--color <hex>]` | Créer une étiquette (alias `new`) |
+| `tag delete <nom>` | Supprimer une étiquette et la retirer de toutes les entrées (alias `remove` / `rm`) |
+| `tag rename <ancien> <nouveau>` | Renommer une étiquette et la propager partout (alias `mv`) |
 
 ### Options globales
 

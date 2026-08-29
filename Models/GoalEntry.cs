@@ -20,7 +20,8 @@ public enum SortMode
     DeadlineDesc,
     VersionAsc,
     VersionDesc,
-    FavoritesOnly
+    FavoritesOnly,
+    TypeAsc
 }
 
 /// <summary>搜索框的匹配模式。</summary>

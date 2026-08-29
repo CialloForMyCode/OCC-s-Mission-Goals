@@ -171,6 +171,46 @@ public static class ProjectService
         SaveProjectConfig(CurrentProjectDir, CurrentProject);
     }
 
+    /// <summary>
+    /// 删除一个项目目录（含 project.json 与 versions/ 下的全部数据）。
+    /// 若删除的是当前打开的项目，则保存数据后清空当前项目状态与最后打开记录。
+    /// </summary>
+    public static void DeleteProject(string projectDir)
+    {
+        if (string.IsNullOrEmpty(projectDir))
+            throw new InvalidOperationException("没有指定项目。");
+
+        var full = Path.GetFullPath(projectDir);
+
+        // 防御：目标必须是 Projects/ 下且包含 project.json 的目录，避免误删任意目录
+        var root = Path.GetFullPath(ProjectsDir);
+        if (!full.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(full, root, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("只能删除 Projects 目录下的项目。");
+        if (!File.Exists(Path.Combine(full, "project.json")))
+            throw new InvalidOperationException("目标不是有效的项目目录。");
+
+        var isCurrent = CurrentProjectDir != null &&
+            string.Equals(Path.GetFullPath(CurrentProjectDir), full, StringComparison.OrdinalIgnoreCase);
+
+        using (FileLock.Acquire())
+        {
+            // 删除当前项目前先落盘，避免丢失尚未保存的修改
+            if (isCurrent)
+                DataService.Save();
+
+            Directory.Delete(full, recursive: true);
+
+            if (isCurrent)
+            {
+                CurrentProject = null;
+                CurrentProjectDir = null;
+                DataService.Reset();
+                ConfigManager.Set("Project", "LastProject", "");
+            }
+        }
+    }
+
     /// <summary>确保 TypeColors 长度与 TypeOptions 对齐（不足补空串）。</summary>
     public static void EnsureTypeColorsAligned()
     {

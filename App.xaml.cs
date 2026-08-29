@@ -46,11 +46,12 @@ public partial class App : Application
     {
         // 识别所有 CLI 命令 / 短标志 / 选项，确保 -a、-l、-p 等也能进入 CLI 模式，
         // 而不是被当作 GUI 启动参数忽略后打开主窗口。
-        if (arg is "project" or "version" or "entry" or "help" or "--help" or "-h")
+        if (arg is "project" or "version" or "entry" or "tag" or "help" or "--help" or "-h")
             return true;
         if (arg is "-a" or "--add" or "-D" or "--delete" or "-c" or "--check"
             or "-d" or "--done" or "-u" or "--undone" or "-f" or "--favorited"
-            or "-l" or "--list" or "-v" or "--version" or "-p" or "--project")
+            or "-l" or "--list" or "-v" or "--version" or "-p" or "--project"
+            or "--json")
             return true;
         if (arg.StartsWith("--project=", StringComparison.Ordinal)
             || arg.StartsWith("--version=", StringComparison.Ordinal))

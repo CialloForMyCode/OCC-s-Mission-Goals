@@ -81,6 +81,7 @@ namespace OCCMissionGoals.Pages
                 SortMode.DeadlineDesc => query.OrderByDescending(i => i.Entry.Deadline),
                 SortMode.VersionAsc   => query.OrderBy(i => i.Entry.Version),
                 SortMode.VersionDesc  => query.OrderByDescending(i => i.Entry.Version),
+                SortMode.TypeAsc      => query.OrderBy(i => (i.Entry.Type.FirstOrDefault() ?? string.Empty).ToLowerInvariant()),
                 _ => query.OrderBy(i => i.Entry.Severity),
             };
         }
@@ -200,7 +201,9 @@ namespace OCCMissionGoals.Pages
             var card = container as Border ?? FindVisualChild<Border>(container);
             if (card == null) return;
             var original = card.BorderBrush;
-            card.BorderBrush = new SolidColorBrush(Color.FromRgb(0x60, 0xCD, 0xFF));
+            // 提示色跟随主题色，让搜索跳转的高亮与当前配色协调。
+            card.BorderBrush = Application.Current.Resources["PrimaryBrush"] as SolidColorBrush
+                               ?? new SolidColorBrush(Color.FromRgb(0x60, 0xCD, 0xFF));
             var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(900) };
             timer.Tick += (_, _) => { timer.Stop(); card.BorderBrush = original; };
             timer.Start();

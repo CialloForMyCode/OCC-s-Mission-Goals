@@ -2,8 +2,6 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      
-
       xmlns:loc="clr-namespace:OCCMissionGoals"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:OCCMissionGoals.ToolPages"
@@ -30,6 +28,7 @@
             <ComboBoxItem Content="{loc:Loc &quot;按照版本升序排序&quot;}" Tag="4"/>
             <ComboBoxItem Content="{loc:Loc &quot;按照版本降序排序&quot;}" Tag="5"/>
             <ComboBoxItem Content="{loc:Loc &quot;只显示收藏的&quot;}" Tag="6"/>
+            <ComboBoxItem Content="{loc:Loc &quot;按照类别排序&quot;}" Tag="7"/>
         </ComboBox>
     </Grid>
 </Page>

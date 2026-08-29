@@ -206,7 +206,7 @@
                              Height="60"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
+                             VerticalScrollBarVisibility="Hidden"
                              VerticalContentAlignment="Top"
                              Margin="0,0,0,14"/>
 

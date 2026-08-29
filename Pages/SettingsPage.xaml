@@ -136,6 +136,13 @@
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
                             FontSize="12"/>
+                    <Button x:Name="Nav_Tags"
+                            Content="{loc:Loc &quot;标签管理&quot;}" Tag="Tags"
+                            Click="NavButton_Click"
+                            Style="{StaticResource CardActionBtn}"
+                            HorizontalContentAlignment="Left"
+                            Height="32" Margin="0,1"
+                            FontSize="12"/>
                     <Button x:Name="Nav_Stats"
                             Content="{loc:Loc &quot;数据统计&quot;}" Tag="Stats"
                             Click="NavButton_Click"
@@ -302,10 +309,65 @@
                                      VerticalAlignment="Center"/>
                         </Grid>
 
-                        <Button x:Name="SaveProjectBtn" Content="{loc:Loc &quot;保存项目信息&quot;}"
-                                Click="SaveProject_Click"
-                                Style="{StaticResource DialogConfirmButton}"
-                                HorizontalAlignment="Left" MinWidth="120" Height="34"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                            <Button x:Name="SaveProjectBtn" Content="{loc:Loc &quot;保存项目信息&quot;}"
+                                    Click="SaveProject_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    HorizontalAlignment="Left" MinWidth="120" Height="34"/>
+                            <Button x:Name="DeleteProjectBtn" Content="{loc:Loc &quot;删除项目&quot;}"
+                                    Click="DeleteProject_Click"
+                                    Style="{StaticResource DialogCancelButton}"
+                                    HorizontalAlignment="Left" MinWidth="120" Height="34" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== 标签管理 ==================== -->
+                <Border x:Name="Section_Tags"
+                        CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        Padding="24,20" Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc &quot;标签管理&quot;}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   Text="{loc:Loc &quot;管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。&quot;}"/>
+
+                        <!-- 添加标签 -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{loc:Loc &quot;标签名&quot;}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox Grid.Column="1" x:Name="NewTagNameBox"
+                                     Style="{StaticResource DialogTextBox}"
+                                     VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{loc:Loc &quot;颜色&quot;}"
+                                       Style="{StaticResource DialogLabel}"
+                                       VerticalAlignment="Center" Margin="8,0,8,0"/>
+                            <ComboBox Grid.Column="3" x:Name="NewTagColorCombo"
+                                      Style="{StaticResource DialogColorComboBox}"
+                                      VerticalAlignment="Center"/>
+                            <Button Grid.Column="4" Content="{loc:Loc &quot;添加&quot;}"
+                                    Click="AddTag_Click"
+                                    Style="{StaticResource DialogConfirmButton}"
+                                    Height="30" MinWidth="0" Width="64" Padding="0"
+                                    Margin="8,0,0,0" FontSize="12"/>
+                        </Grid>
+
+                        <!-- 标签列表 -->
+                        <StackPanel x:Name="TagListPanel"/>
                     </StackPanel>
                 </Border>
 

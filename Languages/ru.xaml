@@ -30,6 +30,7 @@
     <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。">Setting: не фильтрует записи, а показывает ярлыки настроек (все при пустом слове). Клик выполняет: тема, настройки проекта, статистика данных.</s:String>
     <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: Настройки</s:String>
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: Тег</s:String>
+    <s:String xml:space="preserve" x:Key="Type: 类别">Type: Тип</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: Текст</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}个月前">{0} мес. назад</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0} мин. назад</s:String>
@@ -254,6 +255,7 @@
     <s:String xml:space="preserve" x:Key="按照截止日期降序排序">По сроку (убывание)</s:String>
     <s:String xml:space="preserve" x:Key="按照版本升序排序">По версии (возрастание)</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">По версии (убывание)</s:String>
+    <s:String xml:space="preserve" x:Key="按照类别排序">По типу (возрастание)</s:String>
     <s:String xml:space="preserve" x:Key="排序方式：">Сортировка:</s:String>
     <s:String xml:space="preserve" x:Key="提示">Уведомление</s:String>
     <s:String xml:space="preserve" x:Key="插件与功能扩展管理">Управление плагинами</s:String>
@@ -367,6 +369,17 @@
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">Краткое описание — необязательно, описание в одну строку</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">Управление всеми незавершёнными целями</s:String>
     <s:String xml:space="preserve" x:Key="类别">Категория</s:String>
+    <s:String xml:space="preserve" x:Key="标签管理">Управление тегами</s:String>
+    <s:String xml:space="preserve" x:Key="标签名">Имя тега</s:String>
+    <s:String xml:space="preserve" x:Key="颜色">Цвет</s:String>
+    <s:String xml:space="preserve" x:Key="标签名称不能为空。">Имя тега не может быть пустым.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已存在。">Такой тег уже существует.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已添加。">Тег добавлен.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已更新。">Тег обновлён.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已删除。">Тег удалён.</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。">Удалить тег «{0}»? Он будет удалён из всех записей во всех версиях.</s:String>
+    <s:String xml:space="preserve" x:Key="暂无标签，请在上方添加。">Пока нет тегов. Добавьте выше.</s:String>
+    <s:String xml:space="preserve" x:Key="管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。">Управление тегами типов текущего проекта: добавление, переименование, удаление и назначение цветов. Изменения применяются к записям во всех версиях.</s:String>
     <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">Теги типа — необязательный множественный выбор, например bug, feature, refactor</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码列号（可选）">Точный номер столбца кода (необязательно)</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码行号（可选）">Точный номер строки кода (необязательно)</s:String>
@@ -456,4 +469,17 @@
     <s:String xml:space="preserve" x:Key="总条目">Всего записей</s:String>
     <s:String xml:space="preserve" x:Key="完成率">Процент выполнения</s:String>
     <s:String xml:space="preserve" x:Key="未标记">Без метки</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目">Удалить проект</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。">Удалить проект «{0}»? Это навсегда удалит все версии и записи проекта, действие необратимо.</s:String>
+    <s:String xml:space="preserve" x:Key="项目「{0}」已删除。">Проект «{0}» удалён.</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目失败：{0}">Не удалось удалить проект: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。">В «Настройки → Информация о проекте» можно изменить и сохранить название и описание проекта, а также удалить текущий проект одним кликом. Удаление проекта навсегда удаляет все его версии и записи без возможности восстановления.</s:String>
+    <s:String xml:space="preserve" x:Key="标签操作">Команды тегов</s:String>
+    <s:String xml:space="preserve" x:Key="tag add &lt;名称&gt; [--color &lt;hex&gt;]">tag add &lt;имя&gt; [--color &lt;hex&gt;]</s:String>
+    <s:String xml:space="preserve" x:Key="tag delete &lt;名称&gt;">tag delete &lt;имя&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="tag rename &lt;旧名称&gt; &lt;新名称&gt;">tag rename &lt;старое&gt; &lt;новое&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="列出所有标签（含颜色）。">Показать все теги (с цветами).</s:String>
+    <s:String xml:space="preserve" x:Key="新建标签，可指定颜色。">Создать тег, можно задать цвет.</s:String>
+    <s:String xml:space="preserve" x:Key="删除标签，并从所有版本条目中移除。">Удалить тег и убрать его из всех записей всех версий.</s:String>
+    <s:String xml:space="preserve" x:Key="重命名标签，并同步所有版本条目。">Переименовать тег и синхронизировать во всех записях всех версий.</s:String>
 </ResourceDictionary>

@@ -193,6 +193,7 @@
                             <WrapPanel Margin="0,6,0,0">
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Text: 文字&quot;}" Tag="Text:" Click="SearchModeChip_Click"/>
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Tag: 标签&quot;}" Tag="Tag:" Click="SearchModeChip_Click"/>
+                                <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Type: 类别&quot;}" Tag="Type:" Click="SearchModeChip_Click"/>
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;File: 文件&quot;}" Tag="File:" Click="SearchModeChip_Click"/>
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Date: 日期&quot;}" Tag="Date:" Click="SearchModeChip_Click"/>
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Setting: 设置&quot;}" Tag="Setting:" Click="SearchModeChip_Click"/>

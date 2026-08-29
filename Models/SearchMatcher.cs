@@ -45,7 +45,7 @@ public static class SearchMatcher
 
     /// <summary>
     /// 从原始输入解析出「模式 + 关键词」。支持前缀语法，例如：
-    /// "Text:崩溃"、"Tag:bug"、"Setting:主题"、"Function:新建"、"File:parser.c"、"Date:2024-01-01"、
+    /// "Text:崩溃"、"Tag:bug"、"Type:bug"、"Setting:主题"、"Function:新建"、"File:parser.c"、"Date:2024-01-01"、
     /// "Plugins:备份"、"Expand:已安装插件"。
     /// 无前缀（或前缀无法识别）时，整段按「文字」模式匹配。
     /// </summary>
@@ -59,7 +59,7 @@ public static class SearchMatcher
             var mode = prefix.ToLowerInvariant() switch
             {
                 "text" or "文字"                        => SearchMode.Text,
-                "tag" or "标签"                         => SearchMode.Tag,
+                "tag" or "标签" or "type" or "类别" or "类型" or "category" => SearchMode.Tag,
                 "setting" or "设置" or "settings" or "配置"     => SearchMode.Setting,
                 "function" or "func" or "功能" or "操作"        => SearchMode.Function,
                 "file" or "文件"                        => SearchMode.File,

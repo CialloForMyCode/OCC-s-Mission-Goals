@@ -59,6 +59,7 @@ No third-party NuGet dependencies — pure .NET 8 + WPF, ready out of the box.
 3. **Add entries** — Toolbar → New Entry: fill in title, severity, deadline, related files, etc.
 4. **Track progress** — Browse and manage entries in the "Unfinished" page
 5. **Complete & Archive** — After marking done, entries appear in the "Finished" page. When all entries in a version are complete, archive with one click.
+6. **Manage project** — Settings → Project Info: edit the name & description, or delete the current project (permanently removes all versions & entries, irreversible)
 
 ### Pages
 
@@ -72,7 +73,7 @@ No third-party NuGet dependencies — pure .NET 8 + WPF, ready out of the box.
 
 ### Sort Options
 
-The bottom toolbar offers 7 sort modes:
+The bottom toolbar offers 8 sort modes:
 
 | Sort | Description |
 |------|-------------|
@@ -83,6 +84,7 @@ The bottom toolbar offers 7 sort modes:
 | Version Ascending | By version string alphabetical |
 | Version Descending | By version string reverse |
 | Favorites Only | Only favorited entries, sorted by severity |
+| Type Ascending | By type tag (first tag), alphabetical |
 
 ### Severity Levels
 
@@ -156,6 +158,17 @@ OCCMissionGoals.exe [-p <project>] [-v <version>] <command> [args]
 | `-v Iterate` | Bump iteration number (e.g. `alpha.0` → `alpha.1`) |
 | `-v Delete <version>` | Delete a version file (cannot delete current version) |
 | `-v Archive <version>` | Archive a version to `versions/archive/` (requires all entries finished; cannot archive current version) |
+
+### Tag Commands (`tag`)
+
+Manage type tags (categories) for the current project. Changes sync across all version entries.
+
+| Usage | Description |
+|-------|-------------|
+| `tag list` | List all tags (with colors) |
+| `tag add <name> [--color <hex>]` | Create a new tag (`new` alias) |
+| `tag delete <name>` | Delete a tag and remove it from all version entries (`remove` / `rm` aliases) |
+| `tag rename <old> <new>` | Rename a tag and sync it across all version entries (`mv` alias) |
 
 ### Global Options
 

@@ -30,6 +30,7 @@
     <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。">Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。</s:String>
     <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: 设置</s:String>
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: 标签</s:String>
+    <s:String xml:space="preserve" x:Key="Type: 类别">Type: 类别</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: 文字</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}个月前">{0}个月前</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0}分钟前</s:String>
@@ -254,6 +255,7 @@
     <s:String xml:space="preserve" x:Key="按照截止日期降序排序">按照截止日期降序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照版本升序排序">按照版本升序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">按照版本降序排序</s:String>
+    <s:String xml:space="preserve" x:Key="按照类别排序">按照类别排序</s:String>
     <s:String xml:space="preserve" x:Key="排序方式：">排序方式：</s:String>
     <s:String xml:space="preserve" x:Key="提示">提示</s:String>
     <s:String xml:space="preserve" x:Key="插件与功能扩展管理">插件与功能扩展管理</s:String>
@@ -367,6 +369,17 @@
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">简要 —— 可选，一句话描述</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">管理所有未完成的目标任务</s:String>
     <s:String xml:space="preserve" x:Key="类别">类别</s:String>
+    <s:String xml:space="preserve" x:Key="标签管理">标签管理</s:String>
+    <s:String xml:space="preserve" x:Key="标签名">标签名</s:String>
+    <s:String xml:space="preserve" x:Key="颜色">颜色</s:String>
+    <s:String xml:space="preserve" x:Key="标签名称不能为空。">标签名称不能为空。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已存在。">标签已存在。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已添加。">标签已添加。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已更新。">标签已更新。</s:String>
+    <s:String xml:space="preserve" x:Key="标签已删除。">标签已删除。</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。">确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。</s:String>
+    <s:String xml:space="preserve" x:Key="暂无标签，请在上方添加。">暂无标签，请在上方添加。</s:String>
+    <s:String xml:space="preserve" x:Key="管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。">管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。</s:String>
     <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">类型标签 —— 可选多选，如 bug、feature、refactor 等</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码列号（可选）">精确的代码列号（可选）</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码行号（可选）">精确的代码行号（可选）</s:String>
@@ -456,4 +469,17 @@
     <s:String xml:space="preserve" x:Key="总条目">总条目</s:String>
     <s:String xml:space="preserve" x:Key="完成率">完成率</s:String>
     <s:String xml:space="preserve" x:Key="未标记">未标记</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目">删除项目</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。">确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。</s:String>
+    <s:String xml:space="preserve" x:Key="项目「{0}」已删除。">项目「{0}」已删除。</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目失败：{0}">删除项目失败：{0}</s:String>
+    <s:String xml:space="preserve" x:Key="在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。">在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。</s:String>
+    <s:String xml:space="preserve" x:Key="标签操作">标签操作</s:String>
+    <s:String xml:space="preserve" x:Key="tag add &lt;名称&gt; [--color &lt;hex&gt;]">tag add &lt;名称&gt; [--color &lt;hex&gt;]</s:String>
+    <s:String xml:space="preserve" x:Key="tag delete &lt;名称&gt;">tag delete &lt;名称&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="tag rename &lt;旧名称&gt; &lt;新名称&gt;">tag rename &lt;旧名称&gt; &lt;新名称&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="列出所有标签（含颜色）。">列出所有标签（含颜色）。</s:String>
+    <s:String xml:space="preserve" x:Key="新建标签，可指定颜色。">新建标签，可指定颜色。</s:String>
+    <s:String xml:space="preserve" x:Key="删除标签，并从所有版本条目中移除。">删除标签，并从所有版本条目中移除。</s:String>
+    <s:String xml:space="preserve" x:Key="重命名标签，并同步所有版本条目。">重命名标签，并同步所有版本条目。</s:String>
 </ResourceDictionary>

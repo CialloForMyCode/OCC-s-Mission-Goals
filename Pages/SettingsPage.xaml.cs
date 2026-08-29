@@ -11,6 +11,7 @@ namespace OCCMissionGoals.Pages;
 public partial class SettingsPage : Page
 {
     private bool _loading;
+    private bool _loadingTags;
     private readonly Dictionary<string, FrameworkElement> _sectionMap = new();
     private readonly Dictionary<string, Button> _navMap = new();
     private string _currentTag = "Appearance";
@@ -25,6 +26,7 @@ public partial class SettingsPage : Page
         {
             ["Appearance"] = Section_Appearance,
             ["Project"]    = Section_Project,
+            ["Tags"]       = Section_Tags,
             ["Stats"]      = Section_Stats,
             ["System"]     = Section_System,
         };
@@ -33,6 +35,7 @@ public partial class SettingsPage : Page
         {
             ["Appearance"] = Nav_Appearance,
             ["Project"]    = Nav_Project,
+            ["Tags"]       = Nav_Tags,
             ["Stats"]      = Nav_Stats,
             ["System"]     = Nav_System,
         };
@@ -170,6 +173,11 @@ public partial class SettingsPage : Page
             ProjectNameBox.Text = proj?.Name ?? string.Empty;
             ProjectDescBox.Text = proj?.Description ?? string.Empty;
             ProjectVersionBox.Text = proj?.CurrentVersion ?? string.Empty;
+
+            // 标签管理
+            if (NewTagColorCombo.Items.Count == 0)
+                PopulateColorCombo(NewTagColorCombo, null);
+            BuildTagList();
 
             // 数据统计
             BuildStats();
@@ -371,6 +379,365 @@ public partial class SettingsPage : Page
         MainWindow?.SetTipText(LocalizationManager.T("项目设置已保存。"));
     }
 
+    private void DeleteProject_Click(object sender, RoutedEventArgs e)
+    {
+        var proj = ProjectService.CurrentProject;
+        var dir = ProjectService.CurrentProjectDir;
+        if (proj == null || dir == null)
+        {
+            MainWindow?.SetTipText(LocalizationManager.T("没有打开的项目。"));
+            return;
+        }
+
+        var yes = MessageBox.Show(
+            LocalizationManager.T("确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。", proj.Name),
+            LocalizationManager.T("删除项目"),
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (yes != MessageBoxResult.Yes) return;
+
+        try
+        {
+            ProjectService.DeleteProject(dir);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                LocalizationManager.T("删除项目失败：{0}", ex.Message),
+                LocalizationManager.T("错误"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            return;
+        }
+
+        ProjectNameBox.Text = string.Empty;
+        ProjectDescBox.Text = string.Empty;
+        ProjectVersionBox.Text = string.Empty;
+
+        MainWindow?.RefreshAllViews();
+        MainWindow?.SetTipText(LocalizationManager.T("项目「{0}」已删除。", proj.Name));
+    }
+
+    // ==================== 标签管理 ====================
+
+    private static readonly string[] TagPresetColors =
+    {
+        "#E83D3D", "#E88D3D", "#E8D43D", "#4CAF50",
+        "#3D9DE8", "#9C27B0", "#E91E63", "#00BCD4",
+        "#795548", "#607D8B", "#FF9800", "#8D8D8D"
+    };
+
+    private void PopulateColorCombo(ComboBox combo, string? selectedHex)
+    {
+        combo.Items.Clear();
+        combo.Items.Add(MakeColorItem(string.Empty, LocalizationManager.T("无颜色")));
+        foreach (var hex in TagPresetColors)
+            combo.Items.Add(MakeColorItem(hex, hex));
+
+        SelectColorInCombo(combo, selectedHex);
+    }
+
+    private ComboBox MakeColorCombo(string? selectedHex)
+    {
+        var combo = new ComboBox
+        {
+            Style = (Style)FindResource("DialogColorComboBox"),
+            MinWidth = 130,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        PopulateColorCombo(combo, selectedHex);
+        return combo;
+    }
+
+    private ComboBoxItem MakeColorItem(string hex, string label)
+    {
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        var swatch = new Border
+        {
+            Width = 12,
+            Height = 12,
+            CornerRadius = new CornerRadius(3),
+            Background = string.IsNullOrEmpty(hex) ? Brushes.Transparent : (ColorUtil.ParseBrush(hex) ?? Brushes.Transparent),
+            BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
+            BorderThickness = new Thickness(1),
+            Margin = new Thickness(0, 0, 6, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        if (string.IsNullOrEmpty(hex))
+        {
+            swatch.Child = new TextBlock
+            {
+                Text = "✕",
+                FontSize = 9,
+                Foreground = (Brush)Application.Current.FindResource("ForegroundBrush"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+
+        panel.Children.Add(swatch);
+        panel.Children.Add(new TextBlock { Text = label, VerticalAlignment = VerticalAlignment.Center });
+
+        return new ComboBoxItem
+        {
+            Content = panel,
+            Tag = hex,
+            Style = (Style)FindResource("DialogComboBoxItem")
+        };
+    }
+
+    private static void SelectColorInCombo(ComboBox combo, string? hex)
+    {
+        for (var i = 0; i < combo.Items.Count; i++)
+        {
+            if (combo.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, hex ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            {
+                combo.SelectedIndex = i;
+                return;
+            }
+        }
+        combo.SelectedIndex = 0;
+    }
+
+    private static string GetSelectedColorHex(ComboBox combo) =>
+        combo.SelectedItem is ComboBoxItem item && item.Tag is string hex ? hex : string.Empty;
+
+    /// <summary>根据 project.json 的 TypeOptions/TypeColors 重建标签列表。</summary>
+    private void BuildTagList()
+    {
+        _loadingTags = true;
+        try
+        {
+            TagListPanel.Children.Clear();
+            var cfg = ProjectService.CurrentProject;
+            if (cfg == null) return;
+
+            ProjectService.EnsureTypeColorsAligned();
+
+            if (cfg.TypeOptions.Count == 0)
+            {
+                TagListPanel.Children.Add(new TextBlock
+                {
+                    Text = LocalizationManager.T("暂无标签，请在上方添加。"),
+                    FontSize = 12,
+                    Opacity = 0.5,
+                    Foreground = (Brush)FindResource("ForegroundBrush"),
+                    Margin = new Thickness(0, 4, 0, 0)
+                });
+                return;
+            }
+
+            for (var i = 0; i < cfg.TypeOptions.Count; i++)
+            {
+                var typeName = cfg.TypeOptions[i];
+                if (string.IsNullOrWhiteSpace(typeName)) continue;
+                var colorHex = i < cfg.TypeColors.Count ? cfg.TypeColors[i] : string.Empty;
+                TagListPanel.Children.Add(MakeTagRow(typeName, colorHex));
+            }
+        }
+        finally
+        {
+            _loadingTags = false;
+        }
+    }
+
+    private Border MakeTagRow(string name, string colorHex)
+    {
+        var nameBox = new TextBox
+        {
+            Text = name,
+            Tag = name,
+            Height = 30,
+            Margin = new Thickness(0, 0, 8, 0),
+            Style = (Style)FindResource("DialogTextBox"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        nameBox.LostFocus += TagName_LostFocus;
+
+        var colorCombo = MakeColorCombo(colorHex);
+        colorCombo.Tag = name;
+        colorCombo.Height = 30;
+        colorCombo.SelectionChanged += TagColor_Changed;
+
+        var deleteBtn = new Button
+        {
+            Content = LocalizationManager.T("删除"),
+            Tag = name,
+            Style = (Style)FindResource("DialogCancelButton"),
+            Height = 30,
+            MinWidth = 0,
+            Width = 64,
+            Padding = new Thickness(0),
+            Margin = new Thickness(8, 0, 0, 0),
+            FontSize = 12,
+            Cursor = System.Windows.Input.Cursors.Hand
+        };
+        deleteBtn.Click += DeleteTag_Click;
+
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        Grid.SetColumn(nameBox, 0);
+        Grid.SetColumn(colorCombo, 1);
+        Grid.SetColumn(deleteBtn, 2);
+        grid.Children.Add(nameBox);
+        grid.Children.Add(colorCombo);
+        grid.Children.Add(deleteBtn);
+
+        return new Border
+        {
+            Margin = new Thickness(0, 0, 0, 8),
+            Padding = new Thickness(10, 8, 10, 8),
+            CornerRadius = new CornerRadius(6),
+            Background = (Brush)FindResource("CardBackgroundBrush"),
+            BorderBrush = (Brush)FindResource("CardBorderBrush"),
+            BorderThickness = new Thickness(1),
+            Child = grid
+        };
+    }
+
+    private void AddTag_Click(object sender, RoutedEventArgs e)
+    {
+        var cfg = ProjectService.CurrentProject;
+        if (cfg == null)
+        {
+            MainWindow?.SetTipText(LocalizationManager.T("没有打开的项目。"));
+            return;
+        }
+
+        var name = NewTagNameBox.Text.Trim();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            MainWindow?.SetTipText(LocalizationManager.T("标签名称不能为空。"));
+            return;
+        }
+
+        if (cfg.TypeOptions.Any(t => string.Equals(t, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            MainWindow?.SetTipText(LocalizationManager.T("标签已存在。"));
+            return;
+        }
+
+        var color = GetSelectedColorHex(NewTagColorCombo);
+        cfg.TypeOptions.Add(name);
+        ProjectService.EnsureTypeColorsAligned();
+        cfg.TypeColors[cfg.TypeOptions.Count - 1] = color;
+        ProjectService.UpdateProjectConfig(cfg);
+
+        NewTagNameBox.Text = string.Empty;
+        MainWindow?.SetTipText(LocalizationManager.T("标签已添加。"));
+        DeferTagRefresh();
+    }
+
+    /// <summary>延迟重建标签列表并刷新各页面，避免在控件自身事件中销毁控件。</summary>
+    private void DeferTagRefresh()
+    {
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+        {
+            BuildTagList();
+            MainWindow?.RefreshAllViews();
+        }));
+    }
+
+    private void TagName_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is not TextBox box || box.Tag is not string oldName) return;
+
+        var newName = box.Text.Trim();
+        if (string.IsNullOrWhiteSpace(newName) ||
+            string.Equals(newName, oldName, StringComparison.OrdinalIgnoreCase))
+        {
+            box.Text = oldName;
+            return;
+        }
+
+        var cfg = ProjectService.CurrentProject;
+        if (cfg == null)
+        {
+            box.Text = oldName;
+            return;
+        }
+
+        // 与其他标签冲突（排除自身）
+        if (cfg.TypeOptions.Any(t =>
+            !string.Equals(t, oldName, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(t, newName, StringComparison.OrdinalIgnoreCase)))
+        {
+            MainWindow?.SetTipText(LocalizationManager.T("标签已存在。"));
+            box.Text = oldName;
+            return;
+        }
+
+        var idx = cfg.TypeOptions.FindIndex(t => string.Equals(t, oldName, StringComparison.OrdinalIgnoreCase));
+        if (idx >= 0) cfg.TypeOptions[idx] = newName;
+        ProjectService.UpdateProjectConfig(cfg);
+
+        // 同步到所有版本中的条目
+        DataService.Save();
+        DataService.UpdateTypeTagAcrossVersions(ProjectService.CurrentProjectDir ?? string.Empty, oldName, newName);
+        DataService.Load();
+
+        MainWindow?.SetTipText(LocalizationManager.T("标签已更新。"));
+        DeferTagRefresh();
+    }
+
+    private void TagColor_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loadingTags) return;
+        if (sender is not ComboBox combo || combo.Tag is not string tagName) return;
+        if (combo.SelectedItem is not ComboBoxItem) return;
+
+        var cfg = ProjectService.CurrentProject;
+        if (cfg == null) return;
+
+        var idx = cfg.TypeOptions.FindIndex(t => string.Equals(t, tagName, StringComparison.OrdinalIgnoreCase));
+        if (idx < 0) return;
+
+        var color = GetSelectedColorHex(combo);
+        ProjectService.EnsureTypeColorsAligned();
+        if (idx < cfg.TypeColors.Count) cfg.TypeColors[idx] = color;
+        ProjectService.UpdateProjectConfig(cfg);
+
+        MainWindow?.SetTipText(LocalizationManager.T("标签已更新。"));
+        DeferTagRefresh();
+    }
+
+    private void DeleteTag_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button btn || btn.Tag is not string tagName) return;
+
+        var yes = MessageBox.Show(
+            LocalizationManager.T("确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。", tagName),
+            LocalizationManager.T("标签管理"),
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (yes != MessageBoxResult.Yes) return;
+
+        var cfg = ProjectService.CurrentProject;
+        if (cfg == null) return;
+
+        var idx = cfg.TypeOptions.FindIndex(t => string.Equals(t, tagName, StringComparison.OrdinalIgnoreCase));
+        if (idx >= 0)
+        {
+            cfg.TypeOptions.RemoveAt(idx);
+            if (idx < cfg.TypeColors.Count) cfg.TypeColors.RemoveAt(idx);
+        }
+        ProjectService.UpdateProjectConfig(cfg);
+
+        // 同步到所有版本中的条目
+        DataService.Save();
+        DataService.UpdateTypeTagAcrossVersions(ProjectService.CurrentProjectDir ?? string.Empty, tagName, null);
+        DataService.Load();
+
+        MainWindow?.SetTipText(LocalizationManager.T("标签已删除。"));
+        DeferTagRefresh();
+    }
+
     // ==================== 数据统计 ====================
 
     /// <summary>供外部跳转：滚动到数据统计区块。</summary>
@@ -511,7 +878,7 @@ public partial class SettingsPage : Page
     }
 
     /// <summary>
-    /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Stats / System）。
+    /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Tags / Stats / System）。
     /// </summary>
     public void NavigateTo(string tag, string? anchor = null)
     {

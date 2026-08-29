@@ -30,6 +30,7 @@
     <s:String xml:space="preserve" x:Key="Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。">Setting: mode does not filter the entry list; it lists setting shortcuts in the results board instead, and shows all of them even when the keyword is empty. Click to run directly: toggle dark/light theme, open project settings, or open data statistics.</s:String>
     <s:String xml:space="preserve" x:Key="Setting: 设置">Setting: Settings</s:String>
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: Tag</s:String>
+    <s:String xml:space="preserve" x:Key="Type: 类别">Type: Type</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: Text</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}个月前">{0} mo ago</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0} min ago</s:String>
@@ -254,6 +255,7 @@
     <s:String xml:space="preserve" x:Key="按照截止日期降序排序">Deadline descending</s:String>
     <s:String xml:space="preserve" x:Key="按照版本升序排序">Version ascending</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">Version descending</s:String>
+    <s:String xml:space="preserve" x:Key="按照类别排序">Type ascending</s:String>
     <s:String xml:space="preserve" x:Key="排序方式：">Sort by:</s:String>
     <s:String xml:space="preserve" x:Key="提示">Notice</s:String>
     <s:String xml:space="preserve" x:Key="插件与功能扩展管理">Plugin and feature extension management</s:String>
@@ -367,6 +369,17 @@
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">Brief — optional, one-line description</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">Manage all unfinished goals</s:String>
     <s:String xml:space="preserve" x:Key="类别">Category</s:String>
+    <s:String xml:space="preserve" x:Key="标签管理">Manage Tags</s:String>
+    <s:String xml:space="preserve" x:Key="标签名">Tag name</s:String>
+    <s:String xml:space="preserve" x:Key="颜色">Color</s:String>
+    <s:String xml:space="preserve" x:Key="标签名称不能为空。">Tag name cannot be empty.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已存在。">This tag already exists.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已添加。">Tag added.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已更新。">Tag updated.</s:String>
+    <s:String xml:space="preserve" x:Key="标签已删除。">Tag deleted.</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除标签「{0}」吗？该标签将从所有版本的所有条目中移除。">Delete tag "{0}"? It will be removed from all entries across all versions.</s:String>
+    <s:String xml:space="preserve" x:Key="暂无标签，请在上方添加。">No tags yet. Add one above.</s:String>
+    <s:String xml:space="preserve" x:Key="管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。">Manage type tags for the current project: add, rename, or delete tags and assign colors. Changes apply to entries across all versions.</s:String>
     <s:String xml:space="preserve" x:Key="类型标签 —— 可选多选，如 bug、feature、refactor 等">Type tags — optional multi-select, e.g. bug, feature, refactor</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码列号（可选）">The exact code column number (optional)</s:String>
     <s:String xml:space="preserve" x:Key="精确的代码行号（可选）">The exact code line number (optional)</s:String>
@@ -456,4 +469,17 @@
     <s:String xml:space="preserve" x:Key="总条目">Total entries</s:String>
     <s:String xml:space="preserve" x:Key="完成率">Completion rate</s:String>
     <s:String xml:space="preserve" x:Key="未标记">Untagged</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目">Delete Project</s:String>
+    <s:String xml:space="preserve" x:Key="确定要删除项目「{0}」吗？此操作将永久删除该项目的所有版本与条目，且不可恢复。">Delete project "{0}"? This will permanently delete all versions and entries of this project and cannot be undone.</s:String>
+    <s:String xml:space="preserve" x:Key="项目「{0}」已删除。">Project "{0}" deleted.</s:String>
+    <s:String xml:space="preserve" x:Key="删除项目失败：{0}">Failed to delete project: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。">In "Settings → Project Info" you can edit and save the project name and description, or delete the current project with one click. Deleting a project permanently removes all its versions and entries and cannot be undone.</s:String>
+    <s:String xml:space="preserve" x:Key="标签操作">Tag Commands</s:String>
+    <s:String xml:space="preserve" x:Key="tag add &lt;名称&gt; [--color &lt;hex&gt;]">tag add &lt;name&gt; [--color &lt;hex&gt;]</s:String>
+    <s:String xml:space="preserve" x:Key="tag delete &lt;名称&gt;">tag delete &lt;name&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="tag rename &lt;旧名称&gt; &lt;新名称&gt;">tag rename &lt;old&gt; &lt;new&gt;</s:String>
+    <s:String xml:space="preserve" x:Key="列出所有标签（含颜色）。">List all tags (with colors).</s:String>
+    <s:String xml:space="preserve" x:Key="新建标签，可指定颜色。">Create a tag, optionally with a color.</s:String>
+    <s:String xml:space="preserve" x:Key="删除标签，并从所有版本条目中移除。">Delete a tag and remove it from all version entries.</s:String>
+    <s:String xml:space="preserve" x:Key="重命名标签，并同步所有版本条目。">Rename a tag and sync it across all version entries.</s:String>
 </ResourceDictionary>
