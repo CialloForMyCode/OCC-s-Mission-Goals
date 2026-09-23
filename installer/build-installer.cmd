@@ -9,7 +9,12 @@ REM                              OCC-Mission-Goals-[version]-x86-setup.exe
 REM ============================================================
 
 set "ROOT=%~dp0.."
+REM Locate the Inno Setup compiler: classic per-machine path first, then the
+REM 64-bit Program Files location, then a per-user install (/CURRENTUSER).
 set "INNO=C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+if not exist "%INNO%" set "INNO=C:\Program Files\Inno Setup 6\ISCC.exe"
+if not exist "%INNO%" set "INNO=%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe"
+if not exist "%INNO%" set "INNO="
 set "PROJ=%ROOT%\OCC's Mission & Goals.csproj"
 
 REM The repo path contains a single quote (OCC's Mission & Goals), which
@@ -18,8 +23,9 @@ REM MSB3094. Publish to a quote-free temp dir first, then copy back to the
 REM repo's publish folder for Inno Setup to consume.
 set "PUBTMP=%TEMP%\OCC-publish"
 
-if not exist "%INNO%" (
-    echo [ERROR] Inno Setup compiler not found: "%INNO%"
+if "%INNO%"=="" (
+    echo [ERROR] Inno Setup compiler not found ^(ISCC.exe^).
+    echo         Install it with: winget install --id JRSoftware.InnoSetup --exact
     exit /b 1
 )
 
