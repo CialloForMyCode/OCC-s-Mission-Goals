@@ -65,6 +65,53 @@ public static class ProjectService
     public static string GetVersionsDir(string projectDir) =>
         Path.Combine(projectDir, "versions");
 
+    /// <summary>
+    /// 判断某个版本是否计入统计（版本名不含 .json）。
+    /// StatsVersions 为空时视为「全部版本」，保证旧项目行为不变。
+    /// </summary>
+    public static bool IsStatsVersion(string versionName)
+    {
+        var list = CurrentProject?.StatsVersions;
+        if (list == null || list.Count == 0) return true;
+        return list.Any(v => string.Equals(v, versionName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// 把「计入统计的版本」补齐为项目当前的全部版本（只补不删，不抹掉用户的取舍）。
+    /// 现阶段该数组默认包含所有版本。
+    /// </summary>
+    private static void SyncStatsVersions(string projectDir, ProjectConfig config)
+    {
+        var names = GetVersionFiles(projectDir)
+            .Select(f => f.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ? f[..^5] : f)
+            .ToList();
+        if (names.Count == 0) return;
+
+        var missing = names
+            .Where(n => !config.StatsVersions.Any(v => string.Equals(v, n, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+        if (missing.Count == 0) return;
+
+        config.StatsVersions.AddRange(missing);
+        SaveProjectConfig(projectDir, config);
+    }
+
+    /// <summary>把一个版本加入「计入统计的版本」（去重、忽略大小写），并保存 project.json。</summary>
+    public static void AddStatsVersion(string versionFileName)
+    {
+        if (CurrentProject == null || CurrentProjectDir == null) return;
+
+        var name = versionFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+            ? versionFileName[..^5]
+            : versionFileName;
+
+        var list = CurrentProject.StatsVersions;
+        if (list.Any(v => string.Equals(v, name, StringComparison.OrdinalIgnoreCase))) return;
+
+        list.Add(name);
+        SaveProjectConfig(CurrentProjectDir, CurrentProject);
+    }
+
     // ======================== 项目操作 ========================
 
     /// <summary>新建项目：创建文件夹 → 写入 project.json → 创建初始版本。</summary>
@@ -85,7 +132,9 @@ public static class ProjectService
             Description = description,
             CurrentVersion = cleanVersion,
             CreatedAt = DateTime.Now,
-            ProjectNumber = GetNextProjectNumber()
+            ProjectNumber = GetNextProjectNumber(),
+            // 新建项目时，初始版本即计入统计。
+            StatsVersions = new List<string> { cleanVersion }
         };
 
         SaveProjectConfig(dir, config);
@@ -149,6 +198,9 @@ public static class ProjectService
 
         DataService.SetFilePath(dataPath);
         DataService.Load();
+
+        // 「计入统计的版本」默认容纳全部版本；旧项目缺这个字段时在这里补齐。
+        SyncStatsVersions(projectDir, config);
 
         // 保存最后打开的项目路径
         ConfigManager.Set("Project", "LastProject", Path.GetFileName(projectDir));
@@ -249,6 +301,9 @@ public static class ProjectService
         var empty = new DataFile();
         File.WriteAllText(versionPath,
             JsonSerializer.Serialize(empty, _jsonOptions));
+
+        // 新版本默认计入统计。
+        AddStatsVersion(versionFileName);
 
         return versionFileName;
     }
@@ -381,7 +436,7 @@ public static class ProjectService
         if (CurrentProject == null || CurrentProjectDir == null) return;
         bool changed = false;
 
-        foreach (var entry in data.Unfinished.Concat(data.Finished))
+        foreach (var entry in data.Entries)
         {
             if (string.IsNullOrEmpty(entry.Id))
             {

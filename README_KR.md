@@ -265,9 +265,11 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 | `Severity` | `string` | Fatal / Severe / General / Patch / Update |
 | `Brief` | `string` | 요약 설명 |
 | `Detail` | `string` | 상세 설명 |
-| `Deadline` | `[년,월,일]` | 마감일 |
-| `CompletedAt` | `[년,월,일]` | 완료일 |
-| `ChangeDemand` | `int` | 변경 요구 카운터 |
+| `Deadline` | `string` (ISO 8601) | 마감 시간(시분 포함) |
+| `CompletedAt` | `string` (ISO 8601) | 완료 시간(미완료 시 비어 있음) |
+| `CreatedAt` | `string` (ISO 8601) | 생성 시간 |
+| `UpdatedAt` | `string` (ISO 8601) | 마지막 수정 시간 |
+| `Status` | `string` | 상태: `Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | 즐겨찾기 플래그 |
 | `Version` | `string` | 버전 문자열 |
 | `Type` | `string[]` | 유형 태그 (Bug, UI, Feature 등) |

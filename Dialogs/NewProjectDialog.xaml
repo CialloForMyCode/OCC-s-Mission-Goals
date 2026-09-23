@@ -11,7 +11,7 @@
 
     <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
-            BorderThickness="1" CornerRadius="8">
+            BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}">
 
         <Grid Margin="24,20,24,16">
             <Grid.RowDefinitions>

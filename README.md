@@ -280,9 +280,11 @@ Entry fields:
 | `Severity` | `string` | Fatal / Severe / General / Patch / Update |
 | `Brief` | `string` | Short description |
 | `Detail` | `string` | Full description |
-| `Deadline` | `[year,month,day]` | Due date |
-| `CompletedAt` | `[year,month,day]` | Completion date |
-| `ChangeDemand` | `int` | Change demand counter |
+| `Deadline` | `string` (ISO 8601) | Due date and time |
+| `CompletedAt` | `string` (ISO 8601) | Completion time; empty until finished |
+| `CreatedAt` | `string` (ISO 8601) | Creation time |
+| `UpdatedAt` | `string` (ISO 8601) | Last modified time |
+| `Status` | `string` | `Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | Favorite flag |
 | `Version` | `string` | Version string |
 | `Type` | `string[]` | Type tags (Bug, UI, Feature, etc.) |

@@ -7,7 +7,7 @@ namespace OCCMissionGoals.Services;
 public static class EntryCopyFormatter
 {
     /// <summary>
-    /// 按「标题 / 简介 / 详情 / 相关文件（函数 行:列）」的格式输出条目信息。
+    /// 按「标题 / 简介 / 相关文件（函数 行:列）」的格式输出条目信息。
     /// </summary>
     public static string BuildText(GoalEntry entry)
     {
@@ -15,7 +15,7 @@ public static class EntryCopyFormatter
 
         sb.AppendLine(LocalizationManager.T("标题") + ": " + entry.Title);
         sb.AppendLine(LocalizationManager.T("简介") + ": " + entry.Brief);
-        sb.AppendLine(LocalizationManager.T("详情") + ": " + entry.Detail);
+
         sb.AppendLine(LocalizationManager.T("相关文件") + ":");
 
         if (entry.RelatedFiles.Count == 0)
@@ -29,6 +29,13 @@ public static class EntryCopyFormatter
                 var func = string.IsNullOrWhiteSpace(f.Function) ? string.Empty : f.Function + " ";
                 sb.AppendLine($"{f.Path}（{func}{f.Line}:{f.Column}）");
             }
+        }
+
+        if (entry.Contents.Count > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine(LocalizationManager.T("内容区") + ":");
+            sb.AppendLine(ContentBlocks.ToPlainText(entry.Contents));
         }
 
         return sb.ToString().TrimEnd();

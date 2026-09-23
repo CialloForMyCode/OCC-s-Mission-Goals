@@ -6,12 +6,14 @@
       xmlns:local="clr-namespace:OCCMissionGoals.Pages"
       xmlns:loc="clr-namespace:OCCMissionGoals"
       xmlns:svc="clr-namespace:OCCMissionGoals.Services"
+      xmlns:controls="clr-namespace:OCCMissionGoals.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="758" d:DesignWidth="1240"
       Title="UnDonePage">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <svc:ContentBlockConverter x:Key="ContentBlockConverter"/>
         <svc:MarkdownConverter x:Key="MarkdownConverter" />
         <svc:MarkdownInlineConverter x:Key="MarkdownInlineConverter" />
         <Style x:Key="StarBtn" TargetType="Button">
@@ -27,7 +29,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4"
+                                CornerRadius="{DynamicResource UiCornerRadiusSmall}"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
@@ -56,14 +58,15 @@
                             <!-- 版本头：可点击折叠/展开 -->
                             <Border Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}"
-                                    BorderThickness="1" CornerRadius="6"
-                                    Margin="0,4,0,2" Padding="10,6"
+                                    BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusMedium}"
+                                    Margin="0,0,0,2" Padding="10,6"
                                     Cursor="Hand"
                                     MouseLeftButtonUp="VersionHeader_Click"
                                     Tag="{Binding}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="GroupArrow"
-                                               Text="▼" FontSize="10"
+                                               Text="{Binding ArrowText}"
+                                               FontSize="10"
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                VerticalAlignment="Center"
                                                Margin="0,0,6,0"/>
@@ -81,16 +84,26 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- 该版本下的条目列表 -->
+                            <!-- 该版本下的条目列表：折叠 / 展开由附加属性驱动高度过渡 -->
                             <ItemsControl x:Name="GroupItems"
                                           ItemsSource="{Binding Items}"
-                                          Visibility="Visible">
+                                          ClipToBounds="True"
+                                          svc:ExpandAnimation.Expanded="{Binding IsExpanded}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Margin" Value="0,0,0,2"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="{DynamicResource CardBackgroundBrush}"
+                                        <Border x:Name="CardBorder"
+                                                Background="{DynamicResource CardBackgroundBrush}"
                                                 BorderBrush="{DynamicResource CardBorderBrush}"
-                                                BorderThickness="1" CornerRadius="8"
-                                                Margin="0,0,0,2" Padding="12,8">
+                                                BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
+                                                Margin="6,0,6,0" Padding="12,8"
+                                                Tag="{Binding}"
+                                                MouseEnter="Card_MouseEnter"
+                                                MouseLeave="Card_MouseLeave">
                                             <StackPanel>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
@@ -98,7 +111,6 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
 
@@ -114,7 +126,7 @@
                                                     </Button>
 
                                                     <Border Grid.Column="1"
-                                                            CornerRadius="4" Padding="8,3"
+                                                            CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="8,3"
                                                             VerticalAlignment="Center"
                                                             Background="{Binding SeverityBrush}">
                                                         <TextBlock Text="{Binding SeverityText}"
@@ -137,8 +149,11 @@
                                                                         FontSize="14" FontWeight="SemiBold"
                                                                         HorizontalAlignment="Left"
                                                                         VerticalAlignment="Center"/>
+                                                        <!-- 简介：放不下时静止态以省略号收尾；悬停预览打开后循环滚动显示全文（见 Controls\Marquee.cs） -->
                                                         <ContentControl Grid.Column="1"
-                                                                        Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=excerpt}"
+                                                                        Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=trim}"
+                                                                        controls:Marquee.IsEnabled="True"
+                                                                        controls:Marquee.IsRunning="{Binding ShowOverview, Mode=OneWay}"
                                                                         Foreground="{DynamicResource ForegroundBrush}"
                                                                         FontSize="12"
                                                                         VerticalAlignment="Center"
@@ -159,19 +174,6 @@
                                                     </Grid>
 
                                                     <StackPanel Grid.Column="4"
-                                                                Orientation="Horizontal"
-                                                                VerticalAlignment="Center" Margin="0,0,12,0">
-                                                        <Path Fill="{DynamicResource ForegroundBrush}" Stretch="Uniform"
-                                                              Width="14" Height="14" Margin="0,0,4,0"
-                                                              Data="M8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1ZM7.5 4C7.77614 4 8 4.22386 8 4.5V8H11.5C11.7761 8 12 8.22386 12 8.5C12 8.77614 11.7761 9 11.5 9H7.5C7.22386 9 7 8.77614 7 8.5V4.5C7 4.22386 7.22386 4 7.5 4Z"/>
-                                                        <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="12" VerticalAlignment="Center">
-                                                            <Run Text="{loc:Loc &quot;截止&quot;}"/>
-                                                            <Run Text="{Binding Deadline, StringFormat=yyyy-MM-dd, Mode=OneWay}"/>
-                                                        </TextBlock>
-                                                    </StackPanel>
-
-                                                    <StackPanel Grid.Column="5"
                                                                 Orientation="Horizontal"
                                                                 VerticalAlignment="Center">
                                                         <Button Style="{StaticResource CardActionBtn}"
@@ -200,9 +202,47 @@
                                                     </StackPanel>
                                                 </Grid>
 
-                                                <StackPanel x:Name="DetailPanel" Visibility="{Binding IsDetailExpanded, Converter={StaticResource BoolToVis}}">
-                                                    <ContentControl Content="{Binding Detail, Mode=OneWay, Converter={StaticResource MarkdownConverter}}"
-                                                                    Margin="0,6,0,0"/>
+                                                <StackPanel x:Name="DetailPanel"
+                                                            ClipToBounds="True"
+                                                            svc:ExpandAnimation.Expanded="{Binding IsDetailExpanded}">
+                                                    <!-- 内容区：标题 / 简介 / 严重程度固定在上方，正文随区块变化 -->
+                                                    <!-- 子任务区块在这一层换成可点击的勾选框，勾选状态写回数据文件 -->
+                                                    <ItemsControl ItemsSource="{Binding Contents}"
+                                                                  Margin="10,8,10,0"
+                                                                  Visibility="{Binding HasContents, Converter={StaticResource BoolToVis}}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid>
+                                                                    <!-- 普通区块：只读渲染 -->
+                                                                    <ContentControl Content="{Binding Model, Converter={StaticResource ContentBlockConverter}}"
+                                                                                    HorizontalAlignment="Stretch">
+                                                                        <ContentControl.Style>
+                                                                            <Style TargetType="ContentControl">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsSubTask}" Value="True">
+                                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </ContentControl.Style>
+                                                                    </ContentControl>
+
+                                                                    <!-- 子任务区块：可点击勾选 -->
+                                                                    <CheckBox Style="{StaticResource SettingsCheckBox}"
+                                                                              IsChecked="{Binding Done, Mode=TwoWay}"
+                                                                              Visibility="{Binding IsSubTask, Converter={StaticResource BoolToVis}}"
+                                                                              VerticalAlignment="Top"
+                                                                              FontSize="12"
+                                                                              Margin="0,3,0,3"
+                                                                              Foreground="{DynamicResource ForegroundBrush}">
+                                                                        <ContentControl Content="{Binding Text, Converter={StaticResource MarkdownConverter}}"
+                                                                                        HorizontalAlignment="Stretch"/>
+                                                                    </CheckBox>
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+
                                                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
                                                                 Visibility="{Binding HasType, Converter={StaticResource BoolToVis}}">
                                                         <TextBlock Text="{loc:Loc &quot;类别&quot;}"
@@ -222,7 +262,7 @@
                                                                     <Border x:Name="TagBg" CornerRadius="3" Padding="6,2"
                                                                             Background="{DynamicResource SubtleBackgroundBrush}"
                                                                             BorderBrush="{DynamicResource CardBorderBrush}"
-                                                                            BorderThickness="1"
+                                                                            BorderThickness="{DynamicResource UiBorderThickness}"
                                                                             Margin="0,0,5,0">
                                                                         <TextBlock x:Name="TagText" Text="{Binding Text}"
                                                                                    Foreground="{DynamicResource ForegroundBrush}"
@@ -268,7 +308,11 @@
                                                     <ItemsControl ItemsSource="{Binding RelatedFiles, Mode=OneWay}">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
-                                                                <Grid Margin="0,2,0,0">
+                                                                <Grid Margin="0,2,0,0"
+                                                                      Background="Transparent"
+                                                                      Cursor="Hand"
+                                                                      ToolTip="{loc:Loc &quot;点击跳转到内容区里引用该文件的位置&quot;}"
+                                                                      MouseLeftButtonUp="RelatedFile_Click">
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto" SharedSizeGroup="FileCol"/>
                                                                         <ColumnDefinition Width="Auto" SharedSizeGroup="LineCol"/>
@@ -312,8 +356,70 @@
                                                         </StackPanel>
                                                     </Button>
                                                 </StackPanel>
+                                                <!-- 概览：鼠标停留 2 秒时展开，点「详情」展开后持久显示（类别 + 完成度）；悬停或展开详情时条目左右扩宽到最大 -->
+                                                <StackPanel x:Name="HoverOverview"
+                                                            ClipToBounds="True"
+                                                            svc:ExpandAnimation.Expanded="{Binding ShowOverview}">
+                                                    <Grid Margin="0,10,0,2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto" MaxWidth="320"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{loc:Loc &quot;概览&quot;}"
+                                                                   FontSize="11" FontWeight="SemiBold"
+                                                                   Margin="0,0,10,0" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                                         <TextBlock Grid.Column="1"
+                                                                   Text="{Binding TypeSummary}"
+                                                                   FontSize="11" Opacity="0.7"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                                        <Grid Grid.Column="2" Margin="16,0,0,0" VerticalAlignment="Center">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <ProgressBar Grid.Column="0" Height="8"
+                                                                         HorizontalAlignment="Stretch"
+                                                                         Minimum="0" Maximum="100"
+                                                                         Value="{Binding Progress, Mode=OneWay}"
+                                                                         BorderThickness="0"
+                                                                         Foreground="{DynamicResource PrimaryBrush}"
+                                                                         Background="{DynamicResource SubtleBackgroundBrush}"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding ProgressText}"
+                                                                       FontSize="11" Opacity="0.7"
+                                                                       Margin="8,0,0,0" VerticalAlignment="Center"
+                                                                       Foreground="{DynamicResource ForegroundBrush}"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </StackPanel>
                                             </StackPanel>
                                         </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding ShowOverview}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetName="CardBorder"
+                                                                            Storyboard.TargetProperty="Margin"
+                                                                            To="0,0,0,0" Duration="0:0:0.2"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ThicknessAnimation Storyboard.TargetName="CardBorder"
+                                                                            Storyboard.TargetProperty="Margin"
+                                                                            To="6,0,6,0" Duration="0:0:0.2"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -325,7 +431,7 @@
             <Border x:Name="EmptyPlaceholder"
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}"
-                    BorderThickness="1" CornerRadius="8"
+                    BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                     Margin="0,0,0,6" Padding="24,20"
                     VerticalAlignment="Top">
                 <TextBlock Text="{loc:Loc &quot;没有未完成条目&quot;}"

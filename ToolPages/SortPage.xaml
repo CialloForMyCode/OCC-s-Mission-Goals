@@ -23,12 +23,10 @@
                   Style="{StaticResource StatusBarActionComboBox}">
             <ComboBoxItem Content="{loc:Loc &quot;按照严重程度升序排序&quot;}" Tag="0"/>
             <ComboBoxItem Content="{loc:Loc &quot;按照严重程度降序排序&quot;}" Tag="1"/>
-            <ComboBoxItem Content="{loc:Loc &quot;按照截止日期升序排序&quot;}" Tag="2"/>
-            <ComboBoxItem Content="{loc:Loc &quot;按照截止日期降序排序&quot;}" Tag="3"/>
-            <ComboBoxItem Content="{loc:Loc &quot;按照版本升序排序&quot;}" Tag="4"/>
-            <ComboBoxItem Content="{loc:Loc &quot;按照版本降序排序&quot;}" Tag="5"/>
-            <ComboBoxItem Content="{loc:Loc &quot;只显示收藏的&quot;}" Tag="6"/>
-            <ComboBoxItem Content="{loc:Loc &quot;按照类别排序&quot;}" Tag="7"/>
+            <ComboBoxItem Content="{loc:Loc &quot;按照版本升序排序&quot;}" Tag="2"/>
+            <ComboBoxItem Content="{loc:Loc &quot;按照版本降序排序&quot;}" Tag="3"/>
+            <ComboBoxItem Content="{loc:Loc &quot;只显示收藏的&quot;}" Tag="4"/>
+            <ComboBoxItem Content="{loc:Loc &quot;按照类别排序&quot;}" Tag="5"/>
         </ComboBox>
     </Grid>
 </Page>

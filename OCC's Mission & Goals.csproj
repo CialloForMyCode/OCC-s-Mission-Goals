@@ -9,7 +9,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>OCCMissionGoals</AssemblyName>
     <Title>OCC's Mission &amp; Goals</Title>
-    <Version>0.2.0-rc</Version>
+    <Version>1.0.0</Version>
     <Authors>I-AM-SOLO</Authors>
     <Company>Harvnyx</Company>
     <Description>一款为 ONC Compiler Collection 开发的更新/修复管理工具，为了帮助患有健忘症的我更加快速的开发 ONC Compiler Collection。该工具旨在简化在MD中填写错误然后一个个找哪个没完成的流程，提高效率，并治好我的健忘症。</Description>
@@ -51,14 +51,19 @@
     <Folder Include="Expand\" />
   </ItemGroup>
 
-  <!-- 主题目录：Themes/*.xaml 作为内容复制到输出目录，每个主题文件同时含深/浅两套配色 -->
+  <!-- 主题目录：Themes/*.xaml 作为内容复制到输出目录，每个主题文件同时含深/浅两套配色。
+       例外：内置默认主题 Themes\Default.xaml 内嵌为程序集资源（见下方 Resource 项），
+       不复制到输出目录 —— 这样外部文件被删除时，默认配色依然可用。 -->
   <ItemGroup>
-    <Content Include="Themes\**\*.xaml">
+    <Content Include="Themes\**\*.xaml" Exclude="Themes\Default.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Page Remove="Themes\**\*.xaml" />
+    <Resource Include="Themes\Default.xaml">
+      <LogicalName>themes/default.xaml</LogicalName>
+    </Resource>
     <Folder Include="Themes\" />
   </ItemGroup>
 

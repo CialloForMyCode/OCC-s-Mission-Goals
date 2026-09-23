@@ -752,10 +752,10 @@ public partial class SettingsPage : Page
             return;
         }
 
-        var data = DataService.ReadAllVersions(projectDir);
-        var all = data.Unfinished.Concat(data.Finished).ToList();
-        var finished = data.Finished.Count;
-        var unfinished = data.Unfinished.Count;
+        var tagged = DataService.ReadStatsVersions(projectDir);
+        var all = tagged.Select(t => t.Entry).ToList();
+        var finished = all.Count(e => e.Status == Models.EntryStatus.Finished);
+        var unfinished = all.Count(e => e.Status == Models.EntryStatus.Unfinished);
         var total = finished + unfinished;
         var favorited = all.Count(e => e.IsFavorited);
         var rate = total > 0 ? Math.Min(1.0, (double)finished / total) : 0;
@@ -763,7 +763,27 @@ public partial class SettingsPage : Page
         BuildStatsCards(total, unfinished, finished, rate, favorited);
         BuildSeverityDist(all);
         BuildTypeDist(all);
-        BuildVersionDist(all);
+        BuildVersionDist(tagged);
+    }
+
+    /// <summary>按版本（条目所在的版本文件）统计条目数量。</summary>
+    private void BuildVersionDist(List<(Models.GoalEntry Entry, string Version)> tagged)
+    {
+        var accent = (Brush)FindResource("PrimaryBrush");
+        var groups = tagged
+            .GroupBy(t => string.IsNullOrWhiteSpace(t.Version) ? LocalizationManager.T("未标记") : t.Version)
+            .OrderByDescending(g => g.Count())
+            .ToList();
+        var max = groups.Count > 0 ? groups.Max(g => g.Count()) : 1;
+        VersionDistPanel.ItemsSource = groups
+            .Select(g => new SeverityStat
+            {
+                Label = g.Key,
+                Count = g.Count(),
+                Ratio = (double)g.Count() / max,
+                ColorBrush = accent,
+            })
+            .ToList();
     }
 
     private void ClearStats()
@@ -858,24 +878,6 @@ public partial class SettingsPage : Page
             .ToList();
     }
 
-    private void BuildVersionDist(List<Models.GoalEntry> all)
-    {
-        var accent = (Brush)FindResource("PrimaryBrush");
-        var groups = all
-            .GroupBy(e => string.IsNullOrWhiteSpace(e.Version) ? LocalizationManager.T("未标记") : e.Version)
-            .OrderByDescending(g => g.Count())
-            .ToList();
-        var max = groups.Count > 0 ? groups.Max(g => g.Count()) : 1;
-        VersionDistPanel.ItemsSource = groups
-            .Select(g => new SeverityStat
-            {
-                Label = g.Key,
-                Count = g.Count(),
-                Ratio = (double)g.Count() / max,
-                ColorBrush = accent,
-            })
-            .ToList();
-    }
 
     /// <summary>
     /// 供外部跳转：滚动到设置页指定区块（Appearance / Project / Tags / Stats / System）。

@@ -1,0 +1,9 @@
+{
+  "Id": "expand:example",
+  "Name": "示例扩展",
+  "Version": "1.0.0",
+  "Author": "OCC",
+  "Description": "演示扩展能做什么：覆盖资源键，改变板块的颜色、圆角与边框粗细。默认禁用，启用后立即生效。",
+  "Enabled": false,
+  "Resources": "ui.xaml"
+}

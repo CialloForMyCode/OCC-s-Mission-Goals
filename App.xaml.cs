@@ -38,6 +38,9 @@ public partial class App : Application
             Environment.Exit(exitCode);
         }
 
+        // 装载扩展。放在主题之后，扩展才能覆盖主题提供的资源键（颜色 / 圆角 / 边框粗细……）。
+        Services.ExpandService.Reload();
+
         // GUI 模式
         new MainWindow().Show();
     }

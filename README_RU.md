@@ -265,9 +265,11 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 | `Severity` | `string` | Fatal / Severe / General / Patch / Update |
 | `Brief` | `string` | Краткое описание |
 | `Detail` | `string` | Подробное описание |
-| `Deadline` | `[год,месяц,день]` | Срок выполнения |
-| `CompletedAt` | `[год,месяц,день]` | Дата завершения |
-| `ChangeDemand` | `int` | Счётчик изменений |
+| `Deadline` | `string` (ISO 8601) | Срок (с точностью до минуты) |
+| `CompletedAt` | `string` (ISO 8601) | Время завершения; пусто, пока не завершено |
+| `CreatedAt` | `string` (ISO 8601) | Время создания |
+| `UpdatedAt` | `string` (ISO 8601) | Время последнего изменения |
+| `Status` | `string` | Статус: `Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | Избранное |
 | `Version` | `string` | Версия |
 | `Type` | `string[]` | Теги типов (Bug, UI, Feature и т.д.) |

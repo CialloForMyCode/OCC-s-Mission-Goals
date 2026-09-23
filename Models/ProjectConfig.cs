@@ -32,4 +32,11 @@ public class ProjectConfig
     [JsonPropertyName("NextEntryId")]
     public int NextEntryId { get; set; } = 1;
 
+    /// <summary>
+    /// 计入统计的版本（版本文件名，不含 .json）：列表分组与数据统计只包含这些版本。
+    /// 目前容纳全部版本；为空时同样视为「全部版本」，避免旧项目行为变化。
+    /// </summary>
+    [JsonPropertyName("StatsVersions")]
+    public List<string> StatsVersions { get; set; } = new();
+
 }

@@ -1,4 +1,4 @@
-<ResourceDictionary
+﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="clr-namespace:System;assembly=mscorlib">
@@ -22,7 +22,7 @@
     <s:String xml:space="preserve" x:Key="Expand: 已安装">Expand: 已安装</s:String>
     <s:String xml:space="preserve" x:Key="File: 文件">File: 文件</s:String>
     <s:String xml:space="preserve" x:Key="Function: 功能">Function: 功能</s:String>
-    <s:String xml:space="preserve" x:Key="OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、截止日期、版本归属、关联文件追踪以及多项目切换。">OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、截止日期、版本归属、关联文件追踪以及多项目切换。</s:String>
+<s:String xml:space="preserve" x:Key="OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、关联文件追踪以及多项目切换。">OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、关联文件追踪以及多项目切换。</s:String>
     <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe [-p &lt;项目&gt;] &lt;命令&gt; [参数]">OCCMissionGoals.exe [-p &lt;项目&gt;] &lt;命令&gt; [参数]</s:String>
     <s:String xml:space="preserve" x:Key="OCCMissionGoals.exe 命令行接口">OCCMissionGoals.exe 命令行接口</s:String>
     <s:String xml:space="preserve" x:Key="Plugins: 插件">Plugins: 插件</s:String>
@@ -32,21 +32,21 @@
     <s:String xml:space="preserve" x:Key="Tag: 标签">Tag: 标签</s:String>
     <s:String xml:space="preserve" x:Key="Type: 类别">Type: 类别</s:String>
     <s:String xml:space="preserve" x:Key="Text: 文字">Text: 文字</s:String>
+    <s:String xml:space="preserve" x:Key="{}{0}个星期前">{0}个星期前</s:String>
+    <s:String xml:space="preserve" x:Key="共 {0} 条">共 {0} 条</s:String>
+    <s:String xml:space="preserve" x:Key="点击跳转到该条目">点击跳转到该条目</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}个月前">{0}个月前</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}分钟前">{0}分钟前</s:String>
-    <s:String xml:space="preserve" x:Key="{}{0}天">{0}天</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}天前">{0}天前</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}小时前">{0}小时前</s:String>
     <s:String xml:space="preserve" x:Key="{}{0}年前">{0}年前</s:String>
     <s:String xml:space="preserve" x:Key="| 严重程度 | {0} |">| 严重程度 | {0} |</s:String>
     <s:String xml:space="preserve" x:Key="| 字段 | 内容 |">| 字段 | 内容 |</s:String>
-    <s:String xml:space="preserve" x:Key="| 完成时间 | {0:yyyy-MM-dd} |">| 完成时间 | {0:yyyy-MM-dd} |</s:String>
-    <s:String xml:space="preserve" x:Key="| 截止日期 | {0:yyyy-MM-dd} |">| 截止日期 | {0:yyyy-MM-dd} |</s:String>
+<s:String xml:space="preserve" x:Key="| 完成时间 | {0:yyyy-MM-dd HH:mm} |">| 完成时间 | {0:yyyy-MM-dd HH:mm} |</s:String>
     <s:String xml:space="preserve" x:Key="| 相关文件 | (无) |">| 相关文件 | (无) |</s:String>
     <s:String xml:space="preserve" x:Key="| 相关文件 | {0} |">| 相关文件 | {0} |</s:String>
-    <s:String xml:space="preserve" x:Key="| 详细信息 | {0} |">| 详细信息 | {0} |</s:String>
     <s:String xml:space="preserve" x:Key="• data.json —— 存储所有条目数据（未完成 + 已完成），JSON 数组格式">• data.json —— 存储所有条目数据（未完成 + 已完成），JSON 数组格式</s:String>
-    <s:String xml:space="preserve" x:Key="• Date: / 日期: —— 日期（yyyy-MM-dd）">• Date: / 日期: —— 日期（yyyy-MM-dd）</s:String>
+<s:String xml:space="preserve" x:Key="• Date: / 日期: —— 日期时间（yyyy-MM-dd HH:mm）">• Date: / 日期: —— 日期时间（yyyy-MM-dd HH:mm）</s:String>
     <s:String xml:space="preserve" x:Key="• Expand: / 扩展: / 已安装: —— 已安装的插件（全局搜索）">• Expand: / 扩展: / 已安装: —— 已安装的插件（全局搜索）</s:String>
     <s:String xml:space="preserve" x:Key="• File: / 文件: —— 关联文件路径与函数名">• File: / 文件: —— 关联文件路径与函数名</s:String>
     <s:String xml:space="preserve" x:Key="• Plugins: / 插件: —— 扩展中心插件（全局搜索）">• Plugins: / 插件: —— 扩展中心插件（全局搜索）</s:String>
@@ -68,18 +68,17 @@
     <s:String xml:space="preserve" x:Key="• 已完成条目在版本内全部完成后才可归档，保持视图整洁">• 已完成条目在版本内全部完成后才可归档，保持视图整洁</s:String>
     <s:String xml:space="preserve" x:Key="• 常见标签：bug（缺陷）、feature（新功能）、refactor（重构）、docs（文档）、test（测试）、chore（杂项）">• 常见标签：bug（缺陷）、feature（新功能）、refactor（重构）、docs（文档）、test（测试）、chore（杂项）</s:String>
     <s:String xml:space="preserve" x:Key="• 按版本归档 —— 仅当版本内所有条目均已完成时，才显示归档按钮。归档将导出 Markdown 并删除版本数据文件">• 按版本归档 —— 仅当版本内所有条目均已完成时，才显示归档按钮。归档将导出 Markdown 并删除版本数据文件</s:String>
-    <s:String xml:space="preserve" x:Key="• 排序 —— 按严重程度（高→低）、截止日期（近→远）、版本号（升/降）以及仅收藏排序">• 排序 —— 按严重程度（高→低）、截止日期（近→远）、版本号（升/降）以及仅收藏排序</s:String>
+<s:String xml:space="preserve" x:Key="• 排序 —— 按严重程度（高→低）、版本号（升/降）以及仅收藏排序">• 排序 —— 按严重程度（高→低）、版本号（升/降）以及仅收藏排序</s:String>
     <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框实时过滤插件列表">• 搜索过滤 —— 顶部搜索框实时过滤插件列表</s:String>
     <s:String xml:space="preserve" x:Key="• 搜索过滤 —— 顶部搜索框输入关键词实时过滤，支持前缀切换匹配范围：Text:内容、Tag:标签、Setting:设置（项目设置/主题/数据统计）、File:文件路径、Date:日期；不带前缀时按文字匹配，Setting: 下按回车执行设置项">• 搜索过滤 —— 顶部搜索框输入关键词实时过滤，支持前缀切换匹配范围：Text:内容、Tag:标签、Setting:设置（项目设置/主题/数据统计）、File:文件路径、Date:日期；不带前缀时按文字匹配，Setting: 下按回车执行设置项</s:String>
     <s:String xml:space="preserve" x:Key="• 撤销完成 —— 将已完成条目恢复为未完成状态，条目移回 UnDonePage">• 撤销完成 —— 将已完成条目恢复为未完成状态，条目移回 UnDonePage</s:String>
-    <s:String xml:space="preserve" x:Key="• 支持按变更需求升序或降序排列条目列表">• 支持按变更需求升序或降序排列条目列表</s:String>
     <s:String xml:space="preserve" x:Key="• 收藏加星 —— 点击星标按钮收藏条目，收藏的条目在列表中高亮显示">• 收藏加星 —— 点击星标按钮收藏条目，收藏的条目在列表中高亮显示</s:String>
     <s:String xml:space="preserve" x:Key="• 数值越大表示变更越复杂、影响范围越广">• 数值越大表示变更越复杂、影响范围越广</s:String>
     <s:String xml:space="preserve" x:Key="• 数据存储    所有条目以 JSON 格式保存在各项目目录下">• 数据存储    所有条目以 JSON 格式保存在各项目目录下</s:String>
     <s:String xml:space="preserve" x:Key="• 整体结构与未完成页面一致 —— 版本分组、搜索过滤、详情展开等">• 整体结构与未完成页面一致 —— 版本分组、搜索过滤、详情展开等</s:String>
     <s:String xml:space="preserve" x:Key="• 文件均为纯文本 JSON，可直接用 Git 进行版本追踪和团队协作">• 文件均为纯文本 JSON，可直接用 Git 进行版本追踪和团队协作</s:String>
     <s:String xml:space="preserve" x:Key="• 条目列表按版本号分组展示，支持折叠和展开各版本">• 条目列表按版本号分组展示，支持折叠和展开各版本</s:String>
-    <s:String xml:space="preserve" x:Key="• 条目字段：index, id, title, severity, severityLabel, brief, detail, deadline, completedAt, changeDemand, isFavorited, version, relatedFiles">• 条目字段：index, id, title, severity, severityLabel, brief, detail, deadline, completedAt, changeDemand, isFavorited, version, relatedFiles</s:String>
+<s:String xml:space="preserve" x:Key="• 条目字段：index, id, title, severity, severityLabel, status, brief, completedAt, createdAt, updatedAt, isFavorited, type, relatedFiles">• 条目字段：index, id, title, severity, severityLabel, status, brief, completedAt, createdAt, updatedAt, isFavorited, type, relatedFiles</s:String>
     <s:String xml:space="preserve" x:Key="• 条目结果带类型标签（未完成 / 已完成），点击「跳转」定位到对应条目。">• 条目结果带类型标签（未完成 / 已完成），点击「跳转」定位到对应条目。</s:String>
     <s:String xml:space="preserve" x:Key="• 正常输出 JSON（stdout），带缩进便于阅读">• 正常输出 JSON（stdout），带缩进便于阅读</s:String>
     <s:String xml:space="preserve" x:Key="• 每个条目可附带一个或多个类型标签（多选）">• 每个条目可附带一个或多个类型标签（多选）</s:String>
@@ -92,7 +91,7 @@
     <s:String xml:space="preserve" x:Key="• 类型标签在条目卡片上以标签形式展示，便于快速识别">• 类型标签在条目卡片上以标签形式展示，便于快速识别</s:String>
     <s:String xml:space="preserve" x:Key="• 类型标签在项目配置（project.json）中统一定义和管理">• 类型标签在项目配置（project.json）中统一定义和管理</s:String>
     <s:String xml:space="preserve" x:Key="• 编辑 —— 与未完成页面相同的编辑功能">• 编辑 —— 与未完成页面相同的编辑功能</s:String>
-    <s:String xml:space="preserve" x:Key="• 编辑条目 —— 点击编辑按钮打开编辑窗口，可修改所有字段：标题、简要、详情、严重程度、截止日期、变更需求、类型标签、关联文件">• 编辑条目 —— 点击编辑按钮打开编辑窗口，可修改所有字段：标题、简要、详情、严重程度、截止日期、变更需求、类型标签、关联文件</s:String>
+<s:String xml:space="preserve" x:Key="• 编辑条目 —— 点击编辑按钮打开编辑窗口，可修改所有字段：标题、简要、严重程度、类型标签、关联文件">• 编辑条目 —— 点击编辑按钮打开编辑窗口，可修改所有字段：标题、简要、严重程度、类型标签、关联文件</s:String>
     <s:String xml:space="preserve" x:Key="• 编辑条目时在编辑窗口勾选或取消类型标签">• 编辑条目时在编辑窗口勾选或取消类型标签</s:String>
     <s:String xml:space="preserve" x:Key="• 编辑条目时在编辑窗口设置">• 编辑条目时在编辑窗口设置</s:String>
     <s:String xml:space="preserve" x:Key="• 详情查看 —— 点击插件卡片查看功能说明和使用方式">• 详情查看 —— 点击插件卡片查看功能说明和使用方式</s:String>
@@ -122,7 +121,6 @@
     <s:String xml:space="preserve" x:Key="以可视化图表展示五个严重等级（致命/严重/一般/补丁/更新）各自的条目数量，帮助快速识别项目风险分布。">以可视化图表展示五个严重等级（致命/严重/一般/补丁/更新）各自的条目数量，帮助快速识别项目风险分布。</s:String>
     <s:String xml:space="preserve" x:Key="仪表盘">仪表盘</s:String>
     <s:String xml:space="preserve" x:Key="仪表盘（LogPage）">仪表盘（LogPage）</s:String>
-    <s:String xml:space="preserve" x:Key="任务变更影响度量">任务变更影响度量</s:String>
     <s:String xml:space="preserve" x:Key="作者:">作者:</s:String>
     <s:String xml:space="preserve" x:Key="匿名开发者">匿名开发者</s:String>
     <s:String xml:space="preserve" x:Key="保存">保存</s:String>
@@ -143,7 +141,6 @@
     <s:String xml:space="preserve" x:Key="切换失败：{0}">切换失败：{0}</s:String>
     <s:String xml:space="preserve" x:Key="切换深色 / 浅色主题">切换深色 / 浅色主题</s:String>
     <s:String xml:space="preserve" x:Key="列">列</s:String>
-    <s:String xml:space="preserve" x:Key="列出 7 天内截止的未完成条目，按到期日远近排列。点击可直接跳转到对应条目。">列出 7 天内截止的未完成条目，按到期日远近排列。点击可直接跳转到对应条目。</s:String>
     <s:String xml:space="preserve" x:Key="列出当前项目的所有条目（未完成 + 已完成），JSON 数组。">列出当前项目的所有条目（未完成 + 已完成），JSON 数组。</s:String>
     <s:String xml:space="preserve" x:Key="列号 Column">列号 Column</s:String>
     <s:String xml:space="preserve" x:Key="刚刚">刚刚</s:String>
@@ -155,15 +152,10 @@
     <s:String xml:space="preserve" x:Key="删除条目（不可恢复）。">删除条目（不可恢复）。</s:String>
     <s:String xml:space="preserve" x:Key="刷新">刷新</s:String>
     <s:String xml:space="preserve" x:Key="功能更新和体验优化，最低优先级">功能更新和体验优化，最低优先级</s:String>
-    <s:String xml:space="preserve" x:Key="即将到期">即将到期</s:String>
     <s:String xml:space="preserve" x:Key="卸载">卸载</s:String>
     <s:String xml:space="preserve" x:Key="发现新版本 {0}，是否下载并安装？">发现新版本 {0}，是否下载并安装？</s:String>
     <s:String xml:space="preserve" x:Key="发现新版本 {0}，点击「下载并安装」开始更新。">发现新版本 {0}，点击「下载并安装」开始更新。</s:String>
     <s:String xml:space="preserve" x:Key="取消">取消</s:String>
-    <s:String xml:space="preserve" x:Key="变更需求">变更需求</s:String>
-    <s:String xml:space="preserve" x:Key="变更需求 —— 可选整数，表示变更复杂度和影响范围">变更需求 —— 可选整数，表示变更复杂度和影响范围</s:String>
-    <s:String xml:space="preserve" x:Key="变更需求是一个可选的整数字段，用于量化条目所涉及的变更复杂度和影响范围。">变更需求是一个可选的整数字段，用于量化条目所涉及的变更复杂度和影响范围。</s:String>
-    <s:String xml:space="preserve" x:Key="变更需求（ChangeDemand）">变更需求（ChangeDemand）</s:String>
     <s:String xml:space="preserve" x:Key="只显示收藏的">只显示收藏的</s:String>
     <s:String xml:space="preserve" x:Key="启动时自动检查更新">启动时自动检查更新</s:String>
     <s:String xml:space="preserve" x:Key="命令行">命令行</s:String>
@@ -176,6 +168,12 @@
     <s:String xml:space="preserve" x:Key="外观主题">外观主题</s:String>
     <s:String xml:space="preserve" x:Key="多项目目录与数据管理">多项目目录与数据管理</s:String>
     <s:String xml:space="preserve" x:Key="安装">安装</s:String>
+    <s:String xml:space="preserve" x:Key="启用">启用</s:String>
+    <s:String xml:space="preserve" x:Key="禁用">禁用</s:String>
+    <s:String xml:space="preserve" x:Key="已启用">已启用</s:String>
+    <s:String xml:space="preserve" x:Key="已启用扩展「{0}」。">已启用扩展「{0}」。</s:String>
+    <s:String xml:space="preserve" x:Key="已禁用扩展「{0}」。">已禁用扩展「{0}」。</s:String>
+    <s:String xml:space="preserve" x:Key="找不到扩展目录。">找不到扩展目录。</s:String>
     <s:String xml:space="preserve" x:Key="安装扩展">安装扩展</s:String>
     <s:String xml:space="preserve" x:Key="完成">完成</s:String>
     <s:String xml:space="preserve" x:Key="完成于">完成于</s:String>
@@ -208,7 +206,6 @@
     <s:String xml:space="preserve" x:Key="已是最新版本（{0}）。">已是最新版本（{0}）。</s:String>
     <s:String xml:space="preserve" x:Key="已更新条目「{0}」。">已更新条目「{0}」。</s:String>
     <s:String xml:space="preserve" x:Key="已添加条目「{0}」。">已添加条目「{0}」。</s:String>
-    <s:String xml:space="preserve" x:Key="已过期">已过期</s:String>
     <s:String xml:space="preserve" x:Key="帮助">帮助</s:String>
     <s:String xml:space="preserve" x:Key="帮助 / 使用指南">帮助 / 使用指南</s:String>
     <s:String xml:space="preserve" x:Key="帮助(_H)">帮助(_H)</s:String>
@@ -226,9 +223,7 @@
     <s:String xml:space="preserve" x:Key="快捷键">快捷键</s:String>
     <s:String xml:space="preserve" x:Key="总计">总计</s:String>
     <s:String xml:space="preserve" x:Key="总进度卡片">总进度卡片</s:String>
-    <s:String xml:space="preserve" x:Key="截止">截止</s:String>
-    <s:String xml:space="preserve" x:Key="截止日期">截止日期</s:String>
-    <s:String xml:space="preserve" x:Key="截止日期 —— 可选，过期条目以红色高亮提醒">截止日期 —— 可选，过期条目以红色高亮提醒</s:String>
+<s:String xml:space="preserve" x:Key="状态 —— 未完成 / 已完成，完成时自动记录完成时间">状态 —— 未完成 / 已完成，完成时自动记录完成时间</s:String>
     <s:String xml:space="preserve" x:Key="所有文件 (*.*)|*.*">所有文件 (*.*)|*.*</s:String>
     <s:String xml:space="preserve" x:Key="所选项目无效。">所选项目无效。</s:String>
     <s:String xml:space="preserve" x:Key="打印帮助信息。">打印帮助信息。</s:String>
@@ -251,8 +246,6 @@
     <s:String xml:space="preserve" x:Key="按模式搜索（点击填入前缀）：">按模式搜索（点击填入前缀）：</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度升序排序">按照严重程度升序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度降序排序">按照严重程度降序排序</s:String>
-    <s:String xml:space="preserve" x:Key="按照截止日期升序排序">按照截止日期升序排序</s:String>
-    <s:String xml:space="preserve" x:Key="按照截止日期降序排序">按照截止日期降序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照版本升序排序">按照版本升序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照版本降序排序">按照版本降序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照类别排序">按照类别排序</s:String>
@@ -291,7 +284,7 @@
     <s:String xml:space="preserve" x:Key="更新">更新</s:String>
     <s:String xml:space="preserve" x:Key="更新 Update">更新 Update</s:String>
     <s:String xml:space="preserve" x:Key="更新日志">更新日志</s:String>
-    <s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、详情、严重程度、截止日期、变更需求、类型标签等字段。">最基本的工作单元，包含标题、简要、详情、严重程度、截止日期、变更需求、类型标签等字段。</s:String>
+<s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。">最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。</s:String>
     <s:String xml:space="preserve" x:Key="最近活动">最近活动</s:String>
     <s:String xml:space="preserve" x:Key="最近活动时间线">最近活动时间线</s:String>
     <s:String xml:space="preserve" x:Key="未安装">未安装</s:String>
@@ -358,14 +351,15 @@
     <s:String xml:space="preserve" x:Key="状态机无更新">状态机无更新</s:String>
     <s:String xml:space="preserve" x:Key="登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。">登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。</s:String>
     <s:String xml:space="preserve" x:Key="相关文件">相关文件</s:String>
+    <s:String xml:space="preserve" x:Key="点击跳转到内容区里引用该文件的位置">点击跳转到内容区里引用该文件的位置</s:String>
+    <s:String xml:space="preserve" x:Key="未在内容区找到该文件的引用。">未在内容区找到该文件的引用。</s:String>
     <s:String xml:space="preserve" x:Key="(无)">(无)</s:String>
     <s:String xml:space="preserve" x:Key="相关的函数或方法名（可选）">相关的函数或方法名（可选）</s:String>
     <s:String xml:space="preserve" x:Key="确定">确定</s:String>
     <s:String xml:space="preserve" x:Key="确认">确认</s:String>
     <s:String xml:space="preserve" x:Key="程序在启动时检测命令行参数：带参数启动进入 CLI 模式（控制台），无参数启动进入 GUI 模式。CLI 所有输出为标准 JSON，错误输出至 stderr，适合 AI / 脚本 / CI 集成。">程序在启动时检测命令行参数：带参数启动进入 CLI 模式（控制台），无参数启动进入 GUI 模式。CLI 所有输出为标准 JSON，错误输出至 stderr，适合 AI / 脚本 / CI 集成。</s:String>
     <s:String xml:space="preserve" x:Key="简介">简介</s:String>
-    <s:String xml:space="preserve" x:Key="简介不能超过 500 个字符。">简介不能超过 500 个字符。</s:String>
-    <s:String xml:space="preserve" x:Key="详细信息不能超过 2000 个字符。">详细信息不能超过 2000 个字符。</s:String>
+    <s:String xml:space="preserve" x:Key="简介不能超过 110 个字符。">简介不能超过 110 个字符。</s:String>
     <s:String xml:space="preserve" x:Key="简要 —— 可选，一句话描述">简要 —— 可选，一句话描述</s:String>
     <s:String xml:space="preserve" x:Key="管理所有未完成的目标任务">管理所有未完成的目标任务</s:String>
     <s:String xml:space="preserve" x:Key="类别">类别</s:String>
@@ -404,8 +398,6 @@
     <s:String xml:space="preserve" x:Key="设置项目(_S)">设置项目(_S)</s:String>
     <s:String xml:space="preserve" x:Key="该版本中仍有未完成的条目，无法归档。">该版本中仍有未完成的条目，无法归档。</s:String>
     <s:String xml:space="preserve" x:Key="详情">详情</s:String>
-    <s:String xml:space="preserve" x:Key="详情 —— 可选，Markdown 格式的完整描述文本">详情 —— 可选，Markdown 格式的完整描述文本</s:String>
-    <s:String xml:space="preserve" x:Key="详细信息">详细信息</s:String>
     <s:String xml:space="preserve" x:Key="语言">语言</s:String>
     <s:String xml:space="preserve" x:Key="请先打开一个项目。">请先打开一个项目。</s:String>
     <s:String xml:space="preserve" x:Key="请输入版本号。">请输入版本号。</s:String>
@@ -449,7 +441,7 @@
     <s:String xml:space="preserve" x:Key="🔴 一般">🔴 一般</s:String>
     <s:String xml:space="preserve" x:Key="🔴 严重">🔴 严重</s:String>
     <s:String xml:space="preserve" x:Key="🔴 致命">🔴 致命</s:String>
-    <s:String xml:space="preserve" x:Key="🔴 补丁">🔴 补丁</s:String>
+    <s:String xml:space="preserve" x:Key="🟢 补丁">🟢 补丁</s:String>
     <s:String xml:space="preserve" x:Key="🔵 更新">🔵 更新</s:String>
     <s:String xml:space="preserve" x:Key="删除版本">删除版本</s:String>
     <s:String xml:space="preserve" x:Key="删除版本(_D)">删除版本(_D)</s:String>
@@ -482,4 +474,54 @@
     <s:String xml:space="preserve" x:Key="新建标签，可指定颜色。">新建标签，可指定颜色。</s:String>
     <s:String xml:space="preserve" x:Key="删除标签，并从所有版本条目中移除。">删除标签，并从所有版本条目中移除。</s:String>
     <s:String xml:space="preserve" x:Key="重命名标签，并同步所有版本条目。">重命名标签，并同步所有版本条目。</s:String>
+<s:String xml:space="preserve" x:Key="1月">1月</s:String>
+<s:String xml:space="preserve" x:Key="2月">2月</s:String>
+<s:String xml:space="preserve" x:Key="3月">3月</s:String>
+<s:String xml:space="preserve" x:Key="4月">4月</s:String>
+<s:String xml:space="preserve" x:Key="5月">5月</s:String>
+<s:String xml:space="preserve" x:Key="6月">6月</s:String>
+<s:String xml:space="preserve" x:Key="7月">7月</s:String>
+<s:String xml:space="preserve" x:Key="8月">8月</s:String>
+<s:String xml:space="preserve" x:Key="9月">9月</s:String>
+<s:String xml:space="preserve" x:Key="10月">10月</s:String>
+<s:String xml:space="preserve" x:Key="11月">11月</s:String>
+<s:String xml:space="preserve" x:Key="12月">12月</s:String>
+<s:String xml:space="preserve" x:Key="周一">周一</s:String>
+<s:String xml:space="preserve" x:Key="周三">周三</s:String>
+<s:String xml:space="preserve" x:Key="周五">周五</s:String>
+<s:String xml:space="preserve" x:Key="少">少</s:String>
+<s:String xml:space="preserve" x:Key="多">多</s:String>
+<s:String xml:space="preserve" x:Key="{}{0} · {1} 个贡献">{0} · {1} 个贡献</s:String>
+<s:String xml:space="preserve" x:Key="{}{0} · {1} 个条目">{0} · {1} 个条目</s:String>
+<s:String xml:space="preserve" x:Key="月度修复严重程度">月度修复严重程度</s:String>
+<s:String xml:space="preserve" x:Key="{}{0} · 修复分 {1}">{0} · 修复分 {1}</s:String>
+
+    <s:String xml:space="preserve" x:Key="文本">文本</s:String>
+    <s:String xml:space="preserve" x:Key="表格">表格</s:String>
+    <s:String xml:space="preserve" x:Key="分割线">分割线</s:String>
+    <s:String xml:space="preserve" x:Key="代码块">代码块</s:String>
+    <s:String xml:space="preserve" x:Key="文件引用">文件引用</s:String>
+    <s:String xml:space="preserve" x:Key="编号列表">编号列表</s:String>
+    <s:String xml:space="preserve" x:Key="列表">列表</s:String>
+    <s:String xml:space="preserve" x:Key="拖拽排序">拖拽排序</s:String>
+    <s:String xml:space="preserve" x:Key="支持 # 标题、**粗体**、*斜体*、~~删除线~~、编号列表与列表">支持 # 标题、**粗体**、*斜体*、~~删除线~~、编号列表与列表</s:String>
+    <s:String xml:space="preserve" x:Key="一条分割线">一条分割线</s:String>
+    <s:String xml:space="preserve" x:Key="表头（用 | 分隔各列）">表头（用 | 分隔各列）</s:String>
+    <s:String xml:space="preserve" x:Key="数据行（每行一条，用 | 分隔各列）">数据行（每行一条，用 | 分隔各列）</s:String>
+    <s:String xml:space="preserve" x:Key="行号">行号</s:String>
+    <s:String xml:space="preserve" x:Key="文件的完整路径">文件的完整路径</s:String>
+    <s:String xml:space="preserve" x:Key="条目就是它的子块，子块里再放列表即为多级列表">条目就是它的子块，子块里再放列表即为多级列表</s:String>
+    <s:String xml:space="preserve" x:Key="添加子块">添加子块</s:String>
+    <s:String xml:space="preserve" x:Key="上移">上移</s:String>
+    <s:String xml:space="preserve" x:Key="下移">下移</s:String>
+    <s:String xml:space="preserve" x:Key="内容区为空。用下面的按钮添加区块。">内容区为空。用下面的按钮添加区块。</s:String>
+    <s:String xml:space="preserve" x:Key="＋ 添加区块">＋ 添加区块</s:String>
+    <s:String xml:space="preserve" x:Key="内容区">内容区</s:String>
+    <s:String xml:space="preserve" x:Key="区块：文本（# 标题、粗体、斜体、删除线、编号列表与列表）、表格、分割线、代码块、文件引用、多级列表、子任务。拖拽左侧手柄排序，＋ 添加子块。">区块：文本（# 标题、粗体、斜体、删除线、编号列表与列表）、表格、分割线、代码块、文件引用、多级列表、子任务。拖拽左侧手柄排序，＋ 添加子块。</s:String>
+    <s:String xml:space="preserve" x:Key="相关文件（自动汇总）">相关文件（自动汇总）</s:String>
+    <s:String xml:space="preserve" x:Key="概览">概览</s:String>
+    <s:String xml:space="preserve" x:Key="未分类">未分类</s:String>
+    <s:String xml:space="preserve" x:Key="（未指定文件）">（未指定文件）</s:String>
+    <s:String xml:space="preserve" x:Key="子任务">子任务</s:String>
+    <s:String xml:space="preserve" x:Key="勾选表示该子任务已完成">勾选表示该子任务已完成</s:String>
 </ResourceDictionary>

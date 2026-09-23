@@ -179,6 +179,12 @@ namespace OCCMissionGoals
                 Dispatcher.Invoke(() =>
                 {
                     Services.DataService.Load();
+
+                    // 勾选子任务等自身写入同样会引来监视器事件，而事件常常晚于 IsInternalSave 复位才到达。
+                    // 磁盘内容若正是本进程刚写下的那一版，就只同步内存、不刷新界面——否则详情会被重建收起。
+                    var watched = Services.DataService.GetFilePath();
+                    if (!string.IsNullOrEmpty(watched) && Services.DataService.IsInternalWriteEcho(watched)) return;
+
                     RefreshAllViews();
                 });
             };
@@ -423,12 +429,13 @@ namespace OCCMissionGoals
             if (string.IsNullOrWhiteSpace(keyword)) return;
 
             var data = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
-            foreach (var entry in data.Unfinished)
-                if (SearchMatcher.Matches(entry, keyword, mode, useCompletedDate: false))
-                    results.Add(BuildEntryResult(entry, finished: false));
-            foreach (var entry in data.Finished)
-                if (SearchMatcher.Matches(entry, keyword, mode, useCompletedDate: true))
-                    results.Add(BuildEntryResult(entry, finished: true));
+            // 按 Entries 创建顺序遍历；完成状态由条目的 Status 决定
+            foreach (var entry in data.Entries)
+            {
+                var finished = entry.Status == EntryStatus.Finished;
+                if (SearchMatcher.Matches(entry, keyword, mode, useCompletedDate: finished))
+                    results.Add(BuildEntryResult(entry, finished: finished));
+            }
         }
 
         private void AppendPluginResults(List<SearchResultItem> results, string keyword, bool installedOnly)
@@ -676,6 +683,12 @@ namespace OCCMissionGoals
             else
                 (page as Pages.UnDonePage)?.SelectEntry(entry);
         }
+
+        /// <summary>
+        /// 切到「完成的条目」页并滚动高亮指定条目，供日志页的完成记录列表等外部页面调用。
+        /// 条目按 Id 匹配，因此调用方不必持有列表页里的同一个对象。
+        /// </summary>
+        public void JumpToFinishedEntry(GoalEntry entry) => JumpToEntry(entry, finished: true);
 
         private void OpenStatsSettings()
         {
@@ -1467,8 +1480,8 @@ namespace OCCMissionGoals
                 ? System.IO.Path.GetFileName(dataPath)
                 : "?";
             var merged = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
-            var unfinished = merged.Unfinished.Count;
-            var finished = merged.Finished.Count;
+            var unfinished = merged.Unfinished.Count();
+            var finished = merged.Finished.Count();
             SetTipText(LocalizationManager.T("项目：{0}  |  数据文件：{1}  |  未完成 {2}，已完成 {3}", proj.Name, dataName, unfinished, finished));
         }
 
@@ -1823,11 +1836,11 @@ namespace OCCMissionGoals
                         target.Title = title;
                         target.Severity = (GoalSeverity)NewEntryDialog.Severity;
                         target.Brief = NewEntryDialog.Brief;
-                        target.Detail = NewEntryDialog.Detail;
-                        target.Deadline = NewEntryDialog.Deadline;
-                        target.Version = NewEntryDialog.Version;
                         target.Type = NewEntryDialog.Type;
-                        target.RelatedFiles = new(NewEntryDialog.Files);
+                        // 内容区（区块，含子任务）+ 由内容区自动汇总的相关文件与完成度
+                        target.Contents = NewEntryDialog.Contents;
+                        target.RelatedFiles = Services.ContentBlocks.CollectFileRefs(target.Contents);
+                        target.Progress = Services.ContentBlocks.ComputeProgress(target.Contents);
                     });
                 RefreshAllViews();
                 DismissDialogOverlay();
@@ -1836,20 +1849,17 @@ namespace OCCMissionGoals
             else
             {
                 // 新建模式
+                var contents = NewEntryDialog.Contents;
                 var entry = new GoalEntry
                 {
                     Title = NewEntryDialog.EntryTitle,
                     Severity = (GoalSeverity)NewEntryDialog.Severity,
                     Brief = NewEntryDialog.Brief,
-                    Detail = NewEntryDialog.Detail,
-                    Deadline = NewEntryDialog.Deadline,
-                    ChangeDemand = 0,
                     IsFavorited = false,
-                    Version = string.IsNullOrWhiteSpace(NewEntryDialog.Version)
-                        ? Services.ProjectService.CurrentProject?.CurrentVersion ?? string.Empty
-                        : NewEntryDialog.Version,
                     Type = NewEntryDialog.Type,
-                    RelatedFiles = new(NewEntryDialog.Files)
+                    Contents = contents,
+                    RelatedFiles = Services.ContentBlocks.CollectFileRefs(contents),
+                    Progress = Services.ContentBlocks.ComputeProgress(contents)
                 };
                 Services.DataService.AddEntryAtomic(entry);
                 RefreshUnDoneList();
@@ -1905,7 +1915,12 @@ namespace OCCMissionGoals
             if (reg.IsOverlayTab)
                 _switchPage?.ShowOverlayTab(reg.Key);
             else
+            {
                 _switchPage?.HideOverlayTabs();
+
+                // 程序化跳转（日志页完成记录点击、搜索板结果等）也要让页签高亮跟随目标页
+                _switchPage?.SelectTab(reg.Key);
+            }
 
             ExecuteNavigation(tabIndex, f => f.Navigate(page));
         }

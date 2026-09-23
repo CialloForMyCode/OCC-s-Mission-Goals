@@ -265,9 +265,11 @@ versions/*.json       →  DataFile (User, Unfinished[], Finished[])
 | `Severity` | `string` | 严重程度：Fatal / Severe / General / Patch / Update |
 | `Brief` | `string` | 简要描述 |
 | `Detail` | `string` | 详细描述 |
-| `Deadline` | `[年,月,日]` | 截止日期 |
-| `CompletedAt` | `[年,月,日]` | 完成日期 |
-| `ChangeDemand` | `int` | 变更需求计数 |
+| `Deadline` | `string` (ISO 8601) | 截止时间（含时分） |
+| `CompletedAt` | `string` (ISO 8601) | 完成时间，未完成时为空 |
+| `CreatedAt` | `string` (ISO 8601) | 创建时间 |
+| `UpdatedAt` | `string` (ISO 8601) | 最后修改时间 |
+| `Status` | `string` | 状态：`Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | 是否收藏 |
 | `Version` | `string` | 所属版本号 |
 | `Type` | `string[]` | 类型标签（Bug, UI, Feature 等） |

@@ -100,19 +100,20 @@ public partial class SwitchPage : Page
     /// <summary>隐藏所有隐藏页签按钮。</summary>
     public void HideOverlayTabs()
     {
+        // 全程静默：只恢复视觉状态，导航由调用方决定，避免恢复选中时反向触发 TabSelected。
         _suppressEvents = true;
         foreach (var btn in _overlayButtons.Values)
         {
             btn.IsChecked = false;
             btn.Visibility = Visibility.Collapsed;
         }
-        _suppressEvents = false;
 
         // 恢复选中上一个普通页签
         if (_lastCheckedIndex >= 0 && _lastCheckedIndex < _tabButtons.Count)
         {
             _tabButtons[_lastCheckedIndex].IsChecked = true;
         }
+        _suppressEvents = false;
     }
 
     /// <summary>更新指定页签按钮的显示文字（语言切换时由 MainWindow 调用）。</summary>
@@ -137,6 +138,19 @@ public partial class SwitchPage : Page
         _tabButtons[index].IsChecked = true;
         _suppressEvents = false;
         _lastCheckedIndex = index;
+    }
+
+    /// <summary>按 key 程序化选中某个普通页签（不触发事件）。目标不是普通页签时不做任何事。</summary>
+    public void SelectTab(string key)
+    {
+        for (var i = 0; i < _tabButtons.Count; i++)
+        {
+            if (_tabButtons[i].Tag as string == key)
+            {
+                SelectTab(i);
+                return;
+            }
+        }
     }
 
     // ==================== 事件 ====================

@@ -4,7 +4,7 @@ namespace OCCMissionGoals.Models;
 
 /// <summary>
 /// 严重程度等级的统一文字描述和颜色。
-/// 五等：致命(红)、严重(橙)、一般(黄)、补丁(蓝)、更新(绿)
+/// 五等：致命(红)、严重(橙)、一般(黄)、补丁(绿)、更新(蓝)
 /// </summary>
 public static class SeverityHelper
 {
@@ -23,10 +23,24 @@ public static class SeverityHelper
         GoalSeverity.Fatal   => Color.FromRgb(0xE8, 0x3D, 0x3D), // 红
         GoalSeverity.Severe  => Color.FromRgb(0xE8, 0x8D, 0x3D), // 橙
         GoalSeverity.General => Color.FromRgb(0xE8, 0xD4, 0x3D), // 黄
-        GoalSeverity.Patch   => Color.FromRgb(0x3D, 0x9D, 0xE8), // 蓝
-        GoalSeverity.Update  => Color.FromRgb(0x4C, 0xAF, 0x50), // 绿
+        GoalSeverity.Patch   => Color.FromRgb(0x4C, 0xAF, 0x50), // 绿
+        GoalSeverity.Update  => Color.FromRgb(0x3D, 0x9D, 0xE8), // 蓝
         _                    => Color.FromRgb(0x8D, 0x8D, 0x8D)  // 灰
     };
 
     public static Brush GetBrush(GoalSeverity s) => new SolidColorBrush(GetColor(s));
+
+    /// <summary>
+    /// 修复一个问题折算的贡献权重：问题越严重，修好后的权重越高。
+    /// 更新 0.1 / 补丁 0.2 / 一般 0.3 / 严重 0.4 / 致命 0.5。
+    /// </summary>
+    public static double GetRepairWeight(GoalSeverity s) => s switch
+    {
+        GoalSeverity.Update  => 0.1,
+        GoalSeverity.Patch   => 0.2,
+        GoalSeverity.General => 0.3,
+        GoalSeverity.Severe  => 0.4,
+        GoalSeverity.Fatal   => 0.5,
+        _                    => 0.0
+    };
 }

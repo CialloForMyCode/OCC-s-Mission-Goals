@@ -16,6 +16,10 @@ public class PluginInfo
     public string CategoryName { get; set; } = "";
     public int Downloads { get; set; }
     public bool IsInstalled { get; set; }
+    /// <summary>操作按钮文案（安装 / 卸载 / 启用 / 禁用），由各来源按自身语义填充。</summary>
+    public string ActionLabel { get; set; } = "";
+    /// <summary>已安装徽标文案（已安装 / 已启用）。</summary>
+    public string InstalledLabel { get; set; } = "";
     /// <summary>下载地址（语言包等远程资源的 raw URL）。</summary>
     public string DownloadUrl { get; set; } = "";
     /// <summary>本地文件名（例如 de.xaml），安装 / 卸载时使用。</summary>

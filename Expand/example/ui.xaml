@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        扩展资源文件：这里定义的键会写入 Application.Resources，覆盖主题里的同名键。
+        覆盖发生在主题之后（ThemeManager.ApplyTheme 末尾调用 ExpandService.ApplyOverrides），
+        所以扩展能盖过主题；切换主题后扩展会被重新套用，不会被冲掉。
+
+        可以覆盖两类键：
+          1. 主题色板画刷（见 Themes\*.xaml 与 Styles.xaml 的默认值），
+             例如 CardBackgroundBrush / CardBorderBrush / ForegroundBrush / BackgroundBrush；
+          2. Styles.xaml 里的外观键：UiCornerRadiusSmall / UiCornerRadiusMedium /
+             UiCornerRadiusLarge / UiCornerRadiusXLarge / UiBorderThickness。
+
+        下面的取值是「一眼能看出变化」的示范，正式扩展按需取值即可。
+    -->
+
+    <!-- 卡片背景改成暖色 -->
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFF3E0"/>
+
+    <!-- 圆角整体变大 -->
+    <CornerRadius x:Key="UiCornerRadiusSmall">10</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusMedium">14</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusLarge">18</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusXLarge">24</CornerRadius>
+
+    <!-- 边框变粗 -->
+    <Thickness x:Key="UiBorderThickness">2</Thickness>
+
+</ResourceDictionary>

@@ -54,7 +54,7 @@
                         <Border x:Name="ItemBorder"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                CornerRadius="4"
+                                CornerRadius="{DynamicResource UiCornerRadiusSmall}"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Stretch"
@@ -78,8 +78,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Border CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}"
-            BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1">
+    <Border CornerRadius="{DynamicResource UiCornerRadiusLarge}" Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}">
         <Grid Margin="24,20,24,16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

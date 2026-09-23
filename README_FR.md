@@ -265,9 +265,11 @@ Champs d'entrée :
 | `Severity` | `string` | Fatal / Severe / General / Patch / Update |
 | `Brief` | `string` | Description courte |
 | `Detail` | `string` | Description détaillée |
-| `Deadline` | `[année,mois,jour]` | Date d'échéance |
-| `CompletedAt` | `[année,mois,jour]` | Date de complétion |
-| `ChangeDemand` | `int` | Compteur de demandes de changement |
+| `Deadline` | `string` (ISO 8601) | Échéance (avec l'heure) |
+| `CompletedAt` | `string` (ISO 8601) | Heure de complétion ; vide tant que non terminé |
+| `CreatedAt` | `string` (ISO 8601) | Heure de création |
+| `UpdatedAt` | `string` (ISO 8601) | Heure de dernière modification |
+| `Status` | `string` | Statut : `Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | Drapeau favori |
 | `Version` | `string` | Chaîne de version |
 | `Type` | `string[]` | Étiquettes de type (Bug, UI, Feature, etc.) |

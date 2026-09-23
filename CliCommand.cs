@@ -271,7 +271,8 @@ public static class CliCommand
                 createdAt = cfg.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
                 path = dir,
                 versions = files.Select(StripJson),
-                tags = cfg.TypeOptions
+                tags = cfg.TypeOptions,
+                statsVersions = cfg.StatsVersions
             });
         }
         else
@@ -284,6 +285,7 @@ public static class CliCommand
             Console.WriteLine($"路径: {dir}");
             Console.WriteLine($"版本: {(files.Count > 0 ? string.Join(", ", files.Select(StripJson)) : "（无）")}");
             Console.WriteLine($"标签: {(cfg.TypeOptions.Count > 0 ? string.Join(", ", cfg.TypeOptions) : "（无）")}");
+            Console.WriteLine($"计入统计的版本: {(cfg.StatsVersions.Count > 0 ? string.Join(", ", cfg.StatsVersions) : "（全部）")}");
         }
         return 0;
     }
@@ -378,10 +380,11 @@ public static class CliCommand
         try
         {
             var data = JsonSerializer.Deserialize<DataFile>(File.ReadAllText(src), _jsonInsensitive);
-            if (data == null || (data.Unfinished.Count == 0 && data.Finished.Count == 0))
+            if (data == null || data.Entries.Count == 0)
             { Err($"版本 {clean} 中无条目，无法归档。"); return 1; }
-            if (data.Unfinished.Count > 0)
-            { Err($"版本 {clean} 中仍有 {data.Unfinished.Count} 条未完成条目，无法归档。"); return 1; }
+            var unfinished = data.Entries.Count(e => e.Status == EntryStatus.Unfinished);
+            if (unfinished > 0)
+            { Err($"版本 {clean} 中仍有 {unfinished} 条未完成条目，无法归档。"); return 1; }
         }
         catch (Exception ex) { Err($"读取版本文件失败: {ex.Message}"); return 1; }
 
@@ -419,12 +422,11 @@ public static class CliCommand
         {
             items = items.Where(x =>
                 x.e.Title.Contains(search, StringComparison.OrdinalIgnoreCase)
-                || x.e.Brief.Contains(search, StringComparison.OrdinalIgnoreCase)
-                || x.e.Detail.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                || x.e.Brief.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         if (_jsonOut)
-            OutJson(items.Select((x, i) => { var d = EntryToDict(x.e, i + 1); d["status"] = x.status; return d; }));
+            OutJson(items.Select((x, i) => EntryToDict(x.e, i + 1)));
         else
             PrintEntryTable(items);
         return 0;
@@ -441,17 +443,16 @@ public static class CliCommand
 
         var found = FindEntry(refStr, ver, scope);
         if (found == null) return 1;
-        var (e, _, f, list) = found.Value;
+        var (e, _, f, _) = found.Value;
 
         if (_jsonOut)
         {
             var d = EntryToDict(e, 0);
-            d["status"] = list == "f" ? "finished" : "unfinished";
             d["versionFile"] = SysPath.GetFileNameWithoutExtension(f);
             OutJson(d);
         }
         else
-            PrintEntryDetail(e, list, SysPath.GetFileNameWithoutExtension(f));
+            PrintEntryDetail(e, SysPath.GetFileNameWithoutExtension(f));
         return 0;
     }
 
@@ -484,11 +485,6 @@ public static class CliCommand
             if (!string.IsNullOrWhiteSpace(sevStr) && !Enum.TryParse<GoalSeverity>(sevStr, true, out sev))
             { Err($"无效的严重程度: {sevStr}（可选 Fatal/Severe/General/Patch/Update）"); return 2; }
             var brief = s.Val("--brief") ?? "";
-            var detail = s.Val("--detail") ?? "";
-            var dlStr = s.Val("--deadline") ?? "";
-            var deadline = DateTime.Today.AddDays(7);
-            if (!string.IsNullOrWhiteSpace(dlStr) && !DateTime.TryParse(dlStr, out deadline))
-            { Err($"无效的截止日期: {dlStr}"); return 2; }
             var typeStr = s.Val("--type") ?? s.Val("--tag") ?? "";
             var tags = typeStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
             var fav = s.Has("--favorite") || s.Has("--fav");
@@ -497,17 +493,14 @@ public static class CliCommand
                 Title = title,
                 Severity = sev,
                 Brief = brief,
-                Detail = detail,
-                Deadline = deadline,
                 CompletedAt = default,
                 Type = tags,
                 IsFavorited = fav
             };
         }
 
-        entry.Version = version;
         AddEntryToFile(file, entry);
-        Emit(new { ok = true, id = entry.Id, title = entry.Title, version = entry.Version },
+        Emit(new { ok = true, id = entry.Id, title = entry.Title, version },
              $"已添加 #{entry.Id}「{entry.Title}」");
         return 0;
     }
@@ -517,7 +510,7 @@ public static class CliCommand
         if (!EnsureProject()) return 1;
         var s = ParseArgs(args);
         var refStr = s.Positionals.FirstOrDefault();
-        if (refStr == null) { Err("用法: entry edit <编号|索引|标题> [--title ...] [--severity ...] [--brief ...] [--detail ...] [--deadline ...] [--type ...] [--favorite|--unfavorite]"); return 2; }
+        if (refStr == null) { Err("用法: entry edit <编号|索引|标题> [--title ...] [--severity ...] [--brief ...] [--type ...] [--favorite|--unfavorite]"); return 2; }
         var ver = s.Val("--version") ?? scopedVersion;
 
         using (FileLock.Acquire())
@@ -535,17 +528,11 @@ public static class CliCommand
                 e.Severity = sev;
             }
             var brief = s.Val("--brief"); if (brief != null) e.Brief = brief;
-            var detail = s.Val("--detail"); if (detail != null) e.Detail = detail;
-            var dlStr = s.Val("--deadline");
-            if (!string.IsNullOrWhiteSpace(dlStr))
-            {
-                if (!DateTime.TryParse(dlStr, out var dl)) { Err($"无效的截止日期: {dlStr}"); return 2; }
-                e.Deadline = dl;
-            }
             var typeStr = s.Val("--type");
             if (typeStr != null) e.Type = typeStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
             if (s.Has("--favorite") || s.Has("--fav")) e.IsFavorited = true;
             if (s.Has("--unfavorite") || s.Has("--unfav")) e.IsFavorited = false;
+            e.UpdatedAt = DateTime.Now;
 
             WriteDataFile(f, d);
             Emit(new { ok = true, id = e.Id, title = e.Title }, $"已更新 #{e.Id}「{e.Title}」");
@@ -565,11 +552,11 @@ public static class CliCommand
         {
             var found = FindEntry(refStr, ver, "u");
             if (found == null) return 1;
-            var (e, d, f, list) = found.Value;
-            if (list == "f") { Err("条目已完成。"); return 1; }
-            d.Unfinished.Remove(e);
+            var (e, d, f, _) = found.Value;
+            if (e.Status == EntryStatus.Finished) { Err("条目已完成。"); return 1; }
+            e.Status = EntryStatus.Finished;
             e.CompletedAt = DateTime.Now;
-            d.Finished.Add(e);
+            e.UpdatedAt = DateTime.Now;
             WriteDataFile(f, d);
             Emit(new { ok = true, id = e.Id, title = e.Title, status = "finished" }, $"已完成 #{e.Id}「{e.Title}」");
             return 0;
@@ -588,11 +575,11 @@ public static class CliCommand
         {
             var found = FindEntry(refStr, ver, "f");
             if (found == null) return 1;
-            var (e, d, f, list) = found.Value;
-            if (list == "u") { Err("条目未完成。"); return 1; }
-            d.Finished.Remove(e);
+            var (e, d, f, _) = found.Value;
+            if (e.Status == EntryStatus.Unfinished) { Err("条目未完成。"); return 1; }
+            e.Status = EntryStatus.Unfinished;
             e.CompletedAt = default;
-            d.Unfinished.Insert(0, e);
+            e.UpdatedAt = DateTime.Now;
             WriteDataFile(f, d);
             Emit(new { ok = true, id = e.Id, title = e.Title, status = "unfinished" }, $"已取消完成 #{e.Id}「{e.Title}」");
             return 0;
@@ -611,9 +598,8 @@ public static class CliCommand
         {
             var found = FindEntry(refStr, ver, "a");
             if (found == null) return 1;
-            var (e, d, f, list) = found.Value;
-            if (list == "f") d.Finished.Remove(e);
-            else d.Unfinished.Remove(e);
+            var (e, d, f, _) = found.Value;
+            d.Entries.Remove(e);
             WriteDataFile(f, d);
             Emit(new { ok = true, id = e.Id, title = e.Title, deleted = true }, $"已删除 #{e.Id}「{e.Title}」");
             return 0;
@@ -635,6 +621,7 @@ public static class CliCommand
             if (found == null) return 1;
             var (e, d, f, _) = found.Value;
             e.IsFavorited = fav;
+            e.UpdatedAt = DateTime.Now;
             WriteDataFile(f, d);
             Emit(new { ok = true, id = e.Id, title = e.Title, isFavorited = e.IsFavorited },
                  $"{(fav ? "★ 已收藏" : "☆ 已取消收藏")} #{e.Id}「{e.Title}」");
@@ -875,8 +862,8 @@ public static class CliCommand
     static string SevMark(GoalSeverity s) => s switch
     {
         GoalSeverity.Fatal => "🔴", GoalSeverity.Severe => "🟠",
-        GoalSeverity.General => "🟡", GoalSeverity.Patch => "🔵",
-        GoalSeverity.Update => "🟢", _ => "⚪"
+        GoalSeverity.General => "🟡", GoalSeverity.Patch => "🟢",
+        GoalSeverity.Update => "🔵", _ => "⚪"
     };
 
     static bool EnsureProject(string? name = null)
@@ -941,7 +928,10 @@ public static class CliCommand
         {
             ProjectService.AssignEntryIdCore(entry);
             var data = ReadDataFile(file);
-            data.Unfinished.Add(entry);
+            entry.CreatedAt = entry.UpdatedAt = DateTime.Now;
+            if (entry.Status == EntryStatus.Finished && entry.CompletedAt == default)
+                entry.CompletedAt = DateTime.Now;
+            data.Entries.Add(entry);
             WriteDataFile(file, data);
         }
     }
@@ -984,6 +974,9 @@ public static class CliCommand
         return Directory.GetFiles(dir, "*.json").OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
+    /// <summary>条目状态字符串（CLI 输出与过滤用）：unfinished / finished。</summary>
+    static string StatusText(GoalEntry e) => e.Status == EntryStatus.Finished ? "finished" : "unfinished";
+
     static List<(GoalEntry e, string status, string version)> ReadSingleVersionList(string? version)
     {
         var list = new List<(GoalEntry e, string status, string version)>();
@@ -991,8 +984,8 @@ public static class CliCommand
         if (file == null) return list;
         var data = ReadDataFile(file);
         var ver = SysPath.GetFileNameWithoutExtension(file);
-        list.AddRange(data.Unfinished.Select(e => (e, "unfinished", ver)));
-        list.AddRange(data.Finished.Select(e => (e, "finished", ver)));
+        // 按 Entries 创建顺序输出；状态由 Status 决定，不再按状态分组重排
+        list.AddRange(data.Entries.Select(e => (e, StatusText(e), ver)));
         return list;
     }
 
@@ -1005,48 +998,44 @@ public static class CliCommand
         {
             var d = ReadDataFile(f);
             var ver = SysPath.GetFileNameWithoutExtension(f);
-            list.AddRange(d.Unfinished.Select(e => (e, "unfinished", ver)));
-            list.AddRange(d.Finished.Select(e => (e, "finished", ver)));
+            list.AddRange(d.Entries.Select(e => (e, StatusText(e), ver)));
         }
         return list;
     }
 
     /// <summary>
-    /// 查找条目：先按编号，再按 1-based 索引（scope: u=未完成/f=已完成/a=未完成+已完成），最后按标题精确匹配。
-    /// 返回条目及其所在文件、所在列表。
+    /// 查找条目：先按编号（Id，条目唯一标识），再按 1-based 索引（scope: u=未完成/f=已完成/a=未完成+已完成），
+    /// 最后按标题精确匹配（仅作兜底，标题允许重复）。
+    /// 返回条目及其所在文件、完成状态。
     /// </summary>
     static (GoalEntry e, DataFile d, string f, string list)? FindEntry(string refStr, string? versionSwitch, string scope)
     {
         var files = GetCandidateVersionFiles(versionSwitch);
         if (files.Count == 0) { Err("当前项目没有可用的版本文件。"); return null; }
 
+        static string StatusOf(GoalEntry x) => x.Status == EntryStatus.Finished ? "f" : "u";
+
         // 1) 按编号
         foreach (var f in files)
         {
             var d = ReadDataFile(f);
-            var e = d.Unfinished.FirstOrDefault(x => x.Id == refStr)
-                 ?? d.Finished.FirstOrDefault(x => x.Id == refStr);
-            if (e != null) return (e, d, f, d.Finished.Contains(e) ? "f" : "u");
+            var e = d.Entries.FirstOrDefault(x => x.Id == refStr);
+            if (e != null) return (e, d, f, StatusOf(e));
         }
 
-        // 2) 按 1-based 索引
+        // 2) 按 1-based 索引（按 Entries 创建顺序编号；scope 决定哪些状态计入）
         if (int.TryParse(refStr, out var idx) && idx > 0)
         {
             int seen = 0;
             foreach (var f in files)
             {
                 var d = ReadDataFile(f);
-                if (scope is "u" or "a")
+                foreach (var e in d.Entries)
                 {
-                    if (idx - seen <= d.Unfinished.Count)
-                        return (d.Unfinished[idx - seen - 1], d, f, "u");
-                    seen += d.Unfinished.Count;
-                }
-                if (scope is "f" or "a")
-                {
-                    if (idx - seen <= d.Finished.Count)
-                        return (d.Finished[idx - seen - 1], d, f, "f");
-                    seen += d.Finished.Count;
+                    var st = StatusOf(e);
+                    if (scope == "u" && st != "u") continue;
+                    if (scope == "f" && st != "f") continue;
+                    if (++seen == idx) return (e, d, f, st);
                 }
             }
             Err($"索引 {idx} 超出范围（共 {seen} 条）。");
@@ -1057,9 +1046,8 @@ public static class CliCommand
         foreach (var f in files)
         {
             var d = ReadDataFile(f);
-            var e = d.Unfinished.FirstOrDefault(x => string.Equals(x.Title, refStr, StringComparison.OrdinalIgnoreCase))
-                 ?? d.Finished.FirstOrDefault(x => string.Equals(x.Title, refStr, StringComparison.OrdinalIgnoreCase));
-            if (e != null) return (e, d, f, d.Finished.Contains(e) ? "f" : "u");
+            var e = d.Entries.FirstOrDefault(x => string.Equals(x.Title, refStr, StringComparison.OrdinalIgnoreCase));
+            if (e != null) return (e, d, f, StatusOf(e));
         }
 
         Err($"未找到条目「{refStr}」（可用编号 / 索引 / 标题查找）。");
@@ -1075,25 +1063,23 @@ public static class CliCommand
             var st = status == "finished" ? "已完成" : "未完成";
             var fav = e.IsFavorited ? " ♥" : "";
             var tags = e.Type.Count > 0 ? "  [" + string.Join(",", e.Type) + "]" : "";
-            var dl = e.Deadline.Year < 2 ? "" : "  截止:" + e.Deadline.ToString("yyyy-MM-dd");
-            Console.WriteLine($"{i + 1,3}) [{e.Id}] {SevMark(e.Severity)}{Sev(e.Severity)}  {st}  {e.Title}{fav}{tags}  (v{ver}{dl})");
+            Console.WriteLine($"{i + 1,3}) [{e.Id}] {SevMark(e.Severity)}{Sev(e.Severity)}  {st}  {e.Title}{fav}{tags}  (v{ver})");
         }
     }
 
-    static void PrintEntryDetail(GoalEntry e, string list, string versionFile)
+    static void PrintEntryDetail(GoalEntry e, string versionFile)
     {
         Console.WriteLine($"编号: {e.Id}");
         Console.WriteLine($"标题: {e.Title}");
         Console.WriteLine($"严重程度: {Sev(e.Severity)}");
-        Console.WriteLine($"状态: {(list == "f" ? "已完成" : "未完成")}");
-        Console.WriteLine($"版本: {e.Version}（文件 {versionFile}.json）");
+        Console.WriteLine($"状态: {(e.Status == EntryStatus.Finished ? "已完成" : "未完成")}");
+        Console.WriteLine($"版本文件: {versionFile}.json");
         Console.WriteLine($"收藏: {(e.IsFavorited ? "是" : "否")}");
-        Console.WriteLine($"截止: {(e.Deadline.Year < 2 ? "—" : e.Deadline.ToString("yyyy-MM-dd"))}");
-        Console.WriteLine($"完成时间: {(e.CompletedAt.Year < 2 ? "—" : e.CompletedAt.ToString("yyyy-MM-dd"))}");
-        Console.WriteLine($"需求变更: {e.ChangeDemand}");
+        Console.WriteLine($"完成时间: {(e.CompletedAt.Year < 2 ? "—" : e.CompletedAt.ToString("yyyy-MM-dd HH:mm"))}");
+        Console.WriteLine($"创建时间: {e.CreatedAt:yyyy-MM-dd HH:mm}");
+        Console.WriteLine($"更新时间: {e.UpdatedAt:yyyy-MM-dd HH:mm}");
         if (e.Type.Count > 0) Console.WriteLine($"标签: {string.Join(", ", e.Type)}");
         if (!string.IsNullOrWhiteSpace(e.Brief)) Console.WriteLine($"简介: {e.Brief}");
-        if (!string.IsNullOrWhiteSpace(e.Detail)) Console.WriteLine($"详情: {e.Detail}");
         if (e.RelatedFiles.Count > 0)
         {
             Console.WriteLine("关联文件:");
@@ -1109,13 +1095,12 @@ public static class CliCommand
         ["title"] = e.Title,
         ["severity"] = e.Severity.ToString(),
         ["severityLabel"] = Sev(e.Severity),
+        ["status"] = e.Status == EntryStatus.Finished ? "finished" : "unfinished",
         ["brief"] = e.Brief,
-        ["detail"] = e.Detail.Length > 200 ? e.Detail[..200] + "..." : e.Detail,
-        ["deadline"] = e.Deadline.Year < 2 ? "" : e.Deadline.ToString("yyyy-MM-dd"),
-        ["completedAt"] = e.CompletedAt.Year < 2 ? "" : e.CompletedAt.ToString("yyyy-MM-dd"),
-        ["changeDemand"] = e.ChangeDemand,
+        ["completedAt"] = e.CompletedAt.Year < 2 ? "" : e.CompletedAt.ToString("yyyy-MM-dd HH:mm"),
+        ["createdAt"] = e.CreatedAt.ToString("yyyy-MM-dd HH:mm"),
+        ["updatedAt"] = e.UpdatedAt.ToString("yyyy-MM-dd HH:mm"),
         ["isFavorited"] = e.IsFavorited,
-        ["version"] = e.Version,
         ["type"] = e.Type,
         ["relatedFiles"] = e.RelatedFiles.Select(f => new { path = f.Path, line = f.Line, column = f.Column, function = f.Function }).ToList()
     };

@@ -26,8 +26,8 @@
                            TextTrimming="CharacterEllipsis"/>
                 <Border Grid.Column="1" Margin="8,0"
                         Background="{DynamicResource SearchBackgroundBrush}"
-                        CornerRadius="4" Height="18">
-                    <Border CornerRadius="4" HorizontalAlignment="Left"
+                        CornerRadius="{DynamicResource UiCornerRadiusSmall}" Height="18">
+                    <Border CornerRadius="{DynamicResource UiCornerRadiusSmall}" HorizontalAlignment="Left"
                             Background="{Binding ColorBrush}">
                         <Border.Style>
                             <Style TargetType="Border">
@@ -67,7 +67,7 @@
                         <Border x:Name="Outer"
                                 Background="Transparent"
                                 BorderBrush="Transparent"
-                                BorderThickness="1"
+                                BorderThickness="{DynamicResource UiBorderThickness}"
                                 CornerRadius="13"
                                 Padding="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -93,9 +93,9 @@
         </Grid.RowDefinitions>
 
         <!-- 标题 -->
-        <Border CornerRadius="8"
+        <Border CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                 Background="{DynamicResource CardBackgroundBrush}"
-                BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                 Padding="24,16" Margin="0,0,0,8">
             <TextBlock Text="{loc:Loc &quot;设置&quot;}"
                        FontSize="20" FontWeight="Bold"
@@ -111,9 +111,9 @@
 
             <!-- ====== 侧边导航 ====== -->
             <Border Grid.Column="0"
-                    CornerRadius="8"
+                    CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                     Background="{DynamicResource CardBackgroundBrush}"
-                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                     Padding="10,12"
                     VerticalAlignment="Top"
                     Margin="0,0,8,0">
@@ -170,9 +170,9 @@
 
                 <!-- ==================== 外观主题 ==================== -->
                 <Border x:Name="Section_Appearance"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;外观主题&quot;}"
@@ -259,9 +259,9 @@
 
                 <!-- ==================== 项目信息 ==================== -->
                 <Border x:Name="Section_Project"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;项目信息&quot;}"
@@ -324,9 +324,9 @@
 
                 <!-- ==================== 标签管理 ==================== -->
                 <Border x:Name="Section_Tags"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;标签管理&quot;}"
@@ -373,9 +373,9 @@
 
                 <!-- ==================== 数据统计 ==================== -->
                 <Border x:Name="Section_Stats"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="24,20" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;数据统计&quot;}"
@@ -420,9 +420,9 @@
 
                 <!-- ==================== 系统 / 更新 ==================== -->
                 <Border x:Name="Section_System"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="24,20" Margin="0">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;系统 / 更新&quot;}"

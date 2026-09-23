@@ -12,8 +12,9 @@
 
     <Page.Resources>
         <local:ProgressWidthConverter x:Key="ProgressWidthConverter"/>
-        <local:TimeAgoConverter x:Key="TimeAgoConverter"/>
-        <svc:MarkdownInlineConverter x:Key="MarkdownInlineConverter" />
+        <svc:MarkdownInlineConverter x:Key="MarkdownInlineConverter"/>
+        <!-- 修复严重程度月表的格子基色：取「致命」红（与 SeverityHelper 里的致命色一致），深浅由当日修复权重决定 -->
+        <SolidColorBrush x:Key="SeverityHeatBrush" Color="#E83D3D"/>
     </Page.Resources>
 
     <Grid>
@@ -23,7 +24,7 @@
         <!-- ========== 总进度卡片 ========== -->
         <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
-            BorderThickness="1" CornerRadius="8"
+            BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
             Padding="24,20" Margin="0,0,0,6">
             <Grid>
                 <Grid.RowDefinitions>
@@ -118,350 +119,359 @@
             </Grid>
         </Border>
 
-        <!-- ========== 严重程度分布 ========== -->
-        <Border Background="{DynamicResource CardBackgroundBrush}"
-                BorderBrush="{DynamicResource CardBorderBrush}"
-                BorderThickness="1" CornerRadius="8"
-                Padding="24,20" Margin="0,0,0,6">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <!-- ========== 贡献分布：环形图 + GitHub 风格月表 ========== -->
+        <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{loc:Loc &quot;严重程度分布&quot;}"
-                       Foreground="{DynamicResource ForegroundBrush}"
-                       FontSize="16" FontWeight="SemiBold"
-                       Margin="0,0,0,14"/>
+            <!-- 严重程度分布（环形图） -->
+            <Border Grid.Column="0" MinWidth="428"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}"
+                    BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
+                    Padding="24,20">
+                <StackPanel>
+                    <TextBlock Text="{loc:Loc &quot;严重程度分布&quot;}"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           FontSize="16" FontWeight="SemiBold"
+                           Margin="0,0,0,14"/>
 
-                <ItemsControl Grid.Row="1" x:Name="SeverityBars">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="50"/>
-                                </Grid.ColumnDefinitions>
+                    <Grid HorizontalAlignment="Center">
+                        <!-- 环形图本体：所有扇环叠放在同一格；外部标签与引线由 code-behind 按扇区角度排布 -->
+                        <ItemsControl x:Name="SeverityPie"
+                                      Width="{Binding ChartWidth}" Height="{Binding ChartHeight}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas Width="{Binding DataContext.ChartWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            Height="{Binding DataContext.ChartHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                        <!-- 描边取主题的卡片背景色：相邻扇区之间留出背景色的缝，区块分明 -->
+                                        <Path Data="{Binding Geometry}"
+                                              Fill="{Binding Brush}"
+                                              Stroke="{DynamicResource CardBackgroundBrush}"
+                                              StrokeThickness="2"/>
 
-                                <!-- 标签 -->
-                                <TextBlock Grid.Column="0"
-                                       Text="{Binding Label}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="12" VerticalAlignment="Center"/>
+                                        <!-- 引线：扇区边缘 → 折点 → 标签列 -->
+                                        <Polyline Points="{Binding LeaderPoints}"
+                                                  Stroke="{DynamicResource ForegroundBrush}"
+                                                  StrokeThickness="1" Opacity="0.4"/>
 
-                                <!-- 柱体 -->
-                                <Border Grid.Column="1" Margin="8,0"
-                                    Background="{DynamicResource SearchBackgroundBrush}"
-                                    CornerRadius="4" Height="20">
-                                    <Border CornerRadius="4"
-                                        HorizontalAlignment="Left"
-                                        Background="{Binding ColorBrush}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Count}" Value="0">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Border.Width>
-                                            <MultiBinding Converter="{StaticResource ProgressWidthConverter}">
-                                                <Binding Path="Ratio" Mode="OneWay"/>
-                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Border}"/>
-                                            </MultiBinding>
-                                        </Border.Width>
-                                    </Border>
-                                </Border>
+                                        <TextBlock Text="{Binding LabelText}"
+                                                   Canvas.Left="{Binding LabelLeft}"
+                                                   Canvas.Top="{Binding LabelTop}"
+                                                   Width="{Binding LabelWidth}"
+                                                   TextAlignment="{Binding LabelAlignment}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{DynamicResource ForegroundBrush}"
+                                                   FontSize="12"
+                                                   ToolTip="{Binding TooltipText}"/>
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                                <!-- 数量 -->
-                                <TextBlock Grid.Column="2"
-                                       Text="{Binding Count}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="12" FontWeight="SemiBold"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </Border>
+                        <!-- 空态占位 -->
+                        <TextBlock Text="{loc:Loc &quot;没有动态&quot;}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="13" Opacity="0.4"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   TextWrapping="Wrap" TextAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding UnfinishedCount}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-        <!-- ========== 即将到期条目 ========== -->
-        <Border Background="{DynamicResource CardBackgroundBrush}"
-                BorderBrush="{DynamicResource CardBorderBrush}"
-                BorderThickness="1" CornerRadius="8"
-                Padding="24,20" Margin="0,0,0,6"
-                x:Name="DeadlineCard">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasUpcomingDeadlines}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- 贡献记录（GitHub 同款月表） -->
+            <Border Grid.Column="1" Margin="6,0,0,0"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}"
+                    BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
+                    Padding="24,20">
+                <StackPanel>
+                    <TextBlock Text="{loc:Loc &quot;贡献记录&quot;}"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           FontSize="16" FontWeight="SemiBold"
+                           Margin="0,0,0,14"/>
 
-                <TextBlock Grid.Row="0" Text="{loc:Loc &quot;即将到期&quot;}"
-                       Foreground="{DynamicResource ForegroundBrush}"
-                       FontSize="16" FontWeight="SemiBold"
-                       Margin="0,0,0,14"/>
+                    <!-- 月份刻度：与格子左边缘对齐（左侧留 30 给星期标签） -->
+                    <Grid Margin="30,0,0,4" Width="636" HorizontalAlignment="Left">
+                        <ItemsControl x:Name="MonthLabels">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"
+                                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                                               Margin="{Binding Margin}"
+                                               FontSize="10" Opacity="0.7"
+                                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
 
-                <ItemsControl Grid.Row="1" x:Name="DeadlineList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,6" Height="28">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                    <!-- 星期标签 + 每日格子 -->
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Width="30" Height="84">
+                            <ItemsControl x:Name="WeekdayLabels">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"
+                                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   Margin="{Binding Margin}"
+                                                   FontSize="10" Opacity="0.7"
+                                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
 
-                                <!-- 严重度色点 -->
-                                <Ellipse Grid.Column="0" Width="10" Height="10"
-                                     Fill="{Binding SeverityBrush}"
-                                     VerticalAlignment="Center"/>
+                        <!-- 53 周 × 7 天；ItemPanel 为 UniformGrid，按行填充，故索引 = 星期 * 53 + 周 -->
+                        <ItemsControl x:Name="ContributionGrid" Width="636" Height="84">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="7" Columns="53"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="10" Height="10"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          ToolTip="{Binding Tooltip}">
+                                        <!-- 空档底衬：深色主题下若只画低透明度主题色会黑成一片 -->
+                                        <Rectangle RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource ContributionEmptyBrush}"
+                                                   Opacity="{Binding EmptyOpacity}"/>
+                                        <Rectangle RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource PrimaryBrush}"
+                                                   Opacity="{Binding Opacity}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
 
-                                <!-- 标题 -->
-                                <ContentControl Grid.Column="1"
-                                       Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=trim}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="13" VerticalAlignment="Center"
-                                       Margin="10,0,0,0"
-                                       HorizontalContentAlignment="Stretch"/>
+                    <!-- 色阶图例：少 → 多 -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                        <TextBlock Text="{loc:Loc &quot;少&quot;}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="10" Opacity="0.7" VerticalAlignment="Center"
+                                   Margin="0,0,6,0"/>
 
-                                <!-- 剩余天数 -->
-                                <TextBlock Grid.Column="2"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="12" VerticalAlignment="Center">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="{Binding DaysLeftText}"/>
-                                            <Setter Property="Foreground" Value="#E8D43D"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsOverdue}" Value="True">
-                                                    <Setter Property="Foreground" Value="#E83D3D"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </Border>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource ContributionEmptyBrush}" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource PrimaryBrush}" Opacity="0.28" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource PrimaryBrush}" Opacity="0.48" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource PrimaryBrush}" Opacity="0.72" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource PrimaryBrush}" Opacity="1.00"/>
 
-        <!-- ========== 最近活动 ========== -->
-        <Border Background="{DynamicResource CardBackgroundBrush}"
-                BorderBrush="{DynamicResource CardBorderBrush}"
-                BorderThickness="1" CornerRadius="8"
-                Padding="24,20" Margin="0,0,0,6"
-                x:Name="ActivityCard">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasRecentActivity}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                        <TextBlock Text="{loc:Loc &quot;多&quot;}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="10" Opacity="0.7" VerticalAlignment="Center"
+                                   Margin="6,0,0,0"/>
+                    </StackPanel>
 
-                <TextBlock Grid.Row="0" Text="{loc:Loc &quot;最近活动&quot;}"
-                       Foreground="{DynamicResource ForegroundBrush}"
-                       FontSize="16" FontWeight="SemiBold"
-                       Margin="0,0,0,14"/>
+                    <!-- 月度修复严重程度表：外观与上方月表同款，格子深浅由当日修复问题的严重程度权重决定 -->
+                    <TextBlock Text="{loc:Loc &quot;月度修复严重程度&quot;}"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           FontSize="13" FontWeight="SemiBold"
+                           Margin="0,22,0,10"/>
 
-                <ItemsControl Grid.Row="1" x:Name="ActivityList"
-                              MaxHeight="300">
-                    <ItemsControl.Template>
-                        <ControlTemplate TargetType="ItemsControl">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Disabled">
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                    <!-- 月份刻度：与格子左边缘对齐（左侧留 30 给星期标签） -->
+                    <Grid Margin="30,0,0,4" Width="636" HorizontalAlignment="Left">
+                        <ItemsControl x:Name="SeverityMonthLabels">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"
+                                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                                               Margin="{Binding Margin}"
+                                               FontSize="10" Opacity="0.7"
+                                               Foreground="{DynamicResource ForegroundBrush}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
 
-                                <!-- 严重度色点 -->
-                                <Ellipse Grid.Column="0" Width="10" Height="10"
-                                     Fill="{Binding SeverityBrush}"
-                                     VerticalAlignment="Center"
-                                     Margin="0,0,8,0"/>
+                    <!-- 星期标签 + 每日格子 -->
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Width="30" Height="84">
+                            <ItemsControl x:Name="SeverityWeekdayLabels">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"
+                                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   Margin="{Binding Margin}"
+                                                   FontSize="10" Opacity="0.7"
+                                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
 
-                                <!-- 标题 + 类型 -->
-                                <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-                                    <Border CornerRadius="3" Padding="4,1"
-                                        Background="{Binding TypeBrush}"
-                                        VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding TypeLabel}"
-                                               Foreground="#FFFFFF"
-                                               FontSize="10"/>
-                                    </Border>
-                                    <ContentControl Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=trim}"
-                                           Foreground="{DynamicResource ForegroundBrush}"
-                                           FontSize="13" VerticalAlignment="Center"
-                                           Margin="8,0,0,0"
-                                           HorizontalContentAlignment="Stretch"/>
-                                </StackPanel>
+                        <!-- 53 周 × 7 天；ItemPanel 为 UniformGrid，按行填充，故索引 = 星期 * 53 + 周 -->
+                        <ItemsControl x:Name="SeverityGrid" Width="636" Height="84">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="7" Columns="53"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="10" Height="10"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          ToolTip="{Binding Tooltip}">
+                                        <!-- 空档底衬：深色主题下若只画低透明度基色会黑成一片 -->
+                                        <Rectangle RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource ContributionEmptyBrush}"
+                                                   Opacity="{Binding EmptyOpacity}"/>
+                                        <Rectangle RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource SeverityHeatBrush}"
+                                                   Opacity="{Binding Opacity}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
 
-                                <!-- 时间 -->
-                                <TextBlock Grid.Column="2"
-                                       Text="{Binding TimeAgo}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="11" Opacity="0.5"
-                                       VerticalAlignment="Center"
-                                       Margin="12,0,0,0"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </Border>
+                    <!-- 色阶图例：少 → 多 -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                        <TextBlock Text="{loc:Loc &quot;少&quot;}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="10" Opacity="0.7" VerticalAlignment="Center"
+                                   Margin="0,0,6,0"/>
 
-        <!-- ========== 月度贡献卡片 ========== -->
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource ContributionEmptyBrush}" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource SeverityHeatBrush}" Opacity="0.28" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource SeverityHeatBrush}" Opacity="0.48" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource SeverityHeatBrush}" Opacity="0.72" Margin="0,0,3,0"/>
+                        <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2"
+                                   Fill="{DynamicResource SeverityHeatBrush}" Opacity="1.00"/>
+
+                        <TextBlock Text="{loc:Loc &quot;多&quot;}"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   FontSize="10" Opacity="0.7" VerticalAlignment="Center"
+                                   Margin="6,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ========== 已完成条目：严重程度 + 标题 + 相对完成时间，整行点击跳转 ========== -->
         <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
-            BorderThickness="1" CornerRadius="8"
-            Padding="24,20" Margin="0,0,0,6">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="{loc:Loc &quot;贡献记录&quot;}"
-                       Foreground="{DynamicResource ForegroundBrush}"
-                       FontSize="16" FontWeight="SemiBold"
-                       Margin="0,0,0,16"/>
-
-                <!-- 刻度线 -->
-                <Grid Margin="0,0,0,6">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="40"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="1" Margin="8,0">
-                        <!-- 刻度值 -->
-                        <TextBlock Text="{Binding TickLabels[2]}"
-                               Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="10" Opacity="0.7"
-                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBlock Text="{Binding TickLabels[4]}"
-                               Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="10" Opacity="0.7"
-                               HorizontalAlignment="Right" Margin="4,8,0,0"/>
-                    </Grid>
+            BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
+            Padding="24,20" Margin="0,0,0,0">
+            <StackPanel>
+                <Grid Margin="0,0,0,12">
+                    <TextBlock Text="{loc:Loc &quot;已完成条目&quot;}"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding FinishedCountText, Mode=OneWay}"
+                           Foreground="{DynamicResource ForegroundBrush}"
+                           FontSize="12" Opacity="0.5"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 </Grid>
 
-                <ItemsControl Grid.Row="1" x:Name="MonthlyBars">
-                    <ItemsControl.Style>
-                        <Style TargetType="ItemsControl">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding CompletedCount}" Value="0">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ItemsControl.Style>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="40"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- 日期标签 -->
-                                <TextBlock Grid.Column="0"
-                                       Text="{Binding Label}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="12" Opacity="0.7"
-                                       VerticalAlignment="Center"/>
-
-                                <!-- 柱体区域 -->
-                                <Border Grid.Column="1" Margin="8,0"
-                                    Background="{DynamicResource SearchBackgroundBrush}"
-                                    CornerRadius="4" Height="22">
-                                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
-                                        HorizontalAlignment="Left">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Count}" Value="0">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Border.Width>
-                                            <MultiBinding Converter="{StaticResource ProgressWidthConverter}">
-                                                <Binding Path="Ratio" Mode="OneWay"/>
-                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Border}"/>
-                                            </MultiBinding>
-                                        </Border.Width>
-                                    </Border>
-                                </Border>
-
-                                <!-- 数量标签 -->
-                                <TextBlock Grid.Column="2"
-                                       Text="{Binding Count}"
-                                       Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="12" FontWeight="SemiBold"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <TextBlock Grid.Row="1" Text="{loc:Loc &quot;没有动态&quot;}"
-                           Foreground="{DynamicResource ForegroundBrush}"
-                           FontSize="16" Opacity="0.4"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="0,40,0,40">
+                <!-- 空态 -->
+                <TextBlock Text="{loc:Loc &quot;没有已完成条目&quot;}"
+                       Foreground="{DynamicResource ForegroundBrush}"
+                       FontSize="13" Opacity="0.4" Margin="0,4,0,0">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding CompletedCount}" Value="0">
+                                <DataTrigger Binding="{Binding FinishedEntryCount}" Value="0">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-            </Grid>
+
+                <!-- 固定高度 + 内部滚动：条目再多也不会把日志页撑得很长 -->
+                <ScrollViewer MaxHeight="300"
+                              VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
+                              PreviewMouseWheel="FinishedList_PreviewMouseWheel">
+                    <ItemsControl ItemsSource="{Binding FinishedEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource SearchBoardItem}"
+                                    Click="FinishedEntry_Click" Tag="{Binding Entry}"
+                                    Padding="10,6" Margin="0,0,0,2"
+                                    ToolTip="{loc:Loc &quot;点击跳转到该条目&quot;}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0"
+                                            CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="8,3"
+                                            VerticalAlignment="Center"
+                                            Background="{Binding SeverityBrush}">
+                                            <TextBlock Text="{Binding SeverityText}"
+                                                   Foreground="White" FontSize="12"
+                                                   VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <ContentControl Grid.Column="1" Margin="10,0,8,0"
+                                                    Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}}"
+                                                    Foreground="{DynamicResource ForegroundBrush}"
+                                                    FontSize="14" VerticalAlignment="Center"/>
+
+                                        <TextBlock Grid.Column="2" Text="{Binding TimeAgo}"
+                                               Foreground="{DynamicResource ForegroundBrush}"
+                                               FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
         </Border>
 
             </StackPanel>

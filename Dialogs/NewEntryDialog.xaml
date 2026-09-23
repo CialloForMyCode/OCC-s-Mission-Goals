@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
              xmlns:loc="clr-namespace:OCCMissionGoals"
+             xmlns:dialogs="clr-namespace:OCCMissionGoals.Dialogs"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
@@ -21,8 +22,8 @@
                         <Border x:Name="Outer"
                                 Background="Transparent"
                                 BorderBrush="Transparent"
-                                BorderThickness="1"
-                                CornerRadius="4"
+                                BorderThickness="{DynamicResource UiBorderThickness}"
+                                CornerRadius="{DynamicResource UiCornerRadiusSmall}"
                                 Padding="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -43,7 +44,7 @@
 
     <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
-            BorderThickness="1" CornerRadius="8">
+            BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}">
 
         <Grid Margin="24,20,24,16">
             <Grid.RowDefinitions>
@@ -83,7 +84,7 @@
                         <ComboBoxItem Content="{loc:Loc &quot;🔴 一般&quot;}" Tag="2"
                                       Foreground="#F9A825"
                                       Style="{StaticResource DialogComboBoxItem}"/>
-                        <ComboBoxItem Content="{loc:Loc &quot;🔴 补丁&quot;}" Tag="3"
+                        <ComboBoxItem Content="{loc:Loc &quot;🟢 补丁&quot;}" Tag="3"
                                       Foreground="#2E7D32"
                                       Style="{StaticResource DialogComboBoxItem}"/>
                         <ComboBoxItem Content="{loc:Loc &quot;🔵 更新&quot;}" Tag="4"
@@ -146,8 +147,8 @@
                             <DataTemplate>
                                 <Border x:Name="TagBg" Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="4"
+                                        BorderThickness="{DynamicResource UiBorderThickness}"
+                                        CornerRadius="{DynamicResource UiCornerRadiusSmall}"
                                         Padding="8,4" Margin="0,0,6,6">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -202,7 +203,7 @@
                     <TextBlock Text="{loc:Loc &quot;简介&quot;}" Style="{StaticResource DialogLabel}"/>
                     <TextBox x:Name="BriefTextBox"
                              Style="{StaticResource DialogTextBox}"
-                             MaxLength="500"
+                             MaxLength="110"
                              Height="60"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
@@ -210,136 +211,42 @@
                              VerticalContentAlignment="Top"
                              Margin="0,0,0,14"/>
 
-                    <!-- 详细信息 -->
-                    <TextBlock Text="{loc:Loc &quot;详细信息&quot;}" Style="{StaticResource DialogLabel}"
-                               ToolTip="{loc:Loc &quot;详情 —— 可选，Markdown 格式的完整描述文本&quot;}"/>
-                    <TextBox x:Name="DetailTextBox"
-                             Style="{StaticResource DialogTextBox}"
-                             MaxLength="2000"
-                             Height="80"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Hidden"
-                             VerticalContentAlignment="Top"
-                             Margin="0,0,0,14"/>
+                    <!-- 内容区：区块化编辑（拖拽排序 / 增删 / 多级列表 / 子任务） -->
+                    <TextBlock Text="{loc:Loc &quot;内容区&quot;}"
+                               Style="{StaticResource DialogLabel}"/>
+                    <TextBlock Text="{loc:Loc &quot;区块：文本（# 标题、粗体、斜体、删除线、编号列表与列表）、表格、分割线、代码块、文件引用、多级列表、子任务。拖拽左侧手柄排序，＋ 添加子块。&quot;}"
+                               FontSize="10" Opacity="0.5"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,6"
+                               Foreground="{DynamicResource ForegroundBrush}"/>
+                    <dialogs:BlockEditor x:Name="ContentEditor" Margin="0,0,0,16"/>
 
-                    <!-- 截止日期 -->
-                    <TextBlock Text="{loc:Loc &quot;截止日期&quot;}" Style="{StaticResource DialogLabel}"/>
-                    <DatePicker x:Name="DeadlinePicker"
-                                Style="{StaticResource DialogDatePicker}"
-                                Margin="0,0,0,14"/>
-
-                    <!-- 版本 -->
-                    <TextBlock Text="{loc:Loc &quot;版本&quot;}" Style="{StaticResource DialogLabel}"/>
-                    <ComboBox x:Name="VersionComboBox"
-                              Style="{StaticResource DialogComboBox}"
-                              Margin="0,0,0,14"
-                              ToolTip="{loc:Loc &quot;条目所属版本号&quot;}"/>
-
-                    <!-- 相关文件 -->
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{loc:Loc &quot;相关文件&quot;}"
-                                   Style="{StaticResource DialogLabel}"
-                                   VerticalAlignment="Center"/>
-                        <Button Grid.Column="1"
-                                Content="{loc:Loc &quot;＋ 添加文件&quot;}"
-                                Click="AddFile_Click"
-                                Style="{StaticResource DialogConfirmButton}"
-                                Height="28" MinWidth="80"
-                                FontSize="11" FontWeight="Normal"
-                                Padding="8,0"/>
-                    </Grid>
+                    <!-- 相关文件：由内容区里的文件引用自动汇总（不再手动选择） -->
+                    <TextBlock Text="{loc:Loc &quot;相关文件（自动汇总）&quot;}"
+                               Style="{StaticResource DialogLabel}"/>
                     <ItemsControl x:Name="FileListControl"
                                   Margin="0,0,0,8">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}"
-                                        BorderThickness="1" CornerRadius="4"
+                                        BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusSmall}"
                                         Padding="8,6" Margin="0,0,0,6">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- 第一行：路径 + 移除 -->
-                                        <Grid Grid.Row="0" Margin="0,0,0,4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Path}"
-                                                       Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="11"
-                                                       VerticalAlignment="Center"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       ToolTip="{Binding Path}"/>
-                                            <Button Grid.Column="1"
-                                                    Click="RemoveFile_Click"
-                                                    Tag="{Binding}"
-                                                    Width="20" Height="20"
-                                                    Background="Transparent"
-                                                    Foreground="#e81123"
-                                                    BorderThickness="0"
-                                                    Style="{StaticResource DialogConfirmButton}"
-                                                    Cursor="Hand">
-                                                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                                      Width="12" Height="13"
-                                                      Stretch="Uniform"
-                                                      Data="M14 2H10C10 0.897 9.103 0 8 0C6.897 0 6 0.897 6 2H2C1.724 2 1.5 2.224 1.5 2.5C1.5 2.776 1.724 3 2 3H2.54L3.349 12.708C3.456 13.994 4.55 15 5.84 15H10.159C11.449 15 12.543 13.993 12.65 12.708L13.459 3H13.999C14.275 3 14.499 2.776 14.499 2.5C14.499 2.224 14.275 2 13.999 2H14ZM8 1C8.551 1 9 1.449 9 2H7C7 1.449 7.449 1 8 1ZM11.655 12.625C11.591 13.396 10.934 14 10.16 14H5.841C5.067 14 4.41 13.396 4.346 12.625L3.544 3H12.458L11.656 12.625H11.655ZM7 5.5V11.5C7 11.776 6.776 12 6.5 12C6.224 12 6 11.776 6 11.5V5.5C6 5.224 6.224 5 6.5 5C6.776 5 7 5.224 7 5.5ZM10 5.5V11.5C10 11.776 9.776 12 9.5 12C9.224 12 9 11.776 9 11.5V5.5C9 5.224 9.224 5 9.5 5C9.776 5 10 5.224 10 5.5Z"/>
-                                            </Button>
-                                        </Grid>
-
-                                        <!-- 第二行：函数 / 行 / 列 -->
-                                        <Grid Grid.Row="1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBox Grid.Column="0"
-                                                     Text="{Binding Function, UpdateSourceTrigger=PropertyChanged}"
-                                                     Style="{StaticResource DialogTextBox}"
-                                                     FontSize="11" Padding="4,2"
-                                                     Margin="0,0,6,0"
-                                                     ToolTip="{loc:Loc &quot;命名空间.类.方法&quot;}"/>
-
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{loc:Loc &quot;行&quot;}"
-                                                       Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="11"
-                                                       VerticalAlignment="Center"
-                                                       Margin="0,0,3,0"/>
-                                            <TextBox Grid.Column="2"
-                                                     Text="{Binding Line, UpdateSourceTrigger=PropertyChanged}"
-                                                     Style="{StaticResource DialogTextBox}"
-                                                     FontSize="11" Padding="4,2"
-                                                     Width="44"
-                                                     TextAlignment="Right"
-                                                     Margin="0,0,6,0"/>
-
-                                            <TextBlock Grid.Column="3"
-                                                       Text="{loc:Loc &quot;列&quot;}"
-                                                       Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="11"
-                                                       VerticalAlignment="Center"
-                                                       Margin="0,0,3,0"/>
-                                            <TextBox Grid.Column="4"
-                                                     Text="{Binding Column, UpdateSourceTrigger=PropertyChanged}"
-                                                     Style="{StaticResource DialogTextBox}"
-                                                     FontSize="11" Padding="4,2"
-                                                     Width="44"
-                                                     TextAlignment="Right"/>
-                                        </Grid>
-                                    </Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Path}"
+                                                   FontSize="11"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Path}"
+                                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                        <TextBlock FontSize="10" Opacity="0.6" Margin="0,2,0,0"
+                                                   Foreground="{DynamicResource ForegroundBrush}">
+                                            <Run Text="{Binding Function, Mode=OneWay}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding Line, Mode=OneWay}"/>
+                                            <Run Text=":"/>
+                                            <Run Text="{Binding Column, Mode=OneWay}"/>
+                                        </TextBlock>
+                                    </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

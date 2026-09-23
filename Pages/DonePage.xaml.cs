@@ -25,9 +25,18 @@ namespace OCCMissionGoals.Pages
         private string _searchFilter = string.Empty;
         private SearchMode _searchMode = SearchMode.Text;
 
+        /// <summary>悬停 2 秒展开概览区：页面只维护一个计时器，跟随当前悬停的条目。</summary>
+        private readonly System.Windows.Threading.DispatcherTimer _hoverTimer = new()
+        {
+            Interval = TimeSpan.FromSeconds(2)
+        };
+
+        private object? _hoverTarget;
+
         public DonePage()
         {
             InitializeComponent();
+            _hoverTimer.Tick += HoverTimer_Tick;
             LoadFromData();
             ApplySort(SortMode.SeverityAsc);
 
@@ -50,9 +59,12 @@ namespace OCCMissionGoals.Pages
         public void LoadFromData()
         {
             _items.Clear();
-            var data = Services.DataService.ReadAllVersions(Services.ProjectService.CurrentProjectDir!);
-            foreach (var entry in data.Finished)
-                _items.Add(new DoneItemVM(entry));
+            // 版本名来自条目所在的版本文件 —— 条目已不再自带版本字段。
+            foreach (var (entry, version) in Services.DataService.ReadStatsVersions(Services.ProjectService.CurrentProjectDir!))
+            {
+                if (entry.Status != EntryStatus.Finished) continue;
+                _items.Add(new DoneItemVM(entry, version));
+            }
         }
 
         private void OnSortModeChanged(SortMode mode) => ApplySort(mode);
@@ -73,10 +85,8 @@ namespace OCCMissionGoals.Pages
                 SortMode.FavoritesOnly => query.OrderBy(i => i.Entry.Severity),
                 SortMode.SeverityAsc  => query.OrderBy(i => i.Entry.Severity),
                 SortMode.SeverityDesc => query.OrderByDescending(i => i.Entry.Severity),
-                SortMode.DeadlineAsc  => query.OrderBy(i => i.Entry.Deadline),
-                SortMode.DeadlineDesc => query.OrderByDescending(i => i.Entry.Deadline),
-                SortMode.VersionAsc   => query.OrderBy(i => i.Entry.Version),
-                SortMode.VersionDesc  => query.OrderByDescending(i => i.Entry.Version),
+                SortMode.VersionAsc   => query.OrderBy(i => i.Version),
+                SortMode.VersionDesc  => query.OrderByDescending(i => i.Version),
                 SortMode.TypeAsc      => query.OrderBy(i => (i.Entry.Type.FirstOrDefault() ?? string.Empty).ToLowerInvariant()),
                 _ => query.OrderBy(i => i.Entry.Severity),
             };
@@ -165,7 +175,7 @@ namespace OCCMissionGoals.Pages
         {
             if (!string.IsNullOrEmpty(a.Id) && !string.IsNullOrEmpty(b.Id))
                 return a.Id == b.Id;
-            return a.Title == b.Title && a.Version == b.Version;
+            return a.Title == b.Title;
         }
 
         private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
@@ -241,7 +251,8 @@ namespace OCCMissionGoals.Pages
                 var json = File.ReadAllText(versionFile);
                 var data = System.Text.Json.JsonSerializer.Deserialize<DataFile>(json);
                 // 只有全部条目均已完成时才可归档
-                return data != null && data.Unfinished.Count == 0 && data.Finished.Count > 0;
+                return data != null && data.Entries.Count > 0
+                    && data.Entries.All(e => e.Status == EntryStatus.Finished);
             }
             catch { return false; }
         }
@@ -251,26 +262,8 @@ namespace OCCMissionGoals.Pages
             if (sender is not Border header || header.Tag is not DoneVersionGroupVM group)
                 return;
 
+            // 只翻状态：折叠高度过渡和箭头文字都跟着绑定走
             group.IsExpanded = !group.IsExpanded;
-
-            // 向上遍历找到 DataTemplate 根部的 StackPanel，再找 GroupItems
-            StackPanel? rootPanel = null;
-            var p = header.Parent;
-            while (p != null)
-            {
-                if (p is StackPanel sp) { rootPanel = sp; break; }
-                p = VisualTreeHelper.GetParent(p);
-            }
-            if (rootPanel == null) return;
-
-            foreach (var child in rootPanel.Children)
-            {
-                if (child is ItemsControl ic && ic.Name == "GroupItems")
-                    ic.Visibility = group.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            // header 就是包含 GroupArrow 的内部 Border
-            UpdateGroupArrow(header, group.IsExpanded);
         }
 
         private static T? FindParentOfType<T>(DependencyObject child) where T : DependencyObject
@@ -284,19 +277,10 @@ namespace OCCMissionGoals.Pages
             return default;
         }
 
-        private static void UpdateGroupArrow(Border header, bool expanded)
-        {
-            // header.Child 现在是 Grid，需要递归查找 GroupArrow
-            var arrow = FindNameInTree<TextBlock>(header, "GroupArrow");
-            if (arrow != null)
-                arrow.Text = expanded ? "▼" : "▶";
-        }
-
         /// <summary>折叠/展开版本分组（供右键菜单使用）。</summary>
         public void ToggleGroup(DoneVersionGroupVM group)
         {
             group.IsExpanded = !group.IsExpanded;
-            RebuildGroups();
         }
 
         private static T? FindNameInTree<T>(DependencyObject parent, string name) where T : FrameworkElement
@@ -324,9 +308,8 @@ namespace OCCMissionGoals.Pages
                 Services.ProjectService.CurrentProjectDir!, vm.Entry,
                 (data, target) =>
                 {
-                    data.Finished.Remove(target);
+                    target.Status = EntryStatus.Unfinished;
                     target.CompletedAt = default;
-                    data.Unfinished.Insert(0, target);
                 });
             LoadFromData();
             RebuildGroups();
@@ -362,7 +345,7 @@ namespace OCCMissionGoals.Pages
         {
             Services.DataService.SaveToEntryVersion(
                 Services.ProjectService.CurrentProjectDir!, vm.Entry,
-                (data, target) => data.Finished.Remove(target));
+                (data, target) => data.Entries.Remove(target));
             LoadFromData();
             RebuildGroups();
         }
@@ -397,8 +380,8 @@ namespace OCCMissionGoals.Pages
                 sb.AppendLine();
 
                 // 每个错误/条目占一行，用一张 Markdown 表格呈现
-                sb.AppendLine($"| {LocalizationManager.T("标题")} | {LocalizationManager.T("严重程度")} | {LocalizationManager.T("详细信息")} | {LocalizationManager.T("截止日期")} | {LocalizationManager.T("完成时间")} | {LocalizationManager.T("相关文件")} |");
-                sb.AppendLine("|------|------|------|------|------|------|");
+                sb.AppendLine($"| {LocalizationManager.T("标题")} | {LocalizationManager.T("严重程度")} | {LocalizationManager.T("完成时间")} | {LocalizationManager.T("相关文件")} |");
+                sb.AppendLine("|------|------|------|------|");
 
                 foreach (var item in group.Items)
                 {
@@ -411,7 +394,7 @@ namespace OCCMissionGoals.Pages
                         : LocalizationManager.T("(无)");
 
                     sb.AppendLine(
-                        $"| {EscapeMd(item.Title)} | {SeverityHelper.GetText(item.Entry.Severity)} | {EscapeMd(item.Detail)} | {item.Entry.Deadline:yyyy-MM-dd} | {item.Entry.CompletedAt:yyyy-MM-dd} | {EscapeMd(files)} |");
+                        $"| {EscapeMd(item.Title)} | {SeverityHelper.GetText(item.Entry.Severity)} | {item.Entry.CompletedAt:yyyy-MM-dd HH:mm} | {EscapeMd(files)} |");
                 }
 
                 sb.AppendLine();
@@ -562,6 +545,69 @@ namespace OCCMissionGoals.Pages
             vm.IsDetailExpanded = !vm.IsDetailExpanded;
         }
 
+        /// <summary>
+        /// 「相关文件」表里点一行：滚到内容区里引用该文件的那一行并短暂高亮。
+        /// 目标行由内容区渲染时打的 Tag 认定，作用范围限定在本条目的详情面板内。
+        /// </summary>
+        private void RelatedFile_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is not FrameworkElement row || row.DataContext is not FileRef file) return;
+
+            // 行已自行处理，别再冒泡给卡片上的其它点击处理
+            e.Handled = true;
+
+            var panel = FindDetailPanel(row);
+            if (panel != null && Services.FileRefJump.TryJump(panel, file)) return;
+
+            if (Window.GetWindow(this) is MainWindow mw)
+                mw.SetTipText(LocalizationManager.T("未在内容区找到该文件的引用。"));
+        }
+
+        /// <summary>从行往上找所在条目的详情面板（跳转不越出当前条目）。</summary>
+        private static StackPanel? FindDetailPanel(DependencyObject start)
+        {
+            while (start != null)
+            {
+                if (start is StackPanel panel && panel.Name == "DetailPanel") return panel;
+                start = VisualTreeHelper.GetParent(start);
+            }
+            return null;
+        }
+
+        // ==================== 悬停 2 秒：变宽 + 展开概览 ====================
+
+        private void Card_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.Tag is not DoneItemVM vm) return;
+
+            // 已展开详情的条目不再接受聚焦：概览已持久显示，无需悬停效果
+            if (vm.IsDetailExpanded)
+            {
+                _hoverTarget = null;
+                _hoverTimer.Stop();
+                return;
+            }
+
+            _hoverTarget = vm;
+            _hoverTimer.Stop();
+            _hoverTimer.Start();
+        }
+
+        private void Card_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _hoverTimer.Stop();
+            if (_hoverTarget is DoneItemVM vm) vm.IsHoverPreview = false;
+            _hoverTarget = null;
+        }
+
+        private void HoverTimer_Tick(object? sender, EventArgs e)
+        {
+            _hoverTimer.Stop();
+
+            // 计时期间若已展开详情，则不再进入悬停预览（概览已持久显示）
+            if (_hoverTarget is DoneItemVM vm && !vm.IsDetailExpanded) vm.IsHoverPreview = true;
+        }
+
         private void CopyInfo_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn || btn.Tag is not DoneItemVM vm) return;
@@ -589,19 +635,38 @@ namespace OCCMissionGoals.Pages
 
         public void AddItem(GoalEntry entry)
         {
-            var vm = new DoneItemVM(entry);
+            var vm = new DoneItemVM(entry,
+                Services.ProjectService.CurrentProject?.CurrentVersion ?? string.Empty);
             _items.Add(vm);
             RebuildGroups();
         }
     }
 
-    public class DoneVersionGroupVM
+    public class DoneVersionGroupVM : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public string VersionName { get; set; } = string.Empty;
         public string DisplayName => string.IsNullOrEmpty(VersionName) ? LocalizationManager.T("未指定版本") : VersionName;
         public string DisplayCount => Items.Count.ToString();
         public ObservableCollection<DoneItemVM> Items { get; set; } = new();
-        public bool IsExpanded { get; set; } = true;
+
+        private bool _isExpanded = true;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value) return;
+                _isExpanded = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExpanded)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ArrowText)));
+            }
+        }
+
+        /// <summary>折叠箭头：展开 ▼ / 折叠 ▶。</summary>
+        public string ArrowText => IsExpanded ? "▼" : "▶";
+
         public bool CanArchive { get; set; }
     }
 
@@ -620,6 +685,7 @@ namespace OCCMissionGoals.Pages
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsExcerptVisible));
                 OnPropertyChanged(nameof(DetailToggleText));
+                OnPropertyChanged(nameof(ShowOverview));
             }
         }
 
@@ -631,15 +697,52 @@ namespace OCCMissionGoals.Pages
         public Brush SeverityBrush => SeverityHelper.GetBrush(Entry.Severity);
         public DateTime CompletedAt => Entry.CompletedAt;
         public string Brief => Entry.Brief;
-        public string Detail => Entry.Detail;
-        public string Version => Entry.Version;
+
+        /// <summary>条目所属版本（来自它所在的版本文件）。</summary>
+        public string Version { get; }
+
         public IEnumerable<TypeTag> TypeTags =>
             Entry.Type.Select(t => new TypeTag(t, Services.ProjectService.GetTypeColor(t)));
         public bool HasType => Entry.Type.Count > 0;
         public List<FileRef> RelatedFiles => Entry.RelatedFiles;
         public bool HasRelatedFiles => Entry.RelatedFiles.Count > 0;
 
-        public DoneItemVM(GoalEntry entry) => Entry = entry;
+        /// <summary>内容区（区块化正文：文本 / 表格 / 分割线 / 代码块 / 文件引用 / 多级列表）。</summary>
+        public List<ContentBlock> Contents => Entry.Contents;
+        public bool HasContents => Entry.Contents.Count > 0;
+
+        /// <summary>完成度（0-100）：由内容区多级列表条目的勾选情况推导。</summary>
+        public int Progress => Entry.Progress;
+        public string ProgressText => Entry.Progress.ToString() + "%";
+
+        /// <summary>概览区显示的类别串。</summary>
+        public string TypeSummary => Entry.Type.Count == 0
+            ? LocalizationManager.T("未分类")
+            : string.Join(" · ", Entry.Type);
+
+        private bool _isHoverPreview;
+
+        /// <summary>鼠标在条目上停留 2 秒后置真：条目变宽并展开概览区域。</summary>
+        public bool IsHoverPreview
+        {
+            get => _isHoverPreview;
+            set
+            {
+                if (_isHoverPreview == value) return;
+                _isHoverPreview = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowOverview));
+            }
+        }
+
+        /// <summary>概览区是否展开：鼠标悬停预览，或详情已展开时持久显示。</summary>
+        public bool ShowOverview => _isHoverPreview || _isDetailExpanded;
+
+        public DoneItemVM(GoalEntry entry, string version)
+        {
+            Entry = entry;
+            Version = version;
+        }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

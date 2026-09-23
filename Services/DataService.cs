@@ -67,6 +67,34 @@ public static class DataService
     /// <summary>GUI 内部保存时为 true，用于抑制文件监视器。</summary>
     internal static volatile bool IsInternalSave;
 
+    /// <summary>最近一次由本进程写盘后的文件时间戳（UTC）。文件监视器用它区分"自己写入的回声"和真正的外部改动。</summary>
+    internal static DateTime? LastInternalWriteUtc;
+
+    /// <summary>
+    /// 判断 path 时间戳是否就是本进程刚写下的那一版：是则说明监视器事件是自身写入的回声
+    /// （IsInternalSave 往往在事件到达前就已复位，只能靠时间戳判定）。
+    /// </summary>
+    internal static bool IsInternalWriteEcho(string path)
+    {
+        var stamp = LastInternalWriteUtc;
+        if (stamp == null || string.IsNullOrEmpty(path)) return false;
+
+        try
+        {
+            return File.Exists(path) && File.GetLastWriteTimeUtc(path) == stamp.Value;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void MarkInternalWrite(string path)
+    {
+        try { LastInternalWriteUtc = File.GetLastWriteTimeUtc(path); }
+        catch { LastInternalWriteUtc = null; }
+    }
+
     /// <summary>将当前数据写回当前路径（加跨进程锁）。</summary>
     public static void Save()
     {
@@ -89,6 +117,7 @@ public static class DataService
         var json = JsonSerializer.Serialize(Current, _jsonOptions);
         File.WriteAllText(_path, json);
         IsInternalSave = false;
+        MarkInternalWrite(_path);
     }
 
     /// <summary>
@@ -105,7 +134,10 @@ public static class DataService
 
             // 2. 重新读取磁盘最新数据，再追加，避免覆盖外部进程刚写入的内容
             LoadCore();
-            Current.Unfinished.Add(entry);
+            entry.CreatedAt = entry.UpdatedAt = DateTime.Now;
+            if (entry.Status == EntryStatus.Finished && entry.CompletedAt == default)
+                entry.CompletedAt = DateTime.Now;
+            Current.Entries.Add(entry);
 
             // 3. 写回
             WriteCurrentCore();
@@ -130,11 +162,40 @@ public static class DataService
             var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
             if (data != null)
             {
-                merged.Unfinished.AddRange(data.Unfinished);
-                merged.Finished.AddRange(data.Finished);
+                merged.Entries.AddRange(data.Entries);
             }
         }
         return merged;
+    }
+
+    /// <summary>
+    /// 读取所有「计入统计的版本」的条目，并带上条目所属的版本名（版本文件名去掉 .json）。
+    /// 版本归属来自文件本身 —— 条目已不再自带版本字段。
+    /// </summary>
+    public static List<(GoalEntry Entry, string Version)> ReadStatsVersions(string projectDir)
+    {
+        var list = new List<(GoalEntry, string)>();
+        if (string.IsNullOrEmpty(projectDir)) return list;
+
+        var versionsDir = ProjectService.GetVersionsDir(projectDir);
+        if (!Directory.Exists(versionsDir)) return list;
+
+        foreach (var file in Directory.GetFiles(versionsDir, "*.json"))
+        {
+            var version = Path.GetFileNameWithoutExtension(file);
+            if (!ProjectService.IsStatsVersion(version)) continue;
+
+            string json;
+            try { json = File.ReadAllText(file); }
+            catch { continue; }
+
+            var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
+            if (data == null) continue;
+
+            foreach (var entry in data.Entries)
+                list.Add((entry, version));
+        }
+        return list;
     }
 
     /// <summary>
@@ -159,7 +220,7 @@ public static class DataService
                 if (data == null) continue;
 
                 var changed = false;
-                foreach (var entry in data.Unfinished.Concat(data.Finished))
+                foreach (var entry in data.Entries)
                 {
                     for (var i = entry.Type.Count - 1; i >= 0; i--)
                     {
@@ -183,8 +244,7 @@ public static class DataService
     }
 
     /// <summary>
-    /// 在所有版本文件中查找条目（先按 entry.Version 定位，找不到再扫全部），
-    /// 执行修改后保存。如果版本号变更则跨文件搬迁。
+    /// 在所有版本文件中查找条目，执行修改后写回它所在的那个版本文件。
     /// </summary>
     public static bool SaveToEntryVersion(string projectDir, GoalEntry entry,
         Action<DataFile, GoalEntry> modify)
@@ -206,19 +266,14 @@ public static class DataService
         DataFile? foundData = null;
         GoalEntry? target = null;
 
-        // 先按 entry.Version 找（快速路径）
-        var hintFile = string.IsNullOrEmpty(entry.Version) ? null
-            : Path.Combine(versionsDir, entry.Version + ".json");
-
-        foreach (var file in GetCandidateFiles(versionsDir, hintFile))
+        foreach (var file in GetCandidateFiles(versionsDir, null))
         {
             if (!File.Exists(file)) continue;
             var json = File.ReadAllText(file);
             var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
             if (data == null) continue;
 
-            target = data.Unfinished.FirstOrDefault(e => e.Title == entry.Title)
-                  ?? data.Finished.FirstOrDefault(e => e.Title == entry.Title);
+            target = FindEntry(data, entry);
             if (target != null)
             {
                 foundFile = file;
@@ -229,50 +284,40 @@ public static class DataService
 
         if (foundFile == null || foundData == null || target == null) return false;
 
-        var oldVersion = Path.GetFileNameWithoutExtension(foundFile);
         modify(foundData, target);
+        target.UpdatedAt = DateTime.Now;
 
-        // 2. 如果版本变了，跨文件搬迁
-        var newVersion = target.Version;
-        if (!string.IsNullOrEmpty(newVersion) && newVersion != oldVersion)
-        {
-            bool inUnfinished = foundData.Unfinished.Contains(target);
-            if (inUnfinished) foundData.Unfinished.Remove(target);
-            else foundData.Finished.Remove(target);
-            WriteVersionFileCore(foundFile, foundData);
-
-            var newFile = Path.Combine(versionsDir, newVersion + ".json");
-            DataFile newData;
-            if (File.Exists(newFile))
-            {
-                var newJson = File.ReadAllText(newFile);
-                newData = JsonSerializer.Deserialize<DataFile>(newJson, _jsonOptions) ?? new DataFile();
-            }
-            else { newData = new DataFile(); }
-
-            if (inUnfinished) newData.Unfinished.Add(target);
-            else newData.Finished.Add(target);
-            WriteVersionFileCore(newFile, newData);
-        }
-        else
-        {
-            WriteVersionFileCore(foundFile, foundData);
-        }
+        // 2. 写回
+        // 条目不再自带版本字段：版本归属完全由它所在的版本文件决定，所以直接写回原文件。
+        WriteVersionFileCore(foundFile, foundData);
 
         // 3. 同步更新调用方持有的 entry 引用
         entry.Title = target.Title;
-        entry.Version = target.Version;
+        entry.Status = target.Status;
         entry.Severity = target.Severity;
         entry.Brief = target.Brief;
-        entry.Detail = target.Detail;
-        entry.Deadline = target.Deadline;
         entry.CompletedAt = target.CompletedAt;
-        entry.ChangeDemand = target.ChangeDemand;
+        entry.CreatedAt = target.CreatedAt;
+        entry.UpdatedAt = target.UpdatedAt;
         entry.IsFavorited = target.IsFavorited;
         entry.Type = target.Type;
         entry.RelatedFiles = target.RelatedFiles;
 
         return true;
+    }
+
+    /// <summary>
+    /// 在数据文件中定位条目：优先按 Id（条目唯一编号），Id 为空或找不到时回退到标题精确匹配。
+    /// </summary>
+    private static GoalEntry? FindEntry(DataFile data, GoalEntry entry)
+    {
+        if (!string.IsNullOrEmpty(entry.Id))
+        {
+            var byId = data.Entries.FirstOrDefault(e => e.Id == entry.Id);
+            if (byId != null) return byId;
+        }
+
+        return data.Entries.FirstOrDefault(e => string.Equals(e.Title, entry.Title, StringComparison.Ordinal));
     }
 
     /// <summary>hintFile 排最前面，其余文件按名称排序。</summary>
@@ -300,5 +345,6 @@ public static class DataService
         IsInternalSave = true;
         File.WriteAllText(file, JsonSerializer.Serialize(data, _jsonOptions));
         IsInternalSave = false;
+        MarkInternalWrite(file);
     }
 }

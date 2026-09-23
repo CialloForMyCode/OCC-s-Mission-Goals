@@ -25,6 +25,9 @@ public partial class ExpandPage : Page
     /// <summary>主题在扩展中心里的稳定分类键。</summary>
     private const string ThemePackCategory = "theme";
 
+    /// <summary>本地扩展（Expand 目录）在扩展中心里的稳定分类键。</summary>
+    private const string ExpandCategory = "extension";
+
     /// <summary>语言代码 → 中文语言名（用于生成「中文语言包 / 英文语言包」这类简介）。</summary>
     private static readonly Dictionary<string, string> _languageNames = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -37,6 +40,9 @@ public partial class ExpandPage : Page
 
     private List<LanguagePack> _packs = new();
     private List<ThemePack> _themes = new();
+
+    /// <summary>本次目录中出现的本地扩展，按清单 Id 索引（按钮点击时回查）。</summary>
+    private readonly Dictionary<string, ExpandInfo> _expandMap = new();
     private string _currentCategory = "all";
     private bool _loading;
     private bool _hasLoaded;
@@ -55,6 +61,9 @@ public partial class ExpandPage : Page
     /// </summary>
     public void Refresh()
     {
+        // 重新扫描 Expand 目录：用户可能刚把扩展放进去 / 删掉，刷新页面时同步。
+        ExpandService.Reload();
+
         if (_hasLoaded)
         {
             RebuildCatalog();
@@ -96,7 +105,10 @@ public partial class ExpandPage : Page
 
         if (error != null)
         {
-            SetEmptyHint(error);
+            // 网络失败也要把本地扩展列出来 —— 它们不依赖网络。
+            RebuildCatalog();
+            if (PluginCatalog.All.Count == 0)
+                SetEmptyHint(error);
             return;
         }
 
@@ -110,6 +122,15 @@ public partial class ExpandPage : Page
     private void RebuildCatalog()
     {
         PluginCatalog.All.Clear();
+        _expandMap.Clear();
+
+        // 本地扩展（Expand 目录）与语言包、主题并列；对扩展来说「安装状态」= 是否启用。
+        foreach (var ext in ExpandService.All)
+        {
+            _expandMap[ext.Id] = ext;
+            PluginCatalog.All.Add(BuildExpandPlugin(ext));
+        }
+
         foreach (var pack in _packs)
             PluginCatalog.All.Add(BuildPlugin(pack));
         foreach (var theme in _themes)
@@ -135,6 +156,8 @@ public partial class ExpandPage : Page
         CategoryName = LocalizationManager.T("语言包"),
         Downloads = 0,
         IsInstalled = LanguagePackService.IsInstalled(pack.Code),
+        ActionLabel = LocalizationManager.T(LanguagePackService.IsInstalled(pack.Code) ? "卸载" : "安装"),
+        InstalledLabel = LocalizationManager.T("已安装"),
         DownloadUrl = pack.DownloadUrl,
         FileName = pack.FileName,
     };
@@ -155,8 +178,30 @@ public partial class ExpandPage : Page
         CategoryName = LocalizationManager.T("主题"),
         Downloads = 0,
         IsInstalled = ThemePackService.IsInstalled(theme.FileName),
+        ActionLabel = LocalizationManager.T(ThemePackService.IsInstalled(theme.FileName) ? "卸载" : "安装"),
+        InstalledLabel = LocalizationManager.T("已安装"),
         DownloadUrl = theme.DownloadUrl,
         FileName = theme.FileName,
+    };
+
+    /// <summary>把本地扩展（Expand 目录）转换成扩展中心的目录项。
+    /// 对扩展而言「安装状态」= 是否启用；清单或资源有问题时把原因显示在简介里。</summary>
+    private static PluginInfo BuildExpandPlugin(ExpandInfo ext) => new()
+    {
+        Id = ext.Id,
+        Name = ext.Name,
+        Icon = "",
+        Description = string.IsNullOrWhiteSpace(ext.LoadError) ? ext.Description : ext.LoadError,
+        Author = string.IsNullOrWhiteSpace(ext.Author)
+            ? LocalizationManager.T("匿名开发者")
+            : ext.Author,
+        Version = ext.Version,
+        Category = ExpandCategory,
+        CategoryName = LocalizationManager.T("扩展"),
+        Downloads = 0,
+        IsInstalled = ext.Enabled,
+        ActionLabel = LocalizationManager.T(ext.Enabled ? "禁用" : "启用"),
+        InstalledLabel = LocalizationManager.T("已启用"),
     };
 
     /// <summary>生成语言包简介，例如「中文语言包」「英文语言包」。</summary>
@@ -249,7 +294,8 @@ public partial class ExpandPage : Page
     {
         if (sender is not Button btn || btn.Tag is not PluginInfo plugin) return;
 
-        if (plugin.IsInstalled)
+        // 已安装（卸载）与本地扩展（启用 / 禁用）都是本地操作，不显示「下载中…」。
+        if (plugin.IsInstalled || plugin.Category == ExpandCategory)
         {
             await ToggleInstall(plugin);
             return;
@@ -271,6 +317,12 @@ public partial class ExpandPage : Page
     /// <summary>安装 / 卸载插件（供右键菜单使用，不依赖具体按钮）。</summary>
     public async Task ToggleInstall(PluginInfo plugin)
     {
+        if (plugin.Category == ExpandCategory)
+        {
+            ToggleExpand(plugin);
+            return;
+        }
+
         if (plugin.Category == ThemePackCategory)
         {
             await ToggleThemeInstall(plugin);
@@ -318,6 +370,27 @@ public partial class ExpandPage : Page
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         await LoadAsync();
+    }
+
+    /// <summary>启用 / 禁用本地扩展：改写它的 expand.json 并立即重新应用资源覆盖。</summary>
+    private void ToggleExpand(PluginInfo plugin)
+    {
+        if (!_expandMap.TryGetValue(plugin.Id, out var ext))
+        {
+            ShowTip(LocalizationManager.T("找不到扩展目录。"));
+            return;
+        }
+
+        var error = ExpandService.SetEnabled(ext, !ext.Enabled);
+        if (error != null)
+        {
+            ShowTip(error);
+            return;
+        }
+
+        RebuildCatalog();
+        ShowTip(LocalizationManager.T(
+            ext.Enabled ? "已启用扩展「{0}」。" : "已禁用扩展「{0}」。", ext.Name));
     }
 
     /// <summary>安装 / 卸载主题：写入或删除本地 Themes 目录，并让主题下拉立即生效。</summary>

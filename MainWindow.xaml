@@ -33,7 +33,7 @@
                 
                 <!-- 主控制器 -->
                 <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Margin="5,5,0,5" CornerRadius="10">
                     <Grid ClipToBounds="True">
                         <Grid.ColumnDefinitions>
@@ -77,7 +77,7 @@
 
                 <!-- 控制按钮 -->
                 <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Margin="5" CornerRadius="10">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
@@ -109,7 +109,7 @@
 
             <!-- 状态 -->
             <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}"
-                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                     Margin="5,0,5,5" CornerRadius="7">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -177,7 +177,7 @@
                         IsHitTestVisible="True"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="8"
+                        BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         MinWidth="360" MaxWidth="620" MaxHeight="420">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -203,7 +203,7 @@
                             </WrapPanel>
                         </StackPanel>
 
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                             <ItemsControl x:Name="SearchBoardList" Margin="4">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -226,7 +226,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" CornerRadius="4" Padding="7,3"
+                                                    <Border Grid.Column="0" CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="7,3"
                                                             VerticalAlignment="Center"
                                                             Background="{Binding KindBrush}">
                                                         <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="11"/>
@@ -265,7 +265,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" CornerRadius="4" Padding="7,3"
+                                                    <Border Grid.Column="0" CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="7,3"
                                                             VerticalAlignment="Center"
                                                             Background="{Binding KindBrush}">
                                                         <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="11"/>

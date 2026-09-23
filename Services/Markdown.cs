@@ -270,7 +270,8 @@ public static class Markdown
         return tb;
     }
 
-    private static FrameworkElement BuildCodeBlock(string language, List<string> codeLines)
+    /// <summary>渲染代码块；<paramref name="showLineNumbers"/> 为真时左侧带行号列并与代码一起横向滚动。</summary>
+    internal static FrameworkElement BuildCodeBlock(string language, List<string> codeLines, bool showLineNumbers = false)
     {
         var codeText = string.Join("\n", codeLines);
 
@@ -298,11 +299,51 @@ public static class Markdown
             Text = codeText,
             FontFamily = new FontFamily("Consolas"),
             FontSize = 11,
-            TextWrapping = TextWrapping.Wrap,
-            Padding = new Thickness(10, 6, 10, 8),
+            TextWrapping = showLineNumbers ? TextWrapping.NoWrap : TextWrapping.Wrap,
+            Padding = new Thickness(showLineNumbers ? 0 : 10, 6, 10, 8),
         };
         code.SetResourceReference(TextBlock.ForegroundProperty, "TerminalForegroundBrush");
-        panel.Children.Add(code);
+
+        if (!showLineNumbers || codeLines.Count == 0)
+        {
+            panel.Children.Add(code);
+        }
+        else
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var gutter = new TextBlock
+            {
+                Text = string.Join("\n", Enumerable.Range(1, codeLines.Count)),
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 11,
+                TextWrapping = TextWrapping.NoWrap,
+                TextAlignment = TextAlignment.Right,
+                Padding = new Thickness(10, 6, 8, 8),
+                Opacity = 0.45,
+            };
+            gutter.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
+            Grid.SetColumn(gutter, 0);
+            grid.Children.Add(gutter);
+
+            var divider = new Border { Width = 1, Margin = new Thickness(0, 6, 0, 6) };
+            divider.SetResourceReference(Border.BackgroundProperty, "CodeBorderBrush");
+            Grid.SetColumn(divider, 1);
+            grid.Children.Add(divider);
+
+            Grid.SetColumn(code, 2);
+            grid.Children.Add(code);
+
+            panel.Children.Add(new ScrollViewer
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = grid,
+            });
+        }
 
         border.Child = panel;
         return border;
@@ -445,7 +486,7 @@ public static class Markdown
             .ToList();
     }
 
-    private static FrameworkElement BuildTable(List<string> header, List<TextAlignment> aligns, List<List<string>> rows)
+    internal static FrameworkElement BuildTable(List<string> header, List<TextAlignment> aligns, List<List<string>> rows)
     {
         var colCount = Math.Max(header.Count, aligns.Count);
         if (rows.Count > 0)
@@ -522,7 +563,7 @@ public static class Markdown
         return cell;
     }
 
-    private static FrameworkElement BuildHorizontalRule()
+    internal static FrameworkElement BuildHorizontalRule()
     {
         var border = new Border
         {

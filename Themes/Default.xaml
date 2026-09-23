@@ -22,6 +22,9 @@
     <SolidColorBrush x:Key="Light.CardBackgroundBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="Light.CardBorderBrush"     Color="#ebebeb"/>
 
+    <!-- 贡献月表空档底衬 -->
+    <SolidColorBrush x:Key="Light.ContributionEmptyBrush" Color="#ebedf0"/>
+
     <!-- 搜索框 -->
     <SolidColorBrush x:Key="Light.SearchBackgroundBrush"  Color="#e7e7e7"/>
     <SolidColorBrush x:Key="Light.SearchBorderBrush"      Color="#e7e7e7"/>
@@ -81,6 +84,9 @@
     <!-- 卡片/面板 -->
     <SolidColorBrush x:Key="Dark.CardBackgroundBrush" Color="#18181b"/>
     <SolidColorBrush x:Key="Dark.CardBorderBrush"     Color="#222225"/>
+
+    <!-- 贡献月表空档底衬 -->
+    <SolidColorBrush x:Key="Dark.ContributionEmptyBrush" Color="#2a2a30"/>
 
     <!-- 搜索框 -->
     <SolidColorBrush x:Key="Dark.SearchBackgroundBrush"  Color="#202025"/>

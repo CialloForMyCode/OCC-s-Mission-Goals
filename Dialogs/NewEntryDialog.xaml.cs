@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Win32;
 using OCCMissionGoals.Models;
 
 namespace OCCMissionGoals.Dialogs;
@@ -16,7 +15,6 @@ public partial class NewEntryDialog : UserControl
     public event EventHandler? Confirmed;
     public event EventHandler? Cancelled;
 
-    private readonly ObservableCollection<FileRef> _files = new();
     private readonly ObservableCollection<TypeTag> _types = new();
     private string? _pendingColorHex;
     private GoalEntry? _editingEntry;
@@ -31,24 +29,20 @@ public partial class NewEntryDialog : UserControl
 
     public string EntryTitle => TitleTextBox.Text.Trim();
     public string Brief => BriefTextBox.Text.Trim();
-    public string Detail => DetailTextBox.Text.Trim();
-    public DateTime Deadline =>
-        DeadlinePicker.SelectedDate ?? DateTime.Today.AddDays(7);
 
-    public string Version =>
-        VersionComboBox.SelectedItem is ComboBoxItem item
-            ? (item.Tag?.ToString() ?? string.Empty)
-            : string.Empty;
+    /// <summary>内容区块（内容区编辑结果）。</summary>
+    public List<ContentBlock> Contents => ContentEditor.Build();
 
-    public ObservableCollection<FileRef> Files => _files;
     public List<string> Type => _types.Select(t => t.Text).ToList();
 
     public NewEntryDialog()
     {
         InitializeComponent();
-        FileListControl.ItemsSource = _files;
         TypeListControl.ItemsSource = _types;
         BuildColorSwatches();
+
+        // 内容区一改，下面的「相关文件」立即重新汇总。
+        ContentEditor.Changed += (_, _) => RefreshAutoFiles();
     }
 
     public void Reset()
@@ -58,14 +52,11 @@ public partial class NewEntryDialog : UserControl
         SeverityComboBox.SelectedIndex = 2;
         TitleTextBox.Text = string.Empty;
         BriefTextBox.Text = string.Empty;
-        DetailTextBox.Text = string.Empty;
-        DeadlinePicker.SelectedDate = DateTime.Today.AddDays(7);
-        PopulateVersions();
-        SelectVersion(Services.ProjectService.CurrentProject?.CurrentVersion);
         PopulateTypes();
         TypeComboBox.Text = string.Empty;
         _types.Clear();
-        _files.Clear();
+        ContentEditor.Load(null);
+        RefreshAutoFiles();
         ResetColorSelection();
     }
 
@@ -77,12 +68,6 @@ public partial class NewEntryDialog : UserControl
         SeverityComboBox.SelectedIndex = (int)entry.Severity;
         TitleTextBox.Text = entry.Title;
         BriefTextBox.Text = entry.Brief;
-        DetailTextBox.Text = entry.Detail;
-        DeadlinePicker.SelectedDate = entry.Deadline == default
-            ? DateTime.Today.AddDays(7)
-            : entry.Deadline;
-        PopulateVersions();
-        SelectVersion(entry.Version);
         PopulateTypes();
         TypeComboBox.Text = string.Empty;
 
@@ -90,59 +75,42 @@ public partial class NewEntryDialog : UserControl
         foreach (var t in entry.Type)
             _types.Add(new TypeTag(t, Services.ProjectService.GetTypeColor(t)));
 
-        _files.Clear();
+        ContentEditor.Load(BuildInitialContents(entry));
+
+        RefreshAutoFiles();
+    }
+
+    /// <summary>
+    /// 准备内容区：以条目的内容区为副本（取消编辑不会改到原条目）；
+    /// 旧数据还没有内容区时，把原来的关联文件迁移成文件引用块，避免历史信息丢失。
+    /// </summary>
+    private static List<ContentBlock> BuildInitialContents(GoalEntry entry)
+    {
+        if (entry.Contents.Count > 0)
+            return Services.ContentBlocks.CloneBlocks(entry.Contents);
+
+        var migrated = new List<ContentBlock>();
         foreach (var f in entry.RelatedFiles)
-            _files.Add(new FileRef
-            {
-                Path = f.Path,
-                Line = f.Line,
-                Column = f.Column,
-                Function = f.Function
-            });
-    }
-
-    private void PopulateVersions()
-    {
-        VersionComboBox.Items.Clear();
-        var dir = Services.ProjectService.CurrentProjectDir;
-        if (dir == null) return;
-
-        var files = Services.ProjectService.GetVersionFiles(dir);
-        foreach (var file in files)
         {
-            var version = file.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-                ? file[..^5]
-                : file;
-            VersionComboBox.Items.Add(new ComboBoxItem
+            migrated.Add(new ContentBlock
             {
-                Content = version,
-                Tag = version,
-                Style = (Style)FindResource("DialogComboBoxItem")
+                Kind = ContentBlockKind.FileRef,
+                File = new FileRef
+                {
+                    Path = f.Path,
+                    Line = f.Line,
+                    Column = f.Column,
+                    Function = f.Function
+                }
             });
         }
+
+        return migrated;
     }
 
-    private void SelectVersion(string? version)
-    {
-        if (string.IsNullOrWhiteSpace(version))
-        {
-            if (VersionComboBox.Items.Count > 0)
-                VersionComboBox.SelectedIndex = 0;
-            return;
-        }
-
-        foreach (ComboBoxItem item in VersionComboBox.Items)
-        {
-            if (string.Equals(item.Tag?.ToString(), version, StringComparison.OrdinalIgnoreCase))
-            {
-                VersionComboBox.SelectedItem = item;
-                return;
-            }
-        }
-
-        if (VersionComboBox.Items.Count > 0)
-            VersionComboBox.SelectedIndex = 0;
-    }
+    /// <summary>把内容区里的文件引用汇总到「相关文件」列表（列表里显示完整路径）。</summary>
+    private void RefreshAutoFiles()
+        => FileListControl.ItemsSource = Services.ContentBlocks.CollectFileRefs(ContentEditor.Build());
 
     private void PopulateTypes()
     {
@@ -374,44 +342,10 @@ public partial class NewEntryDialog : UserControl
         if (EntryTitle.Length > 200)
             return (false, LocalizationManager.T("标题不能超过 200 个字符。"));
 
-        if (Brief.Length > 500)
-            return (false, LocalizationManager.T("简介不能超过 500 个字符。"));
-
-        if (Detail.Length > 2000)
-            return (false, LocalizationManager.T("详细信息不能超过 2000 个字符。"));
+        if (Brief.Length > 110)
+            return (false, LocalizationManager.T("简介不能超过 110 个字符。"));
 
         return (true, string.Empty);
-    }
-
-    private void AddFile_Click(object sender, RoutedEventArgs e)
-    {
-        var dlg = new OpenFileDialog
-        {
-            Title = LocalizationManager.T("选择要关联的文件"),
-            Multiselect = true,
-            Filter = LocalizationManager.T("所有文件 (*.*)|*.*"),
-            InitialDirectory = AppContext.BaseDirectory
-        };
-
-        if (dlg.ShowDialog() == true)
-        {
-            foreach (var path in dlg.FileNames)
-            {
-                _files.Add(new FileRef
-                {
-                    Path = path,
-                    Line = 0,
-                    Column = 0,
-                    Function = string.Empty
-                });
-            }
-        }
-    }
-
-    private void RemoveFile_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is FileRef file)
-            _files.Remove(file);
     }
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)

@@ -16,9 +16,9 @@
         <StackPanel>
 
             <!-- 标题 + 刷新 -->
-            <Border CornerRadius="8"
+            <Border CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                     Background="{DynamicResource CardBackgroundBrush}"
-                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                     Padding="16" Margin="0,0,0,5">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -47,9 +47,9 @@
 
                 <!-- 分类筛选 -->
                 <Border x:Name="CategorySection" Grid.Row="0"
-                        CornerRadius="8"
+                        CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                        BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                         Padding="4" Margin="0,0,0,5">
                     <ItemsControl x:Name="CategoryList">
                         <ItemsControl.ItemsPanel>
@@ -74,9 +74,9 @@
                 <ItemsControl x:Name="PluginList" Grid.Row="1">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border CornerRadius="8"
+                            <Border CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                                     Background="{DynamicResource CardBackgroundBrush}"
-                                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                                     Padding="14,12" Margin="0,0,0,6">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -91,7 +91,7 @@
 
                                     <!-- 图标 -->
                                     <Border Grid.Column="0" Grid.RowSpan="2"
-                                            Width="40" Height="40" CornerRadius="6"
+                                            Width="40" Height="40" CornerRadius="{DynamicResource UiCornerRadiusMedium}"
                                             Background="{DynamicResource SearchBackgroundBrush}"
                                             VerticalAlignment="Center" Margin="0,0,14,0">
                                         <Image Source="{Binding Icon}"
@@ -144,7 +144,7 @@
                                                 Background="{DynamicResource PrimaryBrush}"
                                                 Padding="4" Margin="12,0,0,0" VerticalAlignment="Center"
                                                 Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{loc:Loc &quot;已安装&quot;}" FontSize="10"
+                                            <TextBlock Text="{Binding InstalledLabel}" FontSize="10"
                                                        Foreground="White"/>
                                         </Border>
                                     </Grid>
@@ -184,12 +184,9 @@
                                                 Tag="{Binding}">
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
-                                                    <Setter Property="Content" Value="{loc:Loc &quot;安装&quot;}"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                                            <Setter Property="Content" Value="{loc:Loc &quot;卸载&quot;}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
+                                                    <!-- 文案由来源决定：语言包 / 主题为「安装 / 卸载」，本地扩展为「启用 / 禁用」。
+                                                         放在 Style Setter 中，InstallButton_Click 临时改写 Content 后 ClearValue 可恢复。 -->
+                                                    <Setter Property="Content" Value="{Binding ActionLabel}"/>
                                                 </Style>
                                             </Button.Style>
                                         </Button>
@@ -205,7 +202,7 @@
                         Grid.RowSpan="2"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="8"
+                        BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Margin="0,0,0,6" Padding="24,20"
                         VerticalAlignment="Top"
                         Visibility="Collapsed">

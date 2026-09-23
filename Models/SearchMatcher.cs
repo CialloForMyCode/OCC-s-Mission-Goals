@@ -20,8 +20,7 @@ public static class SearchMatcher
         return mode switch
         {
             SearchMode.Text => Contains(entry.Title, kw) ||
-                               Contains(entry.Brief, kw) ||
-                               Contains(entry.Detail, kw),
+                               Contains(entry.Brief, kw),
 
             SearchMode.Tag => entry.Type.Any(t => Contains(t, kw)),
 
@@ -31,8 +30,9 @@ public static class SearchMatcher
             SearchMode.File => entry.RelatedFiles.Any(f =>
                 Contains(f.Path, kw) || Contains(f.Function, kw)),
 
-            SearchMode.Date => Contains((useCompletedDate ? entry.CompletedAt : entry.Deadline)
-                .ToString("yyyy-MM-dd"), kw),
+            // 日期时间匹配（yyyy-MM-dd HH:mm）；只输入日期部分也能命中。
+            // 截止日期已从条目中移除，日期搜索统一按完成时间匹配。
+            SearchMode.Date => Contains(entry.CompletedAt.ToString("yyyy-MM-dd HH:mm"), kw),
 
             // 插件 / 已安装插件 / 功能是全局搜索，不按条目字段过滤
             SearchMode.Plugins => false,
