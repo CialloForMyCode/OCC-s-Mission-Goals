@@ -352,8 +352,10 @@ public static class ContentBlocks
     }
 
     /// <summary>
-    /// 完成度（0-100）：内容区里所有列表容器的直属条目 + 子任务区块中已勾选的比例；
-    /// 都没有勾选项时为 0。
+    /// 完成度（0-100）：内容区里所有「子任务」区块中已勾选的比例；没有子任务时为 0。
+    ///
+    /// 列表容器（编号列表 / 列表）只负责排版，它的条目不算进度项 —— 条目的勾选状态
+    /// 不参与统计；列表里放的「子任务」仍按子任务计入（也不会被重复计数）。
     /// </summary>
     public static int ComputeProgress(IEnumerable<ContentBlock>? blocks)
     {
@@ -363,23 +365,31 @@ public static class ContentBlocks
         foreach (var block in Flatten(blocks))
         {
             // 子任务区块：一条即一项，勾选状态记在它自己的 Done 上。
-            if (block.Kind == ContentBlockKind.SubTask)
-            {
-                total++;
-                if (block.Done) done++;
-                continue;
-            }
+            if (block.Kind != ContentBlockKind.SubTask) continue;
 
-            if (block.Kind != ContentBlockKind.List) continue;
-            foreach (var item in block.Items)
-            {
-                if (item == null) continue;
-                total++;
-                if (item.Done) done++;
-            }
+            total++;
+            if (block.Done) done++;
         }
 
         return total == 0 ? 0 : (int)Math.Round(done * 100.0 / total);
+    }
+
+    /// <summary>
+    /// 按当前规则重算条目的完成度并写回。加载数据时调用，
+    /// 这样统计口径的变化对已经存下来的旧数据即时生效。
+    /// </summary>
+    public static void RefreshProgress(GoalEntry? entry)
+    {
+        if (entry == null) return;
+        entry.Progress = ComputeProgress(entry.Contents);
+    }
+
+    /// <summary>按当前规则重算一组条目的完成度（见 <see cref="RefreshProgress(GoalEntry)"/>）。</summary>
+    public static void RefreshProgress(DataFile? data)
+    {
+        if (data == null) return;
+        foreach (var entry in data.Entries)
+            RefreshProgress(entry);
     }
 
     /// <summary>把内容区导出为纯文本（「复制信息」与命令行使用）。</summary>

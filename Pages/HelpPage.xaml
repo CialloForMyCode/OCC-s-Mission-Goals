@@ -273,12 +273,12 @@
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
 
-                            <!-- 最近活动 -->
-                            <TextBlock Text="{loc:Loc &quot;最近活动时间线&quot;}"
+                            <!-- 已完成条目（折线图） -->
+                            <TextBlock Text="{loc:Loc &quot;已完成条目&quot;}"
                                        FontSize="13" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
-                            <TextBlock Text="{loc:Loc &quot;按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。&quot;}"
+                            <TextBlock Text="{loc:Loc &quot;横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色。&quot;}"
                                        FontSize="12" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
@@ -411,6 +411,7 @@
                                 <Run Text="{loc:Loc &quot;• 分类浏览 —— 按插件类别分组展示可用扩展&quot;}"/><LineBreak/>
                                 <Run Text="{loc:Loc &quot;• 搜索过滤 —— 顶部搜索框实时过滤插件列表&quot;}"/><LineBreak/>
                                 <Run Text="{loc:Loc &quot;• 安装 / 卸载 —— 一键安装或卸载扩展插件&quot;}"/><LineBreak/>
+                                <Run Text="{loc:Loc &quot;• 更新 —— 已安装的扩展若落后于仓库，卡片上会出现「更新」按钮&quot;}"/><LineBreak/>
                                 <Run Text="{loc:Loc &quot;• 详情查看 —— 点击插件卡片查看功能说明和使用方式&quot;}"/>
                             </TextBlock>
                         </StackPanel>

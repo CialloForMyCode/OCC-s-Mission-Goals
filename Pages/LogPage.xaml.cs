@@ -7,9 +7,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace OCCMissionGoals.Pages
 {
@@ -28,6 +30,25 @@ namespace OCCMissionGoals.Pages
         /// 这两个值只是「最深色」的封顶线，实际分档还要结合区间内最大值，见 BuildMonthTable。
         /// </summary>
         private const double DailySeverityFullScale = 5.0;
+
+        // ===== 已完成条目折线图的画布与几何参数 =====
+        /// <summary>折线图覆盖的天数（含今天）。</summary>
+        private const int TrendDays = 30;
+        /// <summary>折线图的画布高度；宽度跟随卡片，所以横坐标要按实际宽度算。</summary>
+        private const double TrendCanvasHeight = 300.0;
+        /// <summary>绘图区四边留白：左侧留严重程度刻度，底部留日期刻度。</summary>
+        private const double TrendPlotLeft = 66.0;
+        private const double TrendPlotRight = 20.0;
+        private const double TrendPlotTop = 16.0;
+        private const double TrendPlotBottom = 34.0;
+        /// <summary>折线图数据点的半径：同一天的条目均分后间距有限，点不宜过大。</summary>
+        private const double TrendDotRadius = 4.0;
+        /// <summary>
+        /// 同一严重程度的数据点中心距小于此值时共用一个点（此时圆点已经挨上了），该点内改用滚轮切换。
+        /// 严重程度不同的点即使挨在一起也各画各的。合并只影响「有几个点」：点的位置和大小都不变，
+        /// 被并掉的那几条与它们之间的连线也不再画。
+        /// </summary>
+        private const double TrendClusterDistance = TrendDotRadius * 2 + 2.0;
 
         // ===== 严重程度环形图的画布与几何参数 =====
         /// <summary>画布宽：中轴两侧各留出「引线 + 标签列」。</summary>
@@ -58,6 +79,11 @@ namespace OCCMissionGoals.Pages
         private string _projectName = string.Empty;
         private string _currentVersionDisplay = string.Empty;
         private int _finishedEntryCount;
+        private int _trendPointCount;
+        /// <summary>折线图当前绘制的数据点：窗口内的全部已完成条目，按完成时间升序。</summary>
+        private List<Models.GoalEntry> _trendEntries = new();
+        /// <summary>折线图横轴窗口的起点，即「最近 30 天」的第一天 00:00。</summary>
+        private DateTime _trendStart;
 
         /// <summary>环形图画布尺寸，供 XAML 绑定：图表容器与每个扇环共用同一套坐标系。</summary>
         public double ChartWidth => ChartCanvasWidth;
@@ -110,7 +136,7 @@ namespace OCCMissionGoals.Pages
             set { _currentVersionDisplay = value; OnPropertyChanged(); }
         }
 
-        /// <summary>已完成条目数，用于列表标题右侧计数与空态显示。</summary>
+        /// <summary>已完成条目数，用于卡片标题右侧的「共 N 条」计数。</summary>
         public int FinishedEntryCount
         {
             get => _finishedEntryCount;
@@ -126,6 +152,20 @@ namespace OCCMissionGoals.Pages
         /// <summary>「共 N 条」计数文案。</summary>
         public string FinishedCountText => LocalizationManager.T("共 {0} 条", FinishedEntryCount);
 
+        /// <summary>
+        /// 折线图里的数据点数：最近 30 天完成的条目数。为 0 时收起图表、只留空态文案。
+        /// </summary>
+        public int TrendPointCount
+        {
+            get => _trendPointCount;
+            set
+            {
+                if (_trendPointCount == value) return;
+                _trendPointCount = value;
+                OnPropertyChanged();
+            }
+        }
+
         // ===== 图表数据 =====
         public ObservableCollection<SeveritySlice> SeveritySlices { get; } = new();
         public ObservableCollection<ContributionDay> ContributionDays { get; } = new();
@@ -140,9 +180,6 @@ namespace OCCMissionGoals.Pages
         /// <summary>两张月表（贡献数 / 修复严重程度）各自的绑定宿主，建表逻辑共用。</summary>
         private MonthTableBinding _contributionTable = null!;
         private MonthTableBinding _severityTable = null!;
-
-        /// <summary>「已完成条目」列表的数据源，按完成时间倒序。</summary>
-        public ObservableCollection<FinishedEntryItem> FinishedEntries { get; } = new();
 
         public LogPage()
         {
@@ -202,6 +239,7 @@ namespace OCCMissionGoals.Pages
             UnfinishedCount = unfinished.Count;
 
             CompletedCount = finished.Count;
+            FinishedEntryCount = finished.Count;   // 折线图卡片标题右侧的「共 N 条」
             TotalCount = data.Entries.Count;
             ProgressRatio = TotalCount > 0 ? Math.Min(1.0, (double)CompletedCount / TotalCount) : 0;
             ProgressPercent = $"{ProgressRatio:P0}";
@@ -209,34 +247,290 @@ namespace OCCMissionGoals.Pages
             BuildSeverityDonut(unfinished);
             BuildContributionGraph(finished);
             BuildSeverityContributionGraph(finished);
-            BuildFinishedEntryList(finished);
+            BuildSeverityTrend(finished);
         }
 
-        // ======================== 已完成条目列表 ========================
+        // ======================== 已完成条目：最近 30 天的严重程度折线图 ========================
 
         /// <summary>
-        /// 填充「已完成条目」列表：每行是严重程度 + 标题 + 相对完成时间，最近完成的排在最前。
-        /// 数据与「贡献记录」同源（当前项目的全部版本）。
+        /// 画「最近 30 天完成条目的严重程度」折线：横轴是最近 30 天，纵轴是五个严重等级
+        /// （更新在底、致命在顶）。每个已完成条目是一个数据点，按完成时间先后连成折线；
+        /// 同一天的条目会在当天的横向区间里均匀铺开，免得几个点叠在同一处。
+        /// 点的填充色就是它自己的严重程度色，悬停能看到日期、等级与标题。
+        /// 数据与「贡献记录」月表同源（当前项目的全部版本）。
         /// </summary>
-        private void BuildFinishedEntryList(List<Models.GoalEntry> finished)
+        private void BuildSeverityTrend(List<Models.GoalEntry> finished)
         {
-            FinishedEntries.Clear();
+            _trendStart = DateTime.Today.AddDays(-(TrendDays - 1));   // 窗口第一天 00:00
+            var end = _trendStart.AddDays(TrendDays);                // 窗口终点 = 今天 24:00
 
-            // 同一次刷新内共用一个「现在」，避免逐行计算时出现秒级偏差
-            var now = DateTime.Now;
-            foreach (var e in finished.OrderByDescending(e => e.CompletedAt))
+            _trendEntries = finished
+                .Where(e => e.CompletedAt >= _trendStart && e.CompletedAt < end)
+                .OrderBy(e => e.CompletedAt)
+                .ToList();
+
+            TrendPointCount = _trendEntries.Count;
+            DrawSeverityTrend();
+        }
+
+        /// <summary>卡片被拉伸或压缩时按新宽度重画，坐标才不会走形。</summary>
+        private void SeverityTrendCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+            => DrawSeverityTrend();
+
+        private void DrawSeverityTrend()
+        {
+            CloseTrendTips();
+            SeverityTrendCanvas.Children.Clear();
+
+            // 首次布局尚未完成时 ActualWidth 还是 0，先按设计宽度画一版，等 SizeChanged 再纠正
+            double canvasWidth = SeverityTrendCanvas.ActualWidth > 0 ? SeverityTrendCanvas.ActualWidth : 1080.0;
+            double plotWidth = canvasWidth - TrendPlotLeft - TrendPlotRight;
+            double plotHeight = TrendCanvasHeight - TrendPlotTop - TrendPlotBottom;
+            double dayWidth = plotWidth / TrendDays;
+
+            // 按天归位：同一天的条目先按完成时间排好，再各自分到当天的横向区间里
+            var slots = new Dictionary<Models.GoalEntry, (int Day, int Index, int Count)>();
+            foreach (var group in _trendEntries.GroupBy(e => (e.CompletedAt.Date - _trendStart).Days))
             {
-                FinishedEntries.Add(new FinishedEntryItem
-                {
-                    Entry = e,
-                    Title = e.Title,
-                    SeverityText = Models.SeverityHelper.GetText(e.Severity),
-                    SeverityBrush = Models.SeverityHelper.GetBrush(e.Severity),
-                    TimeAgo = Models.RelativeTime.Format(e.CompletedAt, now)
-                });
+                var sameDay = group.OrderBy(e => e.CompletedAt).ToList();
+                for (int i = 0; i < sameDay.Count; i++)
+                    slots[sameDay[i]] = (group.Key, i, sameDay.Count);
             }
 
-            FinishedEntryCount = FinishedEntries.Count;
+            // 条目 → 横坐标：当天区间里的第 (i + 0.5) / n 处，两侧各留半格
+            double X(Models.GoalEntry entry)
+            {
+                var slot = slots[entry];
+                return TrendPlotLeft + (slot.Day + (slot.Index + 0.5) / slot.Count) * dayWidth;
+            }
+
+            // 等级 → 纵坐标：更新（最低）在底、致命（最高）在顶
+            double Y(int level) => TrendPlotTop + plotHeight - (level - 1) * (plotHeight / 4.0);
+
+            DrawTrendAxes(_trendStart, plotWidth, plotHeight, Y);
+
+            if (_trendEntries.Count == 0) return;
+
+            // 相邻太近的同严重程度条目共用一个点，折线也只连这些点，被并掉的那一段不画
+            var clusters = ClusterTrendEntries(_trendEntries, X);
+            var dots = clusters.Select(c => c[0]).ToList();
+
+            // 折线只用一根浅白细线把点连起来，不跟各点的严重程度配色抢眼
+            // 用半像素宽度：抗锯齿后就是一根发丝细线，比 1 像素更轻
+            var polyline = new Polyline
+            {
+                StrokeThickness = 0.5,
+                StrokeLineJoin = PenLineJoin.Round,
+                Points = new PointCollection(dots.Select(e => new Point(X(e), Y(LevelOf(e.Severity)))))
+            };
+            polyline.SetResourceReference(Shape.StrokeProperty, "ForegroundBrush");
+            SeverityTrendCanvas.Children.Add(polyline);
+
+            // 每个点代表一条或多条（同严重程度、又挨在一起的）条目：悬停看明细，滚轮切换，点击跳转
+            foreach (var cluster in clusters)
+                SeverityTrendCanvas.Children.Add(CreateTrendCluster(cluster, X, Y));
+        }
+
+        // ======================== 已完成条目折线图：数据点的合并与点击跳转 ========================
+
+        /// <summary>
+        /// 把数据点按严重程度和横坐标归簇：和簇里第一个点严重程度相同、且挨得够近（中心距小于
+        /// TrendClusterDistance）才并进同一簇。距离跟簇首比而不是跟前一个点比，免得点一串串地
+        /// 被链式吸收——把离簇首已经很远的点也并进来。
+        /// 条目已按完成时间升序，横坐标也基本有序，顺序扫一遍就够。
+        /// </summary>
+        private static List<List<Models.GoalEntry>> ClusterTrendEntries(
+            List<Models.GoalEntry> entries, Func<Models.GoalEntry, double> x)
+        {
+            var clusters = new List<List<Models.GoalEntry>>();
+            double firstX = 0.0;
+            foreach (var entry in entries)
+            {
+                double px = x(entry);
+                if (clusters.Count == 0
+                    || LevelOf(entry.Severity) != LevelOf(clusters[^1][0].Severity)
+                    || px - firstX >= TrendClusterDistance)
+                {
+                    clusters.Add(new List<Models.GoalEntry>());
+                    firstX = px;
+                }
+                clusters[^1].Add(entry);
+            }
+            return clusters;
+        }
+
+        /// <summary>
+        /// 画一个数据点。簇里可能只有一条（普通点），也可能有几条同严重程度、又挨在一起的（合并点）：
+        /// 悬停弹出提示，滚轮在簇内切换条目——提示内容跟着换成当前那一条，
+        /// 左键点一下就切到「完成的条目」页并选中它。
+        /// 点本身不因合并而改变位置和大小：固定画在簇里第一条（也是最早完成的那条）的位置上，
+        /// 也就是折线在该处的拐点上。
+        /// </summary>
+        private Ellipse CreateTrendCluster(
+            List<Models.GoalEntry> entries, Func<Models.GoalEntry, double> x, Func<int, double> y)
+        {
+            int index = 0;
+            var head = entries[0];
+            double centerX = x(head);
+            double centerY = y(LevelOf(head.Severity));
+
+            var dot = new Ellipse
+            {
+                Width = TrendDotRadius * 2,
+                Height = TrendDotRadius * 2,
+                // 簇内严重程度一致，所以颜色固定，滚轮切换时不必跟着变
+                Fill = Models.SeverityHelper.GetBrush(head.Severity),
+                Cursor = Cursors.Hand,
+                StrokeThickness = 1.5
+            };
+            // 描边取卡片背景色：点挨在一起时也能彼此分开
+            dot.SetResourceReference(Shape.StrokeProperty, "CardBackgroundBrush");
+            Canvas.SetLeft(dot, centerX - TrendDotRadius);
+            Canvas.SetTop(dot, centerY - TrendDotRadius);
+
+            // StaysOpen：滚轮切条目时提示不能自己收起来，改由鼠标进出与点击来控制开关
+            var tip = new ToolTip
+            {
+                PlacementTarget = dot,
+                Placement = PlacementMode.Top,
+                StaysOpen = true
+            };
+            dot.ToolTip = tip;
+
+            void Refresh() => tip.Content = TrendTipText(entries, index);
+
+            dot.MouseEnter += (_, _) => tip.IsOpen = true;
+            dot.MouseLeave += (_, _) => tip.IsOpen = false;
+            dot.PreviewMouseWheel += (_, args) =>
+            {
+                if (entries.Count < 2) return;
+                // 往上滚看前一条、往下滚看后一条，到头绕回去
+                index = (index + (args.Delta > 0 ? entries.Count - 1 : 1)) % entries.Count;
+                Refresh();
+                args.Handled = true;      // 拦在这里，别让外层 ScrollViewer 跟着一起滚
+            };
+            dot.MouseLeftButtonUp += (_, args) =>
+            {
+                tip.IsOpen = false;
+                (Window.GetWindow(this) as MainWindow)?.JumpToFinishedEntry(entries[index]);
+                args.Handled = true;
+            };
+
+            Refresh();
+            return dot;
+        }
+
+        /// <summary>数据点的悬停提示：完成时间 · 严重程度 · 标题；合并点再补一行切换提示。</summary>
+        private static string TrendTipText(List<Models.GoalEntry> entries, int index)
+        {
+            var entry = entries[index];
+            var text = $"{entry.CompletedAt:yyyy-MM-dd HH:mm} · {Models.SeverityHelper.GetText(entry.Severity)} · {entry.Title}";
+            var jump = LocalizationManager.T("点击跳转到该条目");
+            return entries.Count > 1
+                ? $"{text}\n{LocalizationManager.T("滚轮切换 {0} / {1}", index + 1, entries.Count)} · {jump}"
+                : $"{text}\n{jump}";
+        }
+
+        /// <summary>重绘前先关掉开着的悬停提示：它们是 StaysOpen 的，不会随点被移除而自己消失。</summary>
+        private void CloseTrendTips()
+        {
+            foreach (var child in SeverityTrendCanvas.Children.OfType<FrameworkElement>())
+                if (child.ToolTip is ToolTip tip) tip.IsOpen = false;
+        }
+
+        /// <summary>严重程度换算成纵轴档位：1 = 更新（最低）… 5 = 致命（最高）。</summary>
+        private static int LevelOf(Models.GoalSeverity severity) => 5 - (int)severity;
+
+        /// <summary>纵轴档位换算回严重程度，用来取刻度的文字。</summary>
+        private static Models.GoalSeverity SeverityOf(int level) => (Models.GoalSeverity)(5 - level);
+
+        /// <summary>
+        /// 画折线图的底子：五条等级横线与左侧等级刻度、每 5 天一条竖线与底部日期刻度。
+        /// </summary>
+        private void DrawTrendAxes(DateTime start, double plotWidth, double plotHeight, Func<int, double> y)
+        {
+            double axisY = TrendPlotTop + plotHeight;
+
+            for (int level = 5; level >= 1; level--)
+            {
+                double lineY = y(level);
+
+                var grid = new Line
+                {
+                    X1 = TrendPlotLeft,
+                    X2 = TrendPlotLeft + plotWidth,
+                    Y1 = lineY,
+                    Y2 = lineY,
+                    StrokeThickness = 1,
+                    Opacity = 0.12
+                };
+                grid.SetResourceReference(Shape.StrokeProperty, "ForegroundBrush");
+                SeverityTrendCanvas.Children.Add(grid);
+
+                var label = new TextBlock
+                {
+                    Text = Models.SeverityHelper.GetText(SeverityOf(level)),
+                    FontSize = 12,
+                    Width = TrendPlotLeft - 12,
+                    TextAlignment = TextAlignment.Right,
+                    Opacity = 0.5
+                };
+                label.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
+                Canvas.SetLeft(label, 0);
+                Canvas.SetTop(label, lineY - 9);
+                SeverityTrendCanvas.Children.Add(label);
+            }
+
+            // 底部时间轴
+            var axis = new Line
+            {
+                X1 = TrendPlotLeft,
+                X2 = TrendPlotLeft + plotWidth,
+                Y1 = axisY,
+                Y2 = axisY,
+                StrokeThickness = 1,
+                Opacity = 0.25
+            };
+            axis.SetResourceReference(Shape.StrokeProperty, "ForegroundBrush");
+            SeverityTrendCanvas.Children.Add(axis);
+
+            // 每 5 天一个刻度，末尾补上今天；今天的标签右对齐，不会探出绘图区
+            var offsets = Enumerable.Range(0, TrendDays / 5)
+                .Select(i => i * 5)
+                .ToList();
+            offsets.Add(TrendDays - 1);
+
+            foreach (int offset in offsets)
+            {
+                var date = start.AddDays(offset);
+                double x = TrendPlotLeft + (double)offset / TrendDays * plotWidth;
+                bool isLast = offset == TrendDays - 1;
+
+                var tick = new Line
+                {
+                    X1 = x,
+                    X2 = x,
+                    Y1 = TrendPlotTop,
+                    Y2 = axisY,
+                    StrokeThickness = 1,
+                    Opacity = 0.08
+                };
+                tick.SetResourceReference(Shape.StrokeProperty, "ForegroundBrush");
+                SeverityTrendCanvas.Children.Add(tick);
+
+                var label = new TextBlock
+                {
+                    Text = date.ToString("M/d"),
+                    FontSize = 12,
+                    Width = 60,
+                    TextAlignment = isLast ? TextAlignment.Right : TextAlignment.Center,
+                    Opacity = 0.5
+                };
+                label.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
+                Canvas.SetLeft(label, isLast ? x - 60 : x - 30);
+                Canvas.SetTop(label, axisY + 8);
+                SeverityTrendCanvas.Children.Add(label);
+            }
         }
 
         // ======================== 严重程度环形图 ========================
@@ -552,63 +846,11 @@ namespace OCCMissionGoals.Pages
             host.ItemsSource = markers;
         }
 
-        // ======================== 已完成条目：点击跳转 ========================
-
-        /// <summary>点击某一行 → 切到「完成的条目」页并滚动高亮该条目。</summary>
-        private void FinishedEntry_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is FrameworkElement { Tag: Models.GoalEntry entry } &&
-                Window.GetWindow(this) is MainWindow win)
-            {
-                win.JumpToFinishedEntry(entry);
-            }
-        }
-
-        /// <summary>
-        /// 列表滚到两端后把滚轮交还给外层页面，避免内层 ScrollViewer 把整页滚动吃掉。
-        /// </summary>
-        private void FinishedList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (sender is not ScrollViewer inner) return;
-
-            bool atTop = inner.VerticalOffset <= 0.0;
-            bool atBottom = inner.VerticalOffset >= inner.ScrollableHeight - 0.5;
-            if ((e.Delta > 0 && atTop) || (e.Delta < 0 && atBottom))
-            {
-                e.Handled = true;
-                var outer = FindAncestorScrollViewer(inner);
-                outer?.ScrollToVerticalOffset(outer.VerticalOffset - e.Delta / 3.0);
-            }
-        }
-
-        private static ScrollViewer? FindAncestorScrollViewer(DependencyObject start)
-        {
-            for (var node = VisualTreeHelper.GetParent(start); node != null; node = VisualTreeHelper.GetParent(node))
-            {
-                if (node is ScrollViewer sv) return sv;
-            }
-            return null;
-        }
-
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
     // ======================== 数据模型 ========================
-
-    /// <summary>「已完成条目」列表里的一行：严重程度 + 标题 + 相对完成时间。</summary>
-    public class FinishedEntryItem
-    {
-        /// <summary>对应条目，点击整行时按它跳转（Tag 传回 code-behind）。</summary>
-        public Models.GoalEntry Entry { get; set; } = null!;
-
-        public string Title { get; set; } = string.Empty;
-        public string SeverityText { get; set; } = string.Empty;
-        public Brush SeverityBrush { get; set; } = Brushes.Gray;
-
-        /// <summary>相对完成时间文案，例如「3分钟前」「2小时前」「1个星期前」。</summary>
-        public string TimeAgo { get; set; } = string.Empty;
-    }
 
     /// <summary>环形图分块的数据模型：扇环几何 + 外侧标签 + 引线。</summary>
     public class SeveritySlice

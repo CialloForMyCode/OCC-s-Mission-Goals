@@ -12,7 +12,6 @@
 
     <Page.Resources>
         <local:ProgressWidthConverter x:Key="ProgressWidthConverter"/>
-        <svc:MarkdownInlineConverter x:Key="MarkdownInlineConverter"/>
         <!-- 修复严重程度月表的格子基色：取「致命」红（与 SeverityHelper 里的致命色一致），深浅由当日修复权重决定 -->
         <SolidColorBrush x:Key="SeverityHeatBrush" Color="#E83D3D"/>
     </Page.Resources>
@@ -398,7 +397,7 @@
             </Border>
         </Grid>
 
-        <!-- ========== 已完成条目：严重程度 + 标题 + 相对完成时间，整行点击跳转 ========== -->
+        <!-- ========== 已完成条目：最近 30 天完成条目的严重程度折线图 ========== -->
         <Border Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource CardBorderBrush}"
             BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
@@ -414,63 +413,37 @@
                            HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 </Grid>
 
-                <!-- 空态 -->
-                <TextBlock Text="{loc:Loc &quot;没有已完成条目&quot;}"
+                <!-- 折线图：横轴 = 最近 30 天，纵轴 = 条目完成时的严重程度。
+                     画布高度固定、宽度跟随卡片，坐标由 code-behind 按实际宽度计算。 -->
+                <Canvas x:Name="SeverityTrendCanvas" Height="300"
+                        SizeChanged="SeverityTrendCanvas_SizeChanged">
+                    <Canvas.Style>
+                        <Style TargetType="Canvas">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TrendPointCount}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Canvas.Style>
+                </Canvas>
+
+                <!-- 空态：最近 30 天没有任何完成动态 -->
+                <TextBlock Text="{loc:Loc &quot;没有动态&quot;}"
                        Foreground="{DynamicResource ForegroundBrush}"
                        FontSize="13" Opacity="0.4" Margin="0,4,0,0">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding FinishedEntryCount}" Value="0">
+                                <DataTrigger Binding="{Binding TrendPointCount}" Value="0">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-
-                <!-- 固定高度 + 内部滚动：条目再多也不会把日志页撑得很长 -->
-                <ScrollViewer MaxHeight="300"
-                              VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
-                              PreviewMouseWheel="FinishedList_PreviewMouseWheel">
-                    <ItemsControl ItemsSource="{Binding FinishedEntries}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Style="{StaticResource SearchBoardItem}"
-                                    Click="FinishedEntry_Click" Tag="{Binding Entry}"
-                                    Padding="10,6" Margin="0,0,0,2"
-                                    ToolTip="{loc:Loc &quot;点击跳转到该条目&quot;}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Grid.Column="0"
-                                            CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="8,3"
-                                            VerticalAlignment="Center"
-                                            Background="{Binding SeverityBrush}">
-                                            <TextBlock Text="{Binding SeverityText}"
-                                                   Foreground="White" FontSize="12"
-                                                   VerticalAlignment="Center"/>
-                                        </Border>
-
-                                        <ContentControl Grid.Column="1" Margin="10,0,8,0"
-                                                    Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}}"
-                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                    FontSize="14" VerticalAlignment="Center"/>
-
-                                        <TextBlock Grid.Column="2" Text="{Binding TimeAgo}"
-                                               Foreground="{DynamicResource ForegroundBrush}"
-                                               FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
             </StackPanel>
         </Border>
 

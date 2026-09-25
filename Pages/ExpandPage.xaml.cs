@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,6 +47,7 @@ public partial class ExpandPage : Page
     private string _currentCategory = "all";
     private bool _loading;
     private bool _hasLoaded;
+    private bool _checkingUpdates;
 
     private List<PluginInfo> _allPlugins => PluginCatalog.All;
 
@@ -138,6 +140,9 @@ public partial class ExpandPage : Page
 
         BuildCategories();
         ApplyFilter();
+
+        // 列表渲染后异步核对已安装项是否落后于仓库里的内容（有新版时卡片上出现「更新」按钮）。
+        _ = CheckUpdatesAsync();
     }
 
     private static PluginInfo BuildPlugin(LanguagePack pack) => new()
@@ -160,6 +165,7 @@ public partial class ExpandPage : Page
         InstalledLabel = LocalizationManager.T("已安装"),
         DownloadUrl = pack.DownloadUrl,
         FileName = pack.FileName,
+        RemoteSha = pack.Sha,
     };
 
     private static PluginInfo BuildThemePlugin(ThemePack theme) => new()
@@ -182,6 +188,7 @@ public partial class ExpandPage : Page
         InstalledLabel = LocalizationManager.T("已安装"),
         DownloadUrl = theme.DownloadUrl,
         FileName = theme.FileName,
+        RemoteSha = theme.Sha,
     };
 
     /// <summary>把本地扩展（Expand 目录）转换成扩展中心的目录项。
@@ -292,31 +299,17 @@ public partial class ExpandPage : Page
 
     private async void InstallButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button btn || btn.Tag is not PluginInfo plugin) return;
-
-        // 已安装（卸载）与本地扩展（启用 / 禁用）都是本地操作，不显示「下载中…」。
-        if (plugin.IsInstalled || plugin.Category == ExpandCategory)
-        {
+        // 是否显示安装进度条由 ToggleInstall 判断：只有需要下载的安装才显示。
+        if (sender is Button { Tag: PluginInfo plugin })
             await ToggleInstall(plugin);
-            return;
-        }
-
-        btn.IsEnabled = false;
-        btn.Content = LocalizationManager.T("下载中…");
-        try
-        {
-            await ToggleInstall(plugin);
-        }
-        finally
-        {
-            btn.IsEnabled = true;
-            btn.ClearValue(ContentControl.ContentProperty);
-        }
     }
 
     /// <summary>安装 / 卸载插件（供右键菜单使用，不依赖具体按钮）。</summary>
     public async Task ToggleInstall(PluginInfo plugin)
     {
+        // 正在安装（下载）时忽略重复触发：按钮已折叠，右键菜单仍可能点到。
+        if (plugin.IsInstalling) return;
+
         if (plugin.Category == ExpandCategory)
         {
             ToggleExpand(plugin);
@@ -347,9 +340,10 @@ public partial class ExpandPage : Page
             return;
         }
 
+        var progress = BeginInstall(plugin);
         try
         {
-            var error = await LanguagePackService.InstallAsync(pack);
+            var error = await LanguagePackService.InstallAsync(pack, progress);
             if (error != null)
             {
                 ShowTip(error);
@@ -364,6 +358,10 @@ public partial class ExpandPage : Page
         catch (Exception ex)
         {
             ShowTip(LocalizationManager.T("安装失败：{0}", ex.Message));
+        }
+        finally
+        {
+            EndInstall(plugin);
         }
     }
 
@@ -413,9 +411,10 @@ public partial class ExpandPage : Page
             return;
         }
 
+        var progress = BeginInstall(plugin);
         try
         {
-            var error = await ThemePackService.InstallAsync(theme);
+            var error = await ThemePackService.InstallAsync(theme, progress);
             if (error != null)
             {
                 ShowTip(error);
@@ -429,6 +428,10 @@ public partial class ExpandPage : Page
         catch (Exception ex)
         {
             ShowTip(LocalizationManager.T("安装失败：{0}", ex.Message));
+        }
+        finally
+        {
+            EndInstall(plugin);
         }
     }
 
@@ -448,6 +451,166 @@ public partial class ExpandPage : Page
     /// <summary>从目录项还原主题包（用于安装 / 卸载时定位远程文件）。</summary>
     private static ThemePack ToThemePack(PluginInfo plugin) =>
         new(plugin.Name, plugin.Author, plugin.Description, plugin.FileName, plugin.DownloadUrl);
+
+    // ==================== 安装进度 ====================
+
+    /// <summary>
+    /// 把目录项切到「安装中」，并返回把服务端上报的进度写入该目录项的上报器
+    /// （0–100；-1 表示响应未给出总大小，此时只显示「下载中…」）。
+    /// 报告在创建它的线程（UI 线程）上回调，属性变更直接驱动卡片上的进度条。
+    /// </summary>
+    private static IProgress<double> BeginInstall(PluginInfo plugin)
+    {
+        plugin.InstallProgress = 0;
+        plugin.InstallProgressText = LocalizationManager.T("下载中…");
+        plugin.IsInstalling = true;
+
+        return new Progress<double>(percent =>
+        {
+            plugin.InstallProgress = percent < 0 ? 0 : percent;
+            plugin.InstallProgressText = percent < 0
+                ? LocalizationManager.T("下载中…")
+                : percent.ToString("F0") + "%";
+        });
+    }
+
+    /// <summary>结束安装状态：收起进度条，恢复卡片上的操作按钮。</summary>
+    private static void EndInstall(PluginInfo plugin)
+    {
+        plugin.IsInstalling = false;
+        plugin.InstallProgress = 0;
+        plugin.InstallProgressText = "";
+    }
+
+    // ==================== 更新检查 ====================
+
+    /// <summary>
+    /// 核对已安装的语言包 / 主题是否落后于仓库里的同名文件：
+    /// contents API 给出的 blob SHA 与本地文件内容的 blob SHA 相同即视为最新。
+    /// 只读本地文件、不额外下载；计算放后台线程，结果回到 UI 线程赋值。
+    /// </summary>
+    private async Task CheckUpdatesAsync()
+    {
+        if (_checkingUpdates) return;
+
+        // 只检查拿到远程 SHA 的已安装项；本地扩展（Expand 目录）不联网。
+        var all = PluginCatalog.All.ToList();
+        var targets = all
+            .Where(p => p.IsInstalled && !string.IsNullOrWhiteSpace(p.RemoteSha))
+            .ToList();
+        if (targets.Count == 0)
+        {
+            // 没有可检查的项时也要保证未安装的卡片不残留「更新」按钮。
+            foreach (var plugin in all)
+                plugin.HasUpdate = false;
+            return;
+        }
+
+        _checkingUpdates = true;
+        try
+        {
+            var outdated = await Task.Run(() => targets.Where(IsOutdated).ToHashSet());
+
+            // 逐个显式赋值：只有「已安装 + 与仓库不一致」才留下「更新」按钮，其余一律复位。
+            foreach (var plugin in all)
+                plugin.HasUpdate = outdated.Contains(plugin);
+        }
+        catch
+        {
+            // 读文件失败（目录被删、文件被占用等）不打扰用户：保持没有「更新」按钮的状态。
+            foreach (var plugin in all)
+                plugin.HasUpdate = false;
+        }
+        finally
+        {
+            _checkingUpdates = false;
+        }
+    }
+
+    /// <summary>本地文件是否与仓库内容不一致；本地文件缺失时不提示更新。</summary>
+    private static bool IsOutdated(PluginInfo plugin)
+    {
+        var directory = plugin.Category == ThemePackCategory
+            ? ThemePackService.LocalThemesDirectory
+            : LanguagePackService.LocalLanguagesDirectory;
+        var path = Path.Combine(directory, plugin.FileName);
+
+        if (!File.Exists(path)) return false;
+
+        return !string.Equals(BlobSha(path), plugin.RemoteSha, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// 按 git 的算法算文件的 blob SHA（SHA-1 over "blob {字节数}\0" + 内容），
+    /// 与 GitHub contents API 返回的 sha 可直接比较。
+    /// </summary>
+    private static string BlobSha(string path)
+    {
+        var content = File.ReadAllBytes(path);
+        var header = Encoding.UTF8.GetBytes($"blob {content.Length}\0");
+
+        using var sha1 = SHA1.Create();
+        sha1.TransformBlock(header, 0, header.Length, null, 0);
+        sha1.TransformFinalBlock(content, 0, content.Length);
+        return Convert.ToHexString(sha1.Hash!).ToLowerInvariant();
+    }
+
+    // ==================== 更新（升级到仓库最新版） ====================
+
+    private async void UpdateButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: PluginInfo plugin })
+            await UpdatePluginAsync(plugin);
+    }
+
+    /// <summary>
+    /// 把已安装的语言包 / 主题升级为仓库里的最新内容：直接下载覆盖（不经过卸载），
+    /// 卡片上的进度条与安装共用。
+    /// </summary>
+    public async Task UpdatePluginAsync(PluginInfo plugin)
+    {
+        if (plugin.IsInstalling || !plugin.IsInstalled || !plugin.HasUpdate) return;
+        if (plugin.Category == ExpandCategory) return;
+
+        var progress = BeginInstall(plugin);
+        try
+        {
+            if (plugin.Category == ThemePackCategory)
+            {
+                var error = await ThemePackService.InstallAsync(ToThemePack(plugin), progress);
+                if (error != null)
+                {
+                    ShowTip(error);
+                    return;
+                }
+
+                ThemeManager.Reload();
+            }
+            else
+            {
+                var error = await LanguagePackService.InstallAsync(ToPack(plugin), progress);
+                if (error != null)
+                {
+                    ShowTip(error);
+                    return;
+                }
+
+                // 重新扫描语言目录，让更新后的文案立即生效。
+                LocalizationManager.Instance.Reload();
+            }
+
+            RebuildCatalog();
+            ShowTip(LocalizationManager.T("「{0}」已更新到最新版本。", plugin.Name));
+        }
+        catch (Exception ex)
+        {
+            ShowTip(LocalizationManager.T("更新失败：{0}", ex.Message));
+        }
+        finally
+        {
+            EndInstall(plugin);
+        }
+    }
 
     /// <summary>在状态栏显示一条非阻塞提示（替代安装 / 卸载弹窗）。</summary>
     private void ShowTip(string message) =>

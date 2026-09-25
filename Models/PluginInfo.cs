@@ -1,7 +1,11 @@
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 namespace OCCMissionGoals.Models;
 
 /// <summary>插件/扩展信息。</summary>
-public class PluginInfo
+public class PluginInfo : INotifyPropertyChanged
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";
@@ -24,4 +28,54 @@ public class PluginInfo
     public string DownloadUrl { get; set; } = "";
     /// <summary>本地文件名（例如 de.xaml），安装 / 卸载时使用。</summary>
     public string FileName { get; set; } = "";
+
+    /// <summary>仓库中该文件的 blob SHA（取自 GitHub contents API），用于判断本地是否为最新。</summary>
+    public string RemoteSha { get; set; } = "";
+
+    private bool _hasUpdate;
+
+    /// <summary>本地文件与仓库中的最新内容不一致时，卡片上出现「更新」按钮。</summary>
+    public bool HasUpdate
+    {
+        get => _hasUpdate;
+        set => SetField(ref _hasUpdate, value);
+    }
+
+    private bool _isInstalling;
+
+    /// <summary>是否正在安装（下载）中。为 true 时卡片上用进度条替换操作按钮。</summary>
+    public bool IsInstalling
+    {
+        get => _isInstalling;
+        set => SetField(ref _isInstalling, value);
+    }
+
+    private double _installProgress;
+
+    /// <summary>安装进度（0–100），与 <see cref="IsInstalling"/> 一同驱动卡片上的进度条。</summary>
+    public double InstallProgress
+    {
+        get => _installProgress;
+        set => SetField(ref _installProgress, value);
+    }
+
+    private string _installProgressText = "";
+
+    /// <summary>安装进度文案（如「42%」；总大小未知时为「下载中…」）。</summary>
+    public string InstallProgressText
+    {
+        get => _installProgressText;
+        set => SetField(ref _installProgressText, value);
+    }
+
+    /// <summary>安装状态变化时通知界面（其余属性在列表重建时一次性赋值，无需通知）。</summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return;
+
+        field = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

@@ -62,6 +62,7 @@ public static class DataService
 
         var json = File.ReadAllText(_path);
         Current = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions) ?? new DataFile();
+        ContentBlocks.RefreshProgress(Current);
     }
 
     /// <summary>GUI 内部保存时为 true，用于抑制文件监视器。</summary>
@@ -162,6 +163,7 @@ public static class DataService
             var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
             if (data != null)
             {
+                ContentBlocks.RefreshProgress(data);
                 merged.Entries.AddRange(data.Entries);
             }
         }
@@ -192,6 +194,7 @@ public static class DataService
             var data = JsonSerializer.Deserialize<DataFile>(json, _jsonOptions);
             if (data == null) continue;
 
+            ContentBlocks.RefreshProgress(data);
             foreach (var entry in data.Entries)
                 list.Add((entry, version));
         }

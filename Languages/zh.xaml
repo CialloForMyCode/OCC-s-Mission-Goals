@@ -60,6 +60,7 @@
     <s:String xml:space="preserve" x:Key="• 删除条目 —— 移除不需要的条目（不可恢复）">• 删除条目 —— 移除不需要的条目（不可恢复）</s:String>
     <s:String xml:space="preserve" x:Key="• 通过「版本管理」弹窗新建、打开或删除版本，新条目将归属当前版本">• 通过「版本管理」弹窗新建、打开或删除版本，新条目将归属当前版本</s:String>
     <s:String xml:space="preserve" x:Key="• 安装 / 卸载 —— 一键安装或卸载扩展插件">• 安装 / 卸载 —— 一键安装或卸载扩展插件</s:String>
+    <s:String xml:space="preserve" x:Key="• 更新 —— 已安装的扩展若落后于仓库，卡片上会出现「更新」按钮">• 更新 —— 已安装的扩展若落后于仓库，卡片上会出现「更新」按钮</s:String>
     <s:String xml:space="preserve" x:Key="• 完成日期 —— 每条目卡片额外显示「完成于」日期信息">• 完成日期 —— 每条目卡片额外显示「完成于」日期信息</s:String>
     <s:String xml:space="preserve" x:Key="• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面">• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面</s:String>
     <s:String xml:space="preserve" x:Key="• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助">• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助</s:String>
@@ -103,6 +104,7 @@
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">下载失败，请稍后重试或使用「打开下载页」。</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">下载失败：{0}</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">下载并安装</s:String>
+    <s:String xml:space="preserve" x:Key="下载中…">下载中…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">下载更新失败。</s:String>
     <s:String xml:space="preserve" x:Key="严重">严重</s:String>
     <s:String xml:space="preserve" x:Key="严重 Severe">严重 Severe</s:String>
@@ -242,7 +244,8 @@
     <s:String xml:space="preserve" x:Key="按住 Ctrl">按住 Ctrl</s:String>
     <s:String xml:space="preserve" x:Key="按日期分组">按日期分组</s:String>
     <s:String xml:space="preserve" x:Key="按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。">按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。</s:String>
-    <s:String xml:space="preserve" x:Key="按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。">按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。</s:String>
+    <s:String xml:space="preserve" x:Key="横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色；点一下能跳到那条条目，几个点挤在一起时用滚轮切换。">横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色；点一下能跳到那条条目，几个点挤在一起时用滚轮切换。</s:String>
+    <s:String xml:space="preserve" x:Key="滚轮切换 {0} / {1}">滚轮切换 {0} / {1}</s:String>
     <s:String xml:space="preserve" x:Key="按模式搜索（点击填入前缀）：">按模式搜索（点击填入前缀）：</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度升序排序">按照严重程度升序排序</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度降序排序">按照严重程度降序排序</s:String>
@@ -282,11 +285,12 @@
     <s:String xml:space="preserve" x:Key="暂无新消息。">暂无新消息。</s:String>
     <s:String xml:space="preserve" x:Key="更改条目">更改条目</s:String>
     <s:String xml:space="preserve" x:Key="更新">更新</s:String>
+    <s:String xml:space="preserve" x:Key="更新失败：{0}">更新失败：{0}</s:String>
+    <s:String xml:space="preserve" x:Key="「{0}」已更新到最新版本。">「{0}」已更新到最新版本。</s:String>
     <s:String xml:space="preserve" x:Key="更新 Update">更新 Update</s:String>
     <s:String xml:space="preserve" x:Key="更新日志">更新日志</s:String>
 <s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。">最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。</s:String>
     <s:String xml:space="preserve" x:Key="最近活动">最近活动</s:String>
-    <s:String xml:space="preserve" x:Key="最近活动时间线">最近活动时间线</s:String>
     <s:String xml:space="preserve" x:Key="未安装">未安装</s:String>
     <s:String xml:space="preserve" x:Key="未完成">未完成</s:String>
     <s:String xml:space="preserve" x:Key="未完成条目">未完成条目</s:String>

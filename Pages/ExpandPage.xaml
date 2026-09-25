@@ -175,8 +175,9 @@
                                                    FontSize="11" Opacity="0.7"/>
                                     </StackPanel>
 
-                                    <!-- 操作按钮 -->
+                                    <!-- 操作按钮（横排：安装 / 卸载 ｜ 更新）/ 安装进度 -->
                                     <StackPanel Grid.Column="2" Grid.RowSpan="2"
+                                                Orientation="Horizontal"
                                                 VerticalAlignment="Center" Margin="14,0,0,0">
                                         <Button x:Name="InstallBtn"
                                                 Width="80" Height="32"
@@ -185,11 +186,59 @@
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
                                                     <!-- 文案由来源决定：语言包 / 主题为「安装 / 卸载」，本地扩展为「启用 / 禁用」。
-                                                         放在 Style Setter 中，InstallButton_Click 临时改写 Content 后 ClearValue 可恢复。 -->
+                                                         安装在下载期间折叠，原位显示进度条。 -->
                                                     <Setter Property="Content" Value="{Binding ActionLabel}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInstalling}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
                                         </Button>
+
+                                        <!-- 有新版时才出现：升级到仓库中的最新内容（与安装共用进度条） -->
+                                        <Button x:Name="UpdateBtn"
+                                                Width="80" Height="32" Margin="6,0,0,0"
+                                                Content="{loc:Loc &quot;更新&quot;}"
+                                                Click="UpdateButton_Click"
+                                                Tag="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource CardActionBtn}">
+                                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                                    <!-- 只有「已安装 + 仓库里有新内容」才出现：未安装时点「安装」拿到的就是最新版，
+                                                         更新对未安装项没有意义。 -->
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding HasUpdate}" Value="True"/>
+                                                                <Condition Binding="{Binding IsInstalled}" Value="True"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding IsInstalling}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <!-- 安装进度：出现条件为「正在下载」，安装结束后随状态自动收起 -->
+                                        <StackPanel Width="88"
+                                                    Visibility="{Binding IsInstalling, Converter={StaticResource BoolToVis}}">
+                                            <ProgressBar Height="8"
+                                                         HorizontalAlignment="Stretch"
+                                                         Minimum="0" Maximum="100"
+                                                         Value="{Binding InstallProgress, Mode=OneWay}"/>
+                                            <TextBlock Text="{Binding InstallProgressText}"
+                                                       Foreground="{DynamicResource ForegroundBrush}"
+                                                       FontSize="11" Opacity="0.6"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,6,0,0"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Grid>
                             </Border>

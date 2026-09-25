@@ -13,7 +13,7 @@ using System.Windows.Markup;
 namespace OCCMissionGoals.Services;
 
 /// <summary>一个可下载的主题（对应仓库 Themes 目录下的一个 *.xaml 文件）。</summary>
-public sealed record ThemePack(string Name, string Author, string Description, string FileName, string DownloadUrl);
+public sealed record ThemePack(string Name, string Author, string Description, string FileName, string DownloadUrl, string Sha = "");
 
 /// <summary>
 /// 主题包服务：从 GitHub 仓库的 Themes 目录列出、下载安装与卸载主题。
@@ -74,6 +74,7 @@ public static class ThemePackService
                 continue;
 
             var downloadUrl = GetString(element, "download_url");
+            var sha = GetString(element, "sha");
             var fallbackName = Path.GetFileNameWithoutExtension(fileName);
 
             // 已安装 → 直接用本地文件解析出的显示名、作者与简介。
@@ -85,7 +86,8 @@ public static class ThemePackService
                     local.Value.Author ?? string.Empty,
                     local.Value.Description ?? string.Empty,
                     fileName,
-                    downloadUrl));
+                    downloadUrl,
+                    sha));
                 continue;
             }
 
@@ -96,7 +98,8 @@ public static class ThemePackService
                 remote?.Author ?? string.Empty,
                 remote?.Description ?? string.Empty,
                 fileName,
-                downloadUrl));
+                downloadUrl,
+                sha));
         }
 
         return result;
@@ -104,9 +107,11 @@ public static class ThemePackService
 
     /// <summary>
     /// 下载主题并写入本地 Themes 目录。返回 null 表示成功，否则返回错误信息。
+    /// 下载过程中通过 <paramref name="progress"/> 上报进度（0–100；-1 表示总大小未知）。
     /// </summary>
     public static async Task<string?> InstallAsync(
         ThemePack pack,
+        IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var fileName = pack.FileName;
@@ -118,11 +123,12 @@ public static class ThemePackService
             using var client = CreateClient();
             using var response = await GetRawAsync(client, fileName, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            var bytes = await ReadContentAsync(response, progress, cancellationToken);
 
             Directory.CreateDirectory(LocalThemesDirectory);
             var target = Path.Combine(LocalThemesDirectory, fileName);
             await File.WriteAllBytesAsync(target, bytes, cancellationToken);
+            progress?.Report(100);
             return null;
         }
         catch (OperationCanceledException)
@@ -183,6 +189,33 @@ public static class ThemePackService
     }
 
     // ======================== 内部实现 ========================
+
+    /// <summary>
+    /// 读取响应内容为字节数组，并在读取过程中上报 0–100 的下载进度；
+    /// 响应头未给出总大小时上报 -1（由调用方按「总大小未知」展示）。
+    /// </summary>
+    private static async Task<byte[]> ReadContentAsync(
+        HttpResponseMessage response,
+        IProgress<double>? progress,
+        CancellationToken cancellationToken)
+    {
+        var total = response.Content.Headers.ContentLength;
+
+        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var buffer = new MemoryStream();
+        var chunk = new byte[81920];
+        var read = 0L;
+        int count;
+
+        while ((count = await source.ReadAsync(chunk.AsMemory(), cancellationToken)) > 0)
+        {
+            buffer.Write(chunk, 0, count);
+            read += count;
+            progress?.Report(total is > 0 ? read * 100.0 / total.Value : -1);
+        }
+
+        return buffer.ToArray();
+    }
 
     private static HttpClient CreateClient()
     {

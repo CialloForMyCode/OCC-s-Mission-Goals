@@ -60,6 +60,7 @@
     <s:String xml:space="preserve" x:Key="• 删除条目 —— 移除不需要的条目（不可恢复）">• 항목 삭제 —— 필요 없는 항목을 제거(복구 불가)</s:String>
     <s:String xml:space="preserve" x:Key="• 通过「版本管理」弹窗新建、打开或删除版本，新条目将归属当前版本">• 「버전 관리」 대화 상자에서 버전을 새로 만들거나 열거나 삭제할 수 있으며, 새 항목은 현재 버전에 속합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 安装 / 卸载 —— 一键安装或卸载扩展插件">• 설치 / 제거 —— 확장 플러그인을 한 번의 클릭으로 설치 또는 제거</s:String>
+    <s:String xml:space="preserve" x:Key="• 更新 —— 已安装的扩展若落后于仓库，卡片上会出现「更新」按钮">• 업데이트 —— 저장소보다 오래된 확장은 카드에 「업데이트」 버튼이 표시됩니다</s:String>
     <s:String xml:space="preserve" x:Key="• 完成日期 —— 每条目卡片额外显示「完成于」日期信息">• 완료 날짜 —— 각 항목 카드에 「완료일」 날짜 정보를 추가 표시</s:String>
     <s:String xml:space="preserve" x:Key="• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面">• 항목 완료 —— 항목을 완료로 표시하고 완료 시간을 자동 기록하며, 항목이 이 페이지에서 완료 페이지로 이동합니다</s:String>
     <s:String xml:space="preserve" x:Key="• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助">• 탐색 모음      대시보드 / 미완료 항목 / 완료 항목 / 확장 센터 / 도움말</s:String>
@@ -103,6 +104,7 @@
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">다운로드에 실패했습니다. 잠시 후 다시 시도하거나 「다운로드 페이지 열기」를 사용하세요.</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">다운로드 실패: {0}</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">다운로드 및 설치</s:String>
+    <s:String xml:space="preserve" x:Key="下载中…">다운로드 중…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">업데이트 다운로드에 실패했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="严重">심각</s:String>
     <s:String xml:space="preserve" x:Key="严重 Severe">심각 Severe</s:String>
@@ -242,7 +244,8 @@
     <s:String xml:space="preserve" x:Key="按住 Ctrl">Ctrl 누르기</s:String>
     <s:String xml:space="preserve" x:Key="按日期分组">날짜별 그룹</s:String>
     <s:String xml:space="preserve" x:Key="按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。">날짜별로 완료 수를 집계하고 막대 차트로 일별 기여 추이를 직관적으로 표시하며, 기간 전환과 상세 보기를 지원합니다.</s:String>
-    <s:String xml:space="preserve" x:Key="按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。">최근 완료된 항목을 최신순으로 표시하고 완료 날짜를 함께 보여 팀의 최신 진행 상황을 쉽게 추적할 수 있습니다.</s:String>
+    <s:String xml:space="preserve" x:Key="横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色；点一下能跳到那条条目，几个点挤在一起时用滚轮切换。">가로축은 최근 30일, 세로축은 완료 시점의 심각도입니다. 완료된 항목 하나가 하나의 점이 되어 완료 순서대로 꺾은선으로 이어지고, 점의 색은 해당 항목의 심각도입니다. 점을 클릭하면 그 항목으로 이동하고, 점이 겹쳐 있으면 휠로 전환합니다.</s:String>
+    <s:String xml:space="preserve" x:Key="滚轮切换 {0} / {1}">휠로 전환 {0} / {1}</s:String>
     <s:String xml:space="preserve" x:Key="按模式搜索（点击填入前缀）：">모드별 검색(클릭하여 접두사 입력):</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度升序排序">심각도 오름차순 정렬</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度降序排序">심각도 내림차순 정렬</s:String>
@@ -282,11 +285,12 @@
     <s:String xml:space="preserve" x:Key="暂无新消息。">새 메시지가 없습니다.</s:String>
     <s:String xml:space="preserve" x:Key="更改条目">항목 변경</s:String>
     <s:String xml:space="preserve" x:Key="更新">업데이트</s:String>
+    <s:String xml:space="preserve" x:Key="更新失败：{0}">업데이트 실패: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="「{0}」已更新到最新版本。">「{0}」을(를) 최신 버전으로 업데이트했습니다.</s:String>
     <s:String xml:space="preserve" x:Key="更新 Update">업데이트 Update</s:String>
     <s:String xml:space="preserve" x:Key="更新日志">업데이트 로그</s:String>
 <s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。">가장 기본적인 작업 단위로, 제목, 요약, 심각도, 상태, 유형 태그 등의 필드를 포함합니다.</s:String>
     <s:String xml:space="preserve" x:Key="最近活动">최근 활동</s:String>
-    <s:String xml:space="preserve" x:Key="最近活动时间线">최근 활동 타임라인</s:String>
     <s:String xml:space="preserve" x:Key="未安装">설치 안 됨</s:String>
     <s:String xml:space="preserve" x:Key="未完成">미완료</s:String>
     <s:String xml:space="preserve" x:Key="未完成条目">미완료 항목</s:String>

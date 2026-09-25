@@ -97,7 +97,8 @@ public class GoalEntry
     [JsonPropertyName("Contents")]
     public List<ContentBlock> Contents { get; set; } = new();
 
-    /// <summary>完成度（0-100）：由内容区多级列表条目与子任务区块的勾选情况推导，保存条目时刷新。</summary>
+    /// <summary>完成度（0-100）：由内容区「子任务」区块的勾选情况推导（列表条目不计入），
+    /// 保存条目时刷新，加载数据时按当前规则重算。</summary>
     [JsonPropertyName("Progress")]
     public int Progress { get; set; }
 }

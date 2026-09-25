@@ -711,7 +711,7 @@ namespace OCCMissionGoals.Pages
         public List<ContentBlock> Contents => Entry.Contents;
         public bool HasContents => Entry.Contents.Count > 0;
 
-        /// <summary>完成度（0-100）：由内容区多级列表条目的勾选情况推导。</summary>
+        /// <summary>完成度（0-100）：内容区「子任务」区块的勾选比例（列表条目不计入）。</summary>
         public int Progress => Entry.Progress;
         public string ProgressText => Entry.Progress.ToString() + "%";
 

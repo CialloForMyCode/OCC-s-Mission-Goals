@@ -23,7 +23,8 @@ public enum ContentBlockKind
     /// <summary>文件引用项：路径 / 行 / 列 / 函数。内容区只显示文件名，完整路径见「相关文件」表。</summary>
     FileRef,
 
-    /// <summary>列表：Items 为该层级的条目（多级列表即条目中再嵌一个 List）。</summary>
+    /// <summary>列表：Items 为该层级的条目（多级列表即条目中再嵌一个 List）。
+    /// 列表只负责排版，容器与它的条目都不参与完成度统计。</summary>
     List,
 
     /// <summary>子任务：一条可勾选完成的小项，Done 记录勾选状态，参与条目的完成度。</summary>
@@ -82,7 +83,7 @@ public class ContentBlock
     [JsonPropertyName("Ordered")]
     public bool Ordered { get; set; }
 
-    /// <summary>List 条目 / SubTask 子任务：是否已完成（完成度统计的就是这些勾选）。</summary>
+    /// <summary>SubTask 子任务：是否已完成 —— 条目的完成度统计的就是这些勾选。</summary>
     [JsonPropertyName("Done")]
     public bool Done { get; set; }
 

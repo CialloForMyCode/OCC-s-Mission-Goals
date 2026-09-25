@@ -60,6 +60,7 @@
     <s:String xml:space="preserve" x:Key="• 删除条目 —— 移除不需要的条目（不可恢复）">• Удалить запись — удалить ненужную запись (безвозвратно)</s:String>
     <s:String xml:space="preserve" x:Key="• 通过「版本管理」弹窗新建、打开或删除版本，新条目将归属当前版本">• Создавайте, открывайте или удаляйте версии через диалог «Управление версиями»; новые записи относятся к текущей версии</s:String>
     <s:String xml:space="preserve" x:Key="• 安装 / 卸载 —— 一键安装或卸载扩展插件">• Установка / удаление — расширение в один клик</s:String>
+    <s:String xml:space="preserve" x:Key="• 更新 —— 已安装的扩展若落后于仓库，卡片上会出现「更新」按钮">• Обновление — у расширений, отстающих от репозитория, на карточке появляется кнопка «Обновление»</s:String>
     <s:String xml:space="preserve" x:Key="• 完成日期 —— 每条目卡片额外显示「完成于」日期信息">• Дата завершения — карточка записи показывает дату завершения</s:String>
     <s:String xml:space="preserve" x:Key="• 完成条目 —— 将条目标记为已完成，自动记录完成时间，条目从本页移至已完成页面">• Завершить запись — отметка «завершено», время запишется автоматически, запись перейдёт на страницу «Сделано»</s:String>
     <s:String xml:space="preserve" x:Key="• 导航栏      仪表盘 / 未完成条目 / 已完成条目 / 扩展中心 / 帮助">• Навигация      Панель / В работе / Сделано / Расширения / Справка</s:String>
@@ -103,6 +104,7 @@
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">Не удалось загрузить. Повторите позже или откройте страницу загрузки.</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">Ошибка загрузки: {0}</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">Загрузить и установить</s:String>
+    <s:String xml:space="preserve" x:Key="下载中…">Загрузка…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">Не удалось загрузить обновление.</s:String>
     <s:String xml:space="preserve" x:Key="严重">Серьёзный</s:String>
     <s:String xml:space="preserve" x:Key="严重 Severe">Серьёзный</s:String>
@@ -242,7 +244,8 @@
     <s:String xml:space="preserve" x:Key="按住 Ctrl">Удерживайте Ctrl</s:String>
     <s:String xml:space="preserve" x:Key="按日期分组">Группировать по дате</s:String>
     <s:String xml:space="preserve" x:Key="按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。">Суммирует завершения по датам в виде столбчатой диаграммы; периоды и детали переключаются.</s:String>
-    <s:String xml:space="preserve" x:Key="按时间倒序展示最近完成的条目，附带完成日期，方便追踪团队最新进展。">Недавно завершённые записи в обратном порядке с датами завершения.</s:String>
+    <s:String xml:space="preserve" x:Key="横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色；点一下能跳到那条条目，几个点挤在一起时用滚轮切换。">По горизонтали — последние 30 дней, по вертикали — важность на момент завершения: каждая завершённая запись становится точкой, точки соединяются в порядке завершения, а цвет точки соответствует важности. Щёлкните точку, чтобы перейти к записи; если точки слиплись, переключайтесь колесом мыши.</s:String>
+    <s:String xml:space="preserve" x:Key="滚轮切换 {0} / {1}">Колесо: переключение {0} / {1}</s:String>
     <s:String xml:space="preserve" x:Key="按模式搜索（点击填入前缀）：">Поиск по режиму (нажмите для подстановки префикса):</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度升序排序">По важности (возрастание)</s:String>
     <s:String xml:space="preserve" x:Key="按照严重程度降序排序">По важности (убывание)</s:String>
@@ -282,11 +285,12 @@
     <s:String xml:space="preserve" x:Key="暂无新消息。">Нет новых сообщений.</s:String>
     <s:String xml:space="preserve" x:Key="更改条目">Изменить запись</s:String>
     <s:String xml:space="preserve" x:Key="更新">Обновление</s:String>
+    <s:String xml:space="preserve" x:Key="更新失败：{0}">Не удалось обновить: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="「{0}」已更新到最新版本。">«{0}» обновлено до последней версии.</s:String>
     <s:String xml:space="preserve" x:Key="更新 Update">Обновление</s:String>
     <s:String xml:space="preserve" x:Key="更新日志">Журнал</s:String>
 <s:String xml:space="preserve" x:Key="最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。">Базовая единица работы: заголовок, краткое описание, важность, статус, теги и т. д.</s:String>
     <s:String xml:space="preserve" x:Key="最近活动">Недавняя активность</s:String>
-    <s:String xml:space="preserve" x:Key="最近活动时间线">Хроника недавней активности</s:String>
     <s:String xml:space="preserve" x:Key="未安装">Не установлено</s:String>
     <s:String xml:space="preserve" x:Key="未完成">Не завершено</s:String>
     <s:String xml:space="preserve" x:Key="未完成条目">Незавершённые</s:String>
