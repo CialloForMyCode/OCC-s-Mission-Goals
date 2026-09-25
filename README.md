@@ -1,15 +1,22 @@
+<div align="center">
+
 # OCC's Mission & Goals
 
-An update / fix tracking tool for the ONC Compiler Collection, designed to streamline entry tracking and boost productivity. Dual-mode: GUI with WPF and CLI that outputs standard JSON for AI / script / CI integration.
+An update / fix tracking tool for the ONC Compiler Collection, built to make entry tracking fast and progress review obvious.
+Dual-mode: a WPF GUI for daily use, plus a CLI that emits standard JSON for AI / script / CI integration.
 
-# Language
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D6)](https://github.com/CialloForMyCode/OCC-s-Mission-Goals/releases/latest)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![UI](https://img.shields.io/badge/UI-WPF-5C2D91)](https://learn.microsoft.com/dotnet/desktop/wpf/)
+[![License](https://img.shields.io/badge/license-GPL--2.0-blue)](LICENSE.txt)
+[![Release](https://img.shields.io/github/v/release/CialloForMyCode/OCC-s-Mission-Goals?label=release&color=brightgreen)](https://github.com/CialloForMyCode/OCC-s-Mission-Goals/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/CialloForMyCode/OCC-s-Mission-Goals/total?label=downloads&color=blue)](https://github.com/CialloForMyCode/OCC-s-Mission-Goals/releases)
 
-[中文 README](README_ZH.md) **|**
-[README for English](README.md) **|**
-[README на русском](README_RU.md) **|**
-[日本語の README](README_JP.md) **|**
-[한국어 README](README_KR.md) **|**
-[README en français](README_FR.md) **|**
+**Languages:** [中文](README_ZH.md) | [English](README.md) | [Русский](README_RU.md) | [日本語](README_JP.md) | [한국어](README_KR.md) | [Français](README_FR.md)
+
+</div>
+
+---
 
 # Table of Contents
 
@@ -18,15 +25,29 @@ An update / fix tracking tool for the ONC Compiler Collection, designed to strea
 - [CLI Commands](#cli-commands)
 - [Architecture](#architecture)
 - [Contributors](#contributors)
+- [License](#license)
 
 ---
 
 # Installation
 
+### Download
+
+Prebuilt installers are published on the [Releases](https://github.com/CialloForMyCode/OCC-s-Mission-Goals/releases/latest) page.
+Both are self-contained — no .NET runtime required:
+
+| Architecture | Installer |
+|--------------|-----------|
+| x64 (recommended) | `OCC-Mission-Goals-<version>-x64-setup.exe` |
+| x86 | `OCC-Mission-Goals-<version>-x86-setup.exe` |
+
 ### Requirements
 
-- Windows 10 / 11
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+| Item | Requirement |
+|------|-------------|
+| Operating system | Windows 10 / 11 |
+| Runtime for the installer | none — self-contained |
+| Runtime for building from source | [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) |
 
 ### Build
 
@@ -46,6 +67,14 @@ dotnet run
 dotnet run -- -h
 ```
 
+### Package an installer
+
+```bash
+installer\build-installer.cmd
+```
+
+Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php); output lands in `output/`.
+
 No third-party NuGet dependencies — pure .NET 8 + WPF, ready out of the box.
 
 ---
@@ -55,46 +84,74 @@ No third-party NuGet dependencies — pure .NET 8 + WPF, ready out of the box.
 ### Basic Workflow
 
 1. **Create a project** — Menu → New Project (`Ctrl+N`): set name, description, initial version
-2. **Create a version** — Version dialog to iterate version numbers (e.g. `0.1.0-alpha.1` → `0.1.0-alpha.2`)
-3. **Add entries** — Toolbar → New Entry: fill in title, severity, deadline, related files, etc.
-4. **Track progress** — Browse and manage entries in the "Unfinished" page
-5. **Complete & Archive** — After marking done, entries appear in the "Finished" page. When all entries in a version are complete, archive with one click.
-6. **Manage project** — Settings → Project Info: edit the name & description, or delete the current project (permanently removes all versions & entries, irreversible)
+2. **Create a version** — version dialog to iterate version numbers (e.g. `0.1.0-alpha.1` → `0.1.0-alpha.2`)
+3. **Add entries** — toolbar → New Entry: fill in title, severity, type tags and content blocks
+4. **Track progress** — browse and manage entries on the "Unfinished" page
+5. **Complete & archive** — finished entries move to the "Finished" page; archive a version once all of its entries are complete
+6. **Manage the project** — Settings → Project Info: edit the name & description, or delete the current project (removes every version and entry, irreversible)
 
 ### Pages
 
 | Page | Function |
 |------|----------|
-| Dashboard | Severity distribution chart, recent trends & project status overview |
+| Dashboard | Severity distribution, 30-day severity trend chart, completion statistics and project status overview |
 | Unfinished | All pending entries grouped by version, with search, sort, edit, complete, delete |
-| Finished | Completed entries grouped by version; undo, edit, delete; archive when version is fully complete |
-| Extension Center | Plugin / extension management |
+| Finished | Completed entries grouped by version; undo, edit, delete; archive when the version is fully complete |
+| Extension Center | Install / uninstall language packs, themes and extensions with a progress bar; installed items are checked against the repository and can be upgraded in one click |
 | Help | Complete user guide: basic operations, shortcuts, field reference, CLI reference |
 
-### Sort Options
+### Entry Content
 
-The bottom toolbar offers 8 sort modes:
+The body of an entry is built from draggable, reorderable blocks instead of a single Markdown blob.
+Drag the handle on the left to reorder, press `+` to add a sub-block:
+
+| Block | Notes |
+|-------|-------|
+| Text | `#` headings, bold, italic, strikethrough, ordered and bulleted lists |
+| Table | Header row plus free-form rows |
+| Divider | Horizontal separator |
+| Code | Optional language tag and line numbers |
+| File reference | Path plus line / column / function |
+| Multi-level list | Nested list items |
+| Sub-task | Checkable items; these drive the entry's completion percentage |
+
+Related files and the completion percentage are rolled up from the content area whenever the entry is saved.
+
+### Sort Options
 
 | Sort | Description |
 |------|-------------|
 | Severity Ascending | Fatal → Update |
 | Severity Descending | Update → Fatal |
-| Deadline Ascending | Earliest → Latest |
-| Deadline Descending | Latest → Earliest |
-| Version Ascending | By version string alphabetical |
-| Version Descending | By version string reverse |
-| Favorites Only | Only favorited entries, sorted by severity |
-| Type Ascending | By type tag (first tag), alphabetical |
+| Version Ascending | By version string, ascending |
+| Version Descending | By version string, descending |
+| Type Ascending | By first type tag, alphabetical |
+| Favorites Only | Favorited entries only, sorted by severity |
 
 ### Severity Levels
 
-| Value | Meaning |
-|------|---------|
-| `Fatal` | Highest priority, needs immediate action |
-| `Severe` | High priority |
-| `General` | Default level |
-| `Patch` | Minor fix |
-| `Update` | Feature update |
+| Value | Meaning | Marker |
+|-------|---------|--------|
+| `Fatal` | Highest priority, needs immediate action | red |
+| `Severe` | High priority | orange |
+| `General` | Default level | yellow |
+| `Patch` | Minor fix | green |
+| `Update` | Feature update | blue |
+
+### Search
+
+The search box filters the current list as you type; a prefix switches the match mode:
+
+| Prefix | Scope |
+|--------|-------|
+| `Text:` | Title and brief (also the default when no prefix is used) |
+| `Tag:` | Type tags |
+| `Setting:` | Settings shortcuts (project info / theme / statistics); pressing Enter runs the selected item |
+| `Function:` | Commands such as new entry, new project, open project |
+| `File:` | Related file paths |
+| `Date:` | Dates |
+| `Plugins:` | Every plugin listed in the Extension Center (global search) |
+| `Expand:` | Installed plugins only (global search) |
 
 ### Data Storage
 
@@ -110,98 +167,132 @@ Projects/
         └── archive/              # Archived versions
 ```
 
-Entry IDs use the format `PPPEEEEEE` (9 digits): first 3 for the project number, last 6 auto-incremented.
+Entry IDs use the format `PPPEEEEEE` (9 digits): the first 3 digits are the project number, the last 6 auto-increment.
 
 ### Extension Storage
 
-Extensions installed from the Extension Center are stored next to the executable in two directories:
+Language packs, themes and extensions installed from the Extension Center are stored next to the executable:
 
 ```
-Languages/            # Language packs (one *.xaml per UI language)
-Expand/               # Extension plugins
+Languages/            # Language packs (*.xaml)
+Themes/               # Themes (*.xaml)
+Expand/<name>/        # Extensions: expand.json manifest plus optional XAML
 ```
 
-- **Language packs** are downloaded and installed into `Languages/`, where `LocalizationManager` auto-loads them on startup.
-- **Extension plugins** are downloaded and installed into `Expand/`; both directories are created automatically as needed and are shipped with the published app.
+An extension can override resource keys (colors, corner radius, border thickness…) or supply layout fragments that replace parts of the main content.
 
 ### Dual Mode
 
-The app checks startup arguments in `Main`: no arguments launches **GUI mode** (WPF window); arguments launch **CLI mode** (console with JSON output).
+The `Main` entry point inspects the startup arguments: with no arguments it starts **GUI mode** (WPF window), with arguments it starts **CLI mode** (console output).
+GUI and CLI are separate processes that serialize their data access through a named cross-process mutex, so both can run at the same time without losing writes.
 
 ---
 
 # CLI Commands
 
-CLI mode is designed for AI / scripts / CI. All normal output is JSON to stdout; errors go to stderr.
+CLI mode is designed for AI / scripts / CI. Human-readable text is the default; pass `--json` for standard JSON. Errors are written to stderr.
 
 ```
-OCCMissionGoals.exe [-p <project>] [-v <version>] <command> [args]
+OCCMissionGoals.exe [global options] <command> [subcommand] [arguments]
 ```
-
-### Entry Commands
-
-| Command | Short | Long | Args | Description |
-|---------|-------|------|------|-------------|
-| Add | `-a` | `--add` | `{Title="...", Severity="Fatal", ...}` | Add an entry with JSON or simplified `Key="Value"` syntax |
-| Check | `-c` | `--check` | `<id>` | View full entry details (JSON) |
-| Done | `-d` | `--done` | `<id>` | Mark entry as finished |
-| Undone | `-u` | `--undone` | `<id>` | Revert finished to unfinished |
-| Delete | `-D` | `--delete` | `<id>` | Delete entry (irreversible) |
-| Favorite | `-f` | `--favorited` | `<id> true\|false` | Set favorite status |
-| List | `-l` | `--list` | — | List all entries (JSON array) |
-
-### Version Commands (`-v`)
-
-| Usage | Description |
-|------|-------------|
-| `-v <version>` | Switch to a specific version |
-| `-v Iterate` | Bump iteration number (e.g. `alpha.0` → `alpha.1`) |
-| `-v Delete <version>` | Delete a version file (cannot delete current version) |
-| `-v Archive <version>` | Archive a version to `versions/archive/` (requires all entries finished; cannot archive current version) |
-
-### Tag Commands (`tag`)
-
-Manage type tags (categories) for the current project. Changes sync across all version entries.
-
-| Usage | Description |
-|-------|-------------|
-| `tag list` | List all tags (with colors) |
-| `tag add <name> [--color <hex>]` | Create a new tag (`new` alias) |
-| `tag delete <name>` | Delete a tag and remove it from all version entries (`remove` / `rm` aliases) |
-| `tag rename <old> <new>` | Rename a tag and sync it across all version entries (`mv` alias) |
 
 ### Global Options
 
 | Flag | Description |
 |------|-------------|
-| `-p <name>` / `--project <name>` | Target a specific project |
-| `-v <version>` | Target a specific version (used with entry commands) |
-| `help` / `-h` / `--help` | Print help |
+| `-p`, `--project <name>` | Target project (folder name or project name) |
+| `--json` | Emit JSON instead of human-readable text |
+| `--version <version>` | Read a specific version without switching to it |
+| `-h`, `--help` | Print help; append it to a command (`entry --help`) for details |
 
-### Add Entry Format
+### project — Project Management
+
+| Usage | Description |
+|-------|-------------|
+| `project list` | List all projects |
+| `project info [name]` | Show project info (the `-p` project by default) |
+
+### version — Version Management
+
+| Usage | Description |
+|-------|-------------|
+| `version list` | List all versions (`*` marks the current one) |
+| `version current` | Print the current version |
+| `version switch <version>` | Switch to a version (persisted) |
+| `version iterate` | Increment the pre-release number (`0.1.0-alpha.0` → `0.1.0-alpha.1`) |
+| `version delete <version>` | Delete a version (the current version cannot be deleted) |
+| `version archive <version>` | Archive into `versions/archive/` (every entry must be finished) |
+
+### entry — Entry Management
+
+| Command | Description |
+|---------|-------------|
+| `entry list` | List entries |
+| `entry show <id\|index\|title>` | Show one entry as JSON |
+| `entry add` | Add an entry |
+| `entry edit <id\|index\|title>` | Edit an entry |
+| `entry done <id\|index\|title>` | Mark as finished |
+| `entry undone <id\|index\|title>` | Revert to unfinished |
+| `entry delete <id\|index\|title>` | Delete an entry (irreversible) |
+| `entry favorite <id\|index\|title> <true\|false>` | Set the favorite flag |
+
+Full syntax:
 
 ```
--a {Title="FixBug", Severity="Fatal", Brief="Short desc", Detail="Long desc",
-    IsFavorited=false, Version="0.1.0", Type=["Bug"],
-    RelatedFiles={"P:\\auth.cs"=[10,5,"Login"]}}
+entry list     [--type u|f|a] [--search <keyword>] [--tag <tag>] [--favorite] [--all] [--version <version>]
+entry show     <id|index|title> [--type u|f] [--version <version>]
+entry add      --title <title> [--severity <level>] [--brief <brief>] [--type <tag1,tag2>]
+               [--favorite] [--version <version>]
+entry edit     <id|index|title> [--title ...] [--severity ...] [--brief ...] [--type ...]
+               [--favorite|--unfavorite] [--version <version>]
 ```
 
-Only `Title` is required. `Severity` defaults to `General`. `Type` is a string array, `RelatedFiles` a path → `[line, col, function]` map.
+`<id|index|title>` accepts the hidden ID (`001000001`), the list index, or an exact title match.
+`--type` selects the scope in `list` / `show` (`u` unfinished, `f` finished, `a` all) and sets the type tags (comma-separated) in `add` / `edit`.
+
+### tag — Tag Management
+
+Manage the type tags of the current project; changes are synced to the entries of every version.
+
+| Usage | Description |
+|-------|-------------|
+| `tag list` | List all tags (with colors) |
+| `tag add <name> [--color <hex>]` | Create a tag |
+| `tag delete <name>` | Delete a tag and remove it from every entry |
+| `tag rename <old> <new>` | Rename a tag and sync every entry |
+
+### Legacy Flags
+
+The old single-flag syntax is still accepted:
+
+```
+-a/--add   -c/--check   -d/--done   -u/--undone   -D/--delete
+-f/--favorited   -l/--list   -v <version|Iterate|Delete|Archive>
+```
+
+`-a` / `--add` additionally accepts the old JSON form: `-a {Title="...", Severity="Fatal", ...}`
 
 ### Examples
 
 ```bash
-# List all entries in project "ONC"
-OCCMissionGoals.exe -p ONC -l
+# List every entry of project "ONC"
+OCCMissionGoals.exe -p ONC entry list
 
 # Add a fatal bug
-OCCMissionGoals.exe -a {Title="NullRef crash", Severity="Fatal", Brief="Crash on startup", Version="0.1.0-alpha.0", Type=["Bug"], RelatedFiles={"C:\\src\\App.cs"=[25,10,"App.Init"]}}
+OCCMissionGoals.exe -p ONC entry add --title "NullReferenceException on startup" --severity Fatal --brief "Crashes at launch" --type Bug --version 0.1.0-alpha.0
+
+# Machine-readable output
+OCCMissionGoals.exe -p ONC --json entry list
 
 # Mark as done
-OCCMissionGoals.exe -d 001000001
+OCCMissionGoals.exe -p ONC entry done 001000001
 
 # Switch version and add an entry
-OCCMissionGoals.exe -v 0.2.0-alpha.0 -a {Title="Add login", Severity="Update"}
+OCCMissionGoals.exe -p ONC version switch 0.2.0-alpha.0
+OCCMissionGoals.exe -p ONC entry add --title "Add login" --severity Update
+
+# Tag management
+OCCMissionGoals.exe -p ONC tag add UI --color "#3D9DE8"
 ```
 
 ---
@@ -210,85 +301,113 @@ OCCMissionGoals.exe -v 0.2.0-alpha.0 -a {Title="Add login", Severity="Update"}
 
 ```
 OCC-s-Mission-Goals/
-├── App.xaml / .cs              # Entry point: detects args → GUI or CLI
-├── MainWindow.xaml / .cs       # Main window, custom frameless + blur overlay
-├── CliCommand.cs               # CLI parsing & dispatch
+├── App.xaml / .cs              # Entry point: detect arguments → GUI or CLI
+├── MainWindow.xaml / .cs       # Main window, borderless with blur overlay
+├── CliCommand.cs               # CLI parsing and execution
 ├── ConfigManager.cs            # config.ini read / write
+├── LocalizationManager.cs      # Language pack lookup, T(key)
 ├── ThemeManager.cs             # Light / dark theme switching
 ├── FolderPicker.cs             # Folder picker wrapper
-├── AssemblyInfo.cs             # Assembly metadata
+├── AssemblyInfo.cs             # Assembly information
+├── Styles.xaml                 # Global WPF styles
 │
 ├── Models/                     # Data models
-│   ├── GoalEntry.cs            # Entry entity + SortMode enum
-│   ├── DataFile.cs             # JSON data-file structure
-│   ├── ProjectConfig.cs        # Project configuration
+│   ├── GoalEntry.cs            # Entry entity; GoalSeverity / SortMode / SearchMode
+│   ├── ContentBlock.cs         # Content block (text / table / code / file / list / sub-task)
+│   ├── DataFile.cs             # Data file root: User + Entries
+│   ├── ProjectConfig.cs        # project.json
 │   ├── PageRegistration.cs     # Page registration
-│   └── SeverityHelper.cs       # Severity → display text
+│   ├── SeverityHelper.cs       # Severity → label and color
+│   ├── TypeTag.cs              # Type tag display model (text + color)
+│   ├── SearchMatcher.cs        # Per-mode entry matching
+│   ├── RelativeTime.cs         # "a few minutes ago" wording
+│   ├── ExpandInfo.cs           # Extension manifest (expand.json)
+│   ├── PluginInfo.cs           # Extension card state
+│   └── ColorUtil.cs            # Color string ↔ brush
 │
 ├── Services/                   # Service layer
-│   ├── DataService.cs          # JSON read/write + cross-version CRUD
+│   ├── DataService.cs          # Data file read / write
 │   ├── ProjectService.cs       # Multi-project & version management
-│   └── TipService.cs           # Toast message generation
+│   ├── ContentBlocks.cs        # Content area rendering and derived data
+│   ├── Markdown.cs             # Lightweight Markdown renderer
+│   ├── EntryCopyFormatter.cs   # Text produced by "copy info"
+│   ├── FileLock.cs             # Cross-process mutex for data files
+│   ├── FileRefJump.cs          # Jump to a referenced file position
+│   ├── ExpandService.cs        # Scan / load / manage extensions
+│   ├── ExpandAnimation.cs      # Smooth expand / collapse transition
+│   ├── LanguagePackService.cs  # Language pack download / install
+│   ├── ThemePackService.cs     # Theme download / install
+│   ├── PluginCatalog.cs        # Catalog shared by the Extension Center and search
+│   ├── UpdateService.cs        # Update check
+│   ├── AutoStartService.cs     # Run at startup (HKCU Run key)
+│   └── TipService.cs           # Tip wording
 │
 ├── Pages/                      # Main pages
-│   ├── LogPage.xaml            # Dashboard
+│   ├── LogPage.xaml            # Dashboard (distribution + trend chart + statistics)
 │   ├── UnDonePage.xaml         # Unfinished entries
 │   ├── DonePage.xaml           # Finished entries
 │   ├── ExpandPage.xaml         # Extension Center
-│   └── HelpPage.xaml           # Help (with full CLI reference)
+│   ├── SettingsPage.xaml       # Settings
+│   └── HelpPage.xaml           # Help (with the full CLI reference)
+│
+├── Controls/                   # Custom controls
+│   ├── Marquee.cs              # Single-line text marquee
+│   └── ProgressBarAnimation.cs # Smooth progress bar fill
 │
 ├── ToolPages/                  # Bottom toolbar pages
-│   ├── SwitchPage.xaml         # Tab switcher
-│   ├── SortPage.xaml           # Sort selector
-│   ├── ControlButtonPage.xaml  # Quick-action buttons
+│   ├── SwitchPage.xaml         # Page tabs
+│   ├── SortPage.xaml           # Sort selection
+│   ├── ControlButtonPage.xaml  # Quick action buttons
 │   └── MenuPage.xaml           # Menu bar
 │
 ├── Dialogs/                    # Dialogs
-│   ├── NewEntryDialog.xaml     # New / Edit entry
-│   ├── NewProjectDialog.xaml   # New / Edit project
+│   ├── NewEntryDialog.xaml     # New / edit entry
+│   ├── BlockEditor.xaml        # Content block editor
+│   ├── NewProjectDialog.xaml   # New / edit project
 │   └── VersionDialog.xaml      # Version management
 │
-├── Styles.xaml                 # Global WPF styles
-├── ThemeBrushes.xaml           # Theme colour brushes
-│
-├── Languages/                  # Language packs (*.xaml UI translations)
-└── Expand/                     # Extension plugins
+├── Languages/                  # Bundled language packs (zh, en, ja, ko, ru)
+├── Themes/                     # Bundled themes (Default, ItIsPinkish)
+└── installer/                  # Inno Setup script and build script
 ```
 
 ### Tech Stack
 
-- **Runtime**: .NET 8
-- **UI**: WPF (Windows Presentation Foundation)
-- **Data format**: JSON (System.Text.Json)
-- **Config format**: INI
-- **Third-party deps**: None
+| Layer | Choice |
+|-------|--------|
+| Runtime | .NET 8 |
+| UI framework | WPF (Windows Presentation Foundation) |
+| Data format | JSON (System.Text.Json) |
+| Config format | INI |
+| Installer | Inno Setup 6 |
+| Third-party dependencies | none |
 
 ### Data Model
 
 ```
-project.json          →  ProjectConfig (Name, Description, CurrentVersion, ProjectNumber)
-versions/*.json       →  DataFile (User, Unfinished[], Finished[])
-Each entry            →  GoalEntry
+project.json        → ProjectConfig (Name, Description, CurrentVersion, ProjectNumber,
+                                      TypeOptions, TypeColors, NextEntryId, StatsVersions, CreatedAt)
+versions/*.json     → DataFile (User, Entries[])      # unfinished / finished split by Entry.Status
+each entry          → GoalEntry
 ```
 
 Entry fields:
 
-| Field | JSON Type | Description |
+| Field | JSON type | Description |
 |-------|-----------|-------------|
-| `Id` | `string` | Hidden ID `PPPEEEEEE` (9 digits) |
-| `Title` | `string` | Title (only required field) |
-| `Severity` | `string` | Fatal / Severe / General / Patch / Update |
+| `Id` | `string` | Hidden ID `PPPEEEEEE` (9 digits); the stable reference for an entry |
+| `Title` | `string` | Title (the only required field) |
+| `Severity` | `string` | `Fatal` / `Severe` / `General` / `Patch` / `Update` |
+| `Status` | `string` | `Unfinished` / `Finished` |
 | `Brief` | `string` | Short description |
-| `Detail` | `string` | Full description |
-| `Deadline` | `string` (ISO 8601) | Due date and time |
+| `Contents` | `ContentBlock[]` | Entry body: ordered blocks (text / table / divider / code / file reference / multi-level list / sub-task) |
+| `Progress` | `int` | Completion 0–100, derived from the sub-task blocks (list items are excluded); refreshed on save and recomputed on load |
 | `CompletedAt` | `string` (ISO 8601) | Completion time; empty until finished |
 | `CreatedAt` | `string` (ISO 8601) | Creation time |
 | `UpdatedAt` | `string` (ISO 8601) | Last modified time |
-| `Status` | `string` | `Unfinished` / `Finished` |
 | `IsFavorited` | `bool` | Favorite flag |
-| `Version` | `string` | Version string |
-| `Type` | `string[]` | Type tags (Bug, UI, Feature, etc.) |
-| `RelatedFiles` | `{path: [line,col,func]}` | Linked file references |
+| `Type` | `string[]` | Type tags (Bug, UI, Feature, …) |
+| `RelatedFiles` | `{path: [line,col,func]}` | Linked file references, rolled up from the content area |
 
 ---
 
@@ -300,5 +419,8 @@ Entry fields:
 
 ---
 
-> GPL-2.0 License.
-> Repo: [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)
+# License
+
+Released under the [GPL-2.0 License](LICENSE.txt).
+
+Repo: [https://github.com/CialloForMyCode/OCC-s-Mission-Goals](https://github.com/CialloForMyCode/OCC-s-Mission-Goals)
