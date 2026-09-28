@@ -103,6 +103,7 @@
     <s:String xml:space="preserve" x:Key="一般 General">一般 General</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">ダウンロードに失敗しました。後で再試行するか「ダウンロードページを開く」を使用してください。</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">ダウンロード失敗：{0}</s:String>
+    <s:String xml:space="preserve" x:Key="更新包下载不完整，请重试。">更新パッケージのダウンロードが不完全です。もう一度お試しください。</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">ダウンロードしてインストール</s:String>
     <s:String xml:space="preserve" x:Key="下载中…">ダウンロード中…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">更新のダウンロードに失敗しました。</s:String>
@@ -325,6 +326,7 @@
     <s:String xml:space="preserve" x:Key="正在下载更新…">更新をダウンロード中…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">更新をダウンロード中… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">インストーラーを起動中…</s:String>
+    <s:String xml:space="preserve" x:Key="启动安装程序失败：{0}">インストーラーの起動に失敗しました：{0}</s:String>
     <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">「{0}」をインストール中...
 
 （プレースホルダー：将来実際のダウンロード元に接続した後、ここでダウンロードとインストールのフローが実行されます。）</s:String>

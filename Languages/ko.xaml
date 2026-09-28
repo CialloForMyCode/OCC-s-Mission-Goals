@@ -103,6 +103,7 @@
     <s:String xml:space="preserve" x:Key="一般 General">일반 General</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">다운로드에 실패했습니다. 잠시 후 다시 시도하거나 「다운로드 페이지 열기」를 사용하세요.</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">다운로드 실패: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="更新包下载不完整，请重试。">업데이트 패키지 다운로드가 완료되지 않았습니다. 다시 시도해 주세요.</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">다운로드 및 설치</s:String>
     <s:String xml:space="preserve" x:Key="下载中…">다운로드 중…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">업데이트 다운로드에 실패했습니다.</s:String>
@@ -325,6 +326,7 @@
     <s:String xml:space="preserve" x:Key="正在下载更新…">업데이트 다운로드 중…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">업데이트 다운로드 중… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">설치 프로그램 실행 중…</s:String>
+    <s:String xml:space="preserve" x:Key="启动安装程序失败：{0}">설치 프로그램을 시작하지 못했습니다: {0}</s:String>
     <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">「{0}」 설치 중...
 
 (자리표시자: 향후 실제 다운로드 소스와 연결되면 여기에서 다운로드 및 설치 흐름이 실행됩니다.)</s:String>

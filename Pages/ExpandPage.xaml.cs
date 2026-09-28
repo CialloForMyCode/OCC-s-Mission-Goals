@@ -5,8 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,6 +46,9 @@ public partial class ExpandPage : Page
     private bool _loading;
     private bool _hasLoaded;
     private bool _checkingUpdates;
+
+    /// <summary>检查更新期间列表被重建时置位：本轮结束后再补查一次，避免结果落在旧列表上、漏掉「更新」按钮。</summary>
+    private bool _updateCheckPending;
 
     private List<PluginInfo> _allPlugins => PluginCatalog.All;
 
@@ -488,37 +489,44 @@ public partial class ExpandPage : Page
     /// 核对已安装的语言包 / 主题是否落后于仓库里的同名文件：
     /// contents API 给出的 blob SHA 与本地文件内容的 blob SHA 相同即视为最新。
     /// 只读本地文件、不额外下载；计算放后台线程，结果回到 UI 线程赋值。
+    /// 检查期间列表若被重建（安装 / 卸载 / 刷新），结果按 Id 写回当前列表，
+    /// 并在本轮结束后补查一次，避免「更新」按钮漏显示。
     /// </summary>
     private async Task CheckUpdatesAsync()
     {
-        if (_checkingUpdates) return;
-
-        // 只检查拿到远程 SHA 的已安装项；本地扩展（Expand 目录）不联网。
-        var all = PluginCatalog.All.ToList();
-        var targets = all
-            .Where(p => p.IsInstalled && !string.IsNullOrWhiteSpace(p.RemoteSha))
-            .ToList();
-        if (targets.Count == 0)
+        if (_checkingUpdates)
         {
-            // 没有可检查的项时也要保证未安装的卡片不残留「更新」按钮。
-            foreach (var plugin in all)
-                plugin.HasUpdate = false;
+            // 已有检查在跑：记下这次请求，等它结束后补一次，不要直接丢掉。
+            _updateCheckPending = true;
             return;
         }
 
         _checkingUpdates = true;
         try
         {
-            var outdated = await Task.Run(() => targets.Where(IsOutdated).ToHashSet());
+            do
+            {
+                _updateCheckPending = false;
 
-            // 逐个显式赋值：只有「已安装 + 与仓库不一致」才留下「更新」按钮，其余一律复位。
-            foreach (var plugin in all)
-                plugin.HasUpdate = outdated.Contains(plugin);
+                // 只检查拿到远程 SHA 的已安装项；本地扩展（Expand 目录）不联网。
+                var targets = PluginCatalog.All
+                    .Where(p => p.IsInstalled && !string.IsNullOrWhiteSpace(p.RemoteSha))
+                    .ToList();
+
+                var outdated = targets.Count == 0
+                    ? new HashSet<string>()
+                    : await Task.Run(() => targets.Where(IsOutdated).Select(p => p.Id).ToHashSet());
+
+                // 逐个显式赋值：只有「已安装 + 与仓库不一致」才留下「更新」按钮，其余一律复位。
+                foreach (var plugin in PluginCatalog.All)
+                    plugin.HasUpdate = outdated.Contains(plugin.Id);
+            }
+            while (_updateCheckPending);
         }
         catch
         {
             // 读文件失败（目录被删、文件被占用等）不打扰用户：保持没有「更新」按钮的状态。
-            foreach (var plugin in all)
+            foreach (var plugin in PluginCatalog.All)
                 plugin.HasUpdate = false;
         }
         finally
@@ -527,7 +535,10 @@ public partial class ExpandPage : Page
         }
     }
 
-    /// <summary>本地文件是否与仓库内容不一致；本地文件缺失时不提示更新。</summary>
+    /// <summary>
+    /// 本地文件是否与仓库内容不一致；本地文件缺失时不提示更新。
+    /// 比较交给 <see cref="BlobHash"/>，它会容忍 CRLF / LF 差异。
+    /// </summary>
     private static bool IsOutdated(PluginInfo plugin)
     {
         var directory = plugin.Category == ThemePackCategory
@@ -537,22 +548,7 @@ public partial class ExpandPage : Page
 
         if (!File.Exists(path)) return false;
 
-        return !string.Equals(BlobSha(path), plugin.RemoteSha, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// 按 git 的算法算文件的 blob SHA（SHA-1 over "blob {字节数}\0" + 内容），
-    /// 与 GitHub contents API 返回的 sha 可直接比较。
-    /// </summary>
-    private static string BlobSha(string path)
-    {
-        var content = File.ReadAllBytes(path);
-        var header = Encoding.UTF8.GetBytes($"blob {content.Length}\0");
-
-        using var sha1 = SHA1.Create();
-        sha1.TransformBlock(header, 0, header.Length, null, 0);
-        sha1.TransformFinalBlock(content, 0, content.Length);
-        return Convert.ToHexString(sha1.Hash!).ToLowerInvariant();
+        return !BlobHash.MatchesFile(path, plugin.RemoteSha);
     }
 
     // ==================== 更新（升级到仓库最新版） ====================

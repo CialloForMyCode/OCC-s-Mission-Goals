@@ -42,6 +42,9 @@ public static class UpdateService
     public const string RepoOwner = "CialloForMyCode";
     public const string RepoName = "OCC-s-Mission-Goals";
 
+    /// <summary>安装程序下载到临时目录时使用的文件名。</summary>
+    public const string InstallerFileName = "OCC-Mission-Goals-setup.exe";
+
     /// <summary>当前应用版本（来自程序集信息版本，去掉 + 提交哈希）。</summary>
     public static string CurrentVersion { get; } = DetectCurrentVersion();
 
@@ -60,7 +63,7 @@ public static class UpdateService
     {
         try
         {
-            using var client = CreateClient();
+            using var client = CreateApiClient();
             var url = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
 
             using var response = await client.GetAsync(url, cancellationToken);
@@ -138,7 +141,7 @@ public static class UpdateService
         {
             status?.Report(LocalizationManager.T("正在下载更新…"));
 
-            using var client = CreateClient();
+            using var client = CreateDownloadClient();
             using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             response.EnsureSuccessStatusCode();
 
@@ -163,6 +166,14 @@ public static class UpdateService
                 }
             }
 
+            // 完整性校验：传输中途断开留下的半截安装包不能拿去运行。
+            if (total is > 0 && read != total.Value)
+            {
+                TryDelete(tmp);
+                status?.Report(LocalizationManager.T("更新包下载不完整，请重试。"));
+                return null;
+            }
+
             return tmp;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -172,14 +183,22 @@ public static class UpdateService
         }
     }
 
-    /// <summary>启动已下载的安装程序。</summary>
-    public static void LaunchInstaller(string path)
+    /// <summary>启动已下载的安装程序；返回是否成功启动。</summary>
+    public static bool LaunchInstaller(string path)
     {
-        Process.Start(new ProcessStartInfo
+        try
         {
-            FileName = path,
-            UseShellExecute = true
-        });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /// <summary>用默认浏览器打开网页。</summary>
@@ -201,13 +220,38 @@ public static class UpdateService
 
     // ======================== 内部实现 ========================
 
-    private static HttpClient CreateClient()
+    /// <summary>接口请求用的客户端：超时定短些，网络不通时不至于让「检查更新」长时间无响应。</summary>
+    private static HttpClient CreateApiClient()
     {
-        var client = new HttpClient();
+        var client = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
         // GitHub API 要求提供 User-Agent。
         client.DefaultRequestHeaders.UserAgent.ParseAdd("OCCMissionGoals-Updater");
         client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
         return client;
+    }
+
+    /// <summary>
+    /// 下载安装包用的客户端：安装包约 47 MB，HttpClient 默认的 100 秒超时在慢速网络上必然失败，
+    /// 这里放宽到 30 分钟（真的失败时由异常与完整性校验兜底）。
+    /// </summary>
+    private static HttpClient CreateDownloadClient()
+    {
+        var client = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("OCCMissionGoals-Updater");
+        return client;
+    }
+
+    /// <summary>删除下载中途失败留下的临时文件（删不掉也不影响后续重试）。</summary>
+    private static void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+        catch
+        {
+            // 忽略。
+        }
     }
 
     private static string GetString(JsonElement element, string property)

@@ -103,6 +103,7 @@
     <s:String xml:space="preserve" x:Key="一般 General">一般 General</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">下载失败，请稍后重试或使用「打开下载页」。</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">下载失败：{0}</s:String>
+    <s:String xml:space="preserve" x:Key="更新包下载不完整，请重试。">更新包下载不完整，请重试。</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">下载并安装</s:String>
     <s:String xml:space="preserve" x:Key="下载中…">下载中…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">下载更新失败。</s:String>
@@ -325,6 +326,7 @@
     <s:String xml:space="preserve" x:Key="正在下载更新…">正在下载更新…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">正在下载更新… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">正在启动安装程序…</s:String>
+    <s:String xml:space="preserve" x:Key="启动安装程序失败：{0}">启动安装程序失败：{0}</s:String>
     <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">正在安装「{0}」...
 
 （占位：将来对接真实下载源后，此处将触发下载并安装流程。）</s:String>

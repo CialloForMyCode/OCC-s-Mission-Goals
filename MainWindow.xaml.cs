@@ -749,46 +749,15 @@ namespace OCCMissionGoals
             }
         }
 
-        /// <summary>检查更新：失败/无更新时提示；有更新时询问并下载安装。</summary>
+        /// <summary>
+        /// 检查更新：失败/无更新时提示；有更新时询问、下载并安装，
+        /// 安装程序起来后退出应用，好让它覆盖正在运行的主程序。
+        /// </summary>
         private async void CheckForUpdates()
         {
-            SetTipText(LocalizationManager.T("正在检查更新…"));
-            var result = await Services.UpdateService.CheckAsync();
-            if (!result.Succeeded || !result.HasUpdate)
-            {
-                SetTipText(result.Message);
-                return;
-            }
-
-            var yes = MessageBox.Show(
-                this,
-                LocalizationManager.T("发现新版本 {0}，是否下载并安装？", result.LatestVersion),
-                LocalizationManager.T("更新"),
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Information);
-
-            if (yes != MessageBoxResult.Yes) return;
-
-            if (string.IsNullOrEmpty(result.InstallerDownloadUrl))
-            {
-                if (!string.IsNullOrEmpty(result.HtmlUrl))
-                    Services.UpdateService.OpenUrl(result.HtmlUrl);
-                return;
-            }
-
-            SetTipText(LocalizationManager.T("正在下载更新…"));
-            var progress = new Progress<string>(msg => SetTipText(msg));
-            var path = await Services.UpdateService.DownloadInstallerAsync(
-                result.InstallerDownloadUrl, "OCC-Mission-Goals-setup.exe", progress);
-
-            if (string.IsNullOrEmpty(path))
-            {
-                SetTipText(LocalizationManager.T("下载更新失败。"));
-                return;
-            }
-
-            SetTipText(LocalizationManager.T("正在启动安装程序…"));
-            Services.UpdateService.LaunchInstaller(path);
+            var outcome = await Services.UpdateFlow.CheckAndInstallAsync(this, SetTipText);
+            if (outcome == Services.UpdateOutcome.InstallerStarted)
+                Services.UpdateFlow.ShutdownForUpdate();
         }
 
         /// <summary>语言切换后重建页签标签并刷新所有已加载视图。</summary>
@@ -814,35 +783,9 @@ namespace OCCMissionGoals
                 var result = await Services.UpdateService.CheckAsync();
                 if (!result.Succeeded || !result.HasUpdate) return;
 
-                var yes = MessageBox.Show(
-                    this,
-                    LocalizationManager.T("发现新版本 {0}，是否下载并安装？", result.LatestVersion),
-                    LocalizationManager.T("更新"),
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Information);
-
-                if (yes != MessageBoxResult.Yes) return;
-
-                if (string.IsNullOrEmpty(result.InstallerDownloadUrl))
-                {
-                    if (!string.IsNullOrEmpty(result.HtmlUrl))
-                        Services.UpdateService.OpenUrl(result.HtmlUrl);
-                    return;
-                }
-
-                SetTipText(LocalizationManager.T("正在下载更新…"));
-                var progress = new Progress<string>(msg => SetTipText(msg));
-                var path = await Services.UpdateService.DownloadInstallerAsync(
-                    result.InstallerDownloadUrl, "OCC-Mission-Goals-setup.exe", progress);
-
-                if (string.IsNullOrEmpty(path))
-                {
-                    SetTipText(LocalizationManager.T("下载更新失败。"));
-                    return;
-                }
-
-                SetTipText(LocalizationManager.T("正在启动安装程序…"));
-                Services.UpdateService.LaunchInstaller(path);
+                var outcome = await Services.UpdateFlow.AskAndInstallAsync(this, result, SetTipText);
+                if (outcome == Services.UpdateOutcome.InstallerStarted)
+                    Services.UpdateFlow.ShutdownForUpdate();
             });
         }
 

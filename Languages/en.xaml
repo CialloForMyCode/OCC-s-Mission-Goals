@@ -103,6 +103,7 @@
     <s:String xml:space="preserve" x:Key="一般 General">General</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">Download failed. Please retry later or use "Open Download Page".</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">Download failed: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="更新包下载不完整，请重试。">The downloaded update package is incomplete. Please try again.</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">Download &amp; Install</s:String>
     <s:String xml:space="preserve" x:Key="下载中…">Downloading…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">Downloading the update failed.</s:String>
@@ -325,6 +326,7 @@
     <s:String xml:space="preserve" x:Key="正在下载更新…">Downloading update…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">Downloading update… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">Launching installer…</s:String>
+    <s:String xml:space="preserve" x:Key="启动安装程序失败：{0}">Failed to launch the installer: {0}</s:String>
     <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">Installing "{0}"...
 
 (Placeholder: once a real download source is wired up, this will trigger the download and install flow.)</s:String>

@@ -103,6 +103,7 @@
     <s:String xml:space="preserve" x:Key="一般 General">Обычный</s:String>
     <s:String xml:space="preserve" x:Key="下载失败，请稍后重试或使用「打开下载页」。">Не удалось загрузить. Повторите позже или откройте страницу загрузки.</s:String>
     <s:String xml:space="preserve" x:Key="下载失败：{0}">Ошибка загрузки: {0}</s:String>
+    <s:String xml:space="preserve" x:Key="更新包下载不完整，请重试。">Пакет обновления загружен не полностью. Повторите попытку.</s:String>
     <s:String xml:space="preserve" x:Key="下载并安装">Загрузить и установить</s:String>
     <s:String xml:space="preserve" x:Key="下载中…">Загрузка…</s:String>
     <s:String xml:space="preserve" x:Key="下载更新失败。">Не удалось загрузить обновление.</s:String>
@@ -325,6 +326,7 @@
     <s:String xml:space="preserve" x:Key="正在下载更新…">Загрузка обновления…</s:String>
     <s:String xml:space="preserve" x:Key="正在下载更新… {0:F0}%">Загрузка обновления… {0:F0}%</s:String>
     <s:String xml:space="preserve" x:Key="正在启动安装程序…">Запуск установщика…</s:String>
+    <s:String xml:space="preserve" x:Key="启动安装程序失败：{0}">Не удалось запустить установщик: {0}</s:String>
     <s:String xml:space="preserve" x:Key="正在安装「{0}」...&#10;&#10;（占位：将来对接真实下载源后，此处将触发下载并安装流程。）">Установка «{0}»...
 
 (Заглушка: после подключения реального источника загрузки здесь запустится загрузка и установка.)</s:String>

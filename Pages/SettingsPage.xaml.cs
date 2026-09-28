@@ -977,19 +977,10 @@ public partial class SettingsPage : Page
 
         try
         {
-            var progress = new Progress<string>(msg => UpdateStatusText.Text = msg);
-            var path = await UpdateService.DownloadInstallerAsync(
-                update.InstallerDownloadUrl, "OCC-Mission-Goals-setup.exe", progress);
-
-            if (string.IsNullOrEmpty(path))
-            {
-                UpdateStatusText.Text = LocalizationManager.T("下载失败，请稍后重试或使用「打开下载页」。");
-            }
-            else
-            {
-                UpdateStatusText.Text = LocalizationManager.T("正在启动安装程序…");
-                UpdateService.LaunchInstaller(path);
-            }
+            // 与主窗口走同一套流程：下载 → 启动安装程序 → 退出应用，把覆盖交给安装器。
+            var outcome = await UpdateFlow.InstallAsync(update, msg => UpdateStatusText.Text = msg);
+            if (outcome == UpdateOutcome.InstallerStarted)
+                UpdateFlow.ShutdownForUpdate();
         }
         finally
         {
