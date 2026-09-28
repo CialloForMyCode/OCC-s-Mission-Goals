@@ -137,6 +137,8 @@ public static class UpdateService
         IProgress<string>? status = null,
         CancellationToken cancellationToken = default)
     {
+        var tmp = Path.Combine(Path.GetTempPath(), fileName);
+
         try
         {
             status?.Report(LocalizationManager.T("正在下载更新…"));
@@ -146,7 +148,6 @@ public static class UpdateService
             response.EnsureSuccessStatusCode();
 
             var total = response.Content.Headers.ContentLength;
-            var tmp = Path.Combine(Path.GetTempPath(), fileName);
 
             await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
             await using var target = new FileStream(tmp, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -178,6 +179,8 @@ public static class UpdateService
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            // 传输出错留下的半截安装包不能留：重试会写同名文件，坏文件只会误导人。
+            TryDelete(tmp);
             status?.Report(LocalizationManager.T("下载失败：{0}", ex.Message));
             return null;
         }
