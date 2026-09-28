@@ -17,7 +17,6 @@ Dual-mode: a WPF GUI for daily use, plus a CLI that emits standard JSON for AI /
 </div>
 
 ---
-
 # Table of Contents
 
 - [Installation](#installation)

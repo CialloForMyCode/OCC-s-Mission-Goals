@@ -69,6 +69,20 @@ namespace OCCMissionGoals.Pages
         private const double LeaderGap = 4.0;
         /// <summary>标签列到画布边缘的留白。</summary>
         private const double LabelMargin = 8.0;
+        /// <summary>
+        /// 相邻扇环之间分界缝的总宽度（DIP）。缝的两条侧边都是沿弧向平移 RingSliceGapPx / 2
+        /// 得到的平行线，所以从内圈到外圈一样宽，看上去就是两条平行的分割线。
+        /// 扇环还会描一圈卡片背景色的边（StrokeThickness 1），向缝里各探出半个线宽，
+        /// 所以看到的缝 ≈ RingSliceGapPx + 1；太小时看不出来，太大则圆环像被切碎。
+        /// </summary>
+        private const double RingSliceGapPx = 2.5;
+        /// <summary>
+        /// 12 点方向那条分界线（致命与更新之间）整条朝红色一侧平移的宽度（DIP）。
+        /// 同样占比下红色扇形看起来总比蓝色重，把这条线往红色那边挪一点，两边的视觉重量才接近。
+        /// 是「平移」不是「旋转」：线段保持原来的方向（这条线本来就是竖直的），只是整体右移这么多像素，
+        /// 所以内圈和外圈挪的距离一样；两条边一起挪，缝的宽度不变。
+        /// </summary>
+        private const double RingTopBoundaryShiftPx = 3.5;
 
         private int _completedCount;
         private int _unfinishedCount;
@@ -554,8 +568,10 @@ namespace OCCMissionGoals.Pages
 
             double cx = ChartCanvasWidth / 2.0;
             double cy = ChartCanvasHeight / 2.0;
-            // 相邻扇环各向外多扫 0.3°，用来盖住 WPF 在相邻几何拼缝处留下的抗锯齿细线
-            const double seamOverlapDeg = 0.6;
+            double innerRadius = RingOuterRadius - RingWidth;
+            // 只有一个分类时画成整圆，不留空隙——留了会在圆环上豁开一道口子
+            bool singleCategory = groups.Count == 1;
+            double halfGap = RingSliceGapPx / 2.0;
 
             // 先把扇环与标签锚点都算出来，再统一排布，避免同侧标签互相压住
             var slices = new List<SeveritySlice>(groups.Count);
@@ -563,10 +579,28 @@ namespace OCCMissionGoals.Pages
             var sides = new List<bool>(groups.Count);
             var midAngles = new List<double>(groups.Count);
 
+            // 12 点方向那条分界线（致命 / 更新之间）整条朝红色一侧平移：只把这一条缝挪位，
+            // 各扇区扫过的角度、其余分界线的位置都不变，圆环也不会转。
+            // 平移量最多吃掉首尾两个扇区内弧长的四分之一，免得占比很小的分类被这条线挤没。
+            double firstArc = innerRadius * Rad((double)groups[0].Count / total * 360.0);
+            double lastArc = innerRadius * Rad((double)groups[^1].Count / total * 360.0);
+            double topShiftPx = singleCategory
+                ? 0.0
+                : Math.Min(RingTopBoundaryShiftPx, Math.Min(firstArc, lastArc) * 0.25);
+
             double startAngle = 0.0;
-            foreach (var g in groups)
+            for (int i = 0; i < groups.Count; i++)
             {
+                var g = groups[i];
                 double sweep = (double)g.Count / total * 360.0;
+                // 两侧各让出半点空隙。缝隙宽度是固定像素，半径越小同样的宽度占的角度越大，
+                // 所以按内圆弧长来限幅：占比极小的扇区最多被吃掉一半，免得细条扇区直接消失
+                double sideGap = singleCategory ? 0.0
+                                                : Math.Min(halfGap, innerRadius * Rad(sweep) * 0.25);
+                // 起点边比标准让位再右移 topShiftPx（首条）、终点边少让出同样多（末条）：
+                // 一加一减，正好是这条缝整体平移，缝宽不变
+                double startGap = sideGap + (i == 0 ? topShiftPx : 0.0);
+                double endGap = sideGap - (i == groups.Count - 1 ? topShiftPx : 0.0);
                 // 只有一个分类时从 3 点方向引出，否则引线要绕到圆环正下方
                 double midAngle = groups.Count == 1 ? 90.0 : startAngle + sweep / 2.0;
                 string label = Models.SeverityHelper.GetText(g.Severity);
@@ -580,7 +614,7 @@ namespace OCCMissionGoals.Pages
                     LabelText = $"{label} {percent}",
                     TooltipText = LocalizationManager.T("{0} · {1} 个条目", label, g.Count),
                     Brush = Models.SeverityHelper.GetBrush(g.Severity),
-                    Geometry = BuildRingSliceGeometry(cx, cy, startAngle - seamOverlapDeg / 2.0, sweep + seamOverlapDeg)
+                    Geometry = BuildRingSliceGeometry(cx, cy, startAngle, sweep, startGap, endGap)
                 });
 
                 // 锚点沿扇区中线投到环外，位置正好对引线的折点：正上方的分类落到画布顶部，正右方的落到中线上
@@ -659,8 +693,14 @@ namespace OCCMissionGoals.Pages
         /// <summary>
         /// 构造一个扇环（环形图分块）几何体：外弧顺时针、内弧逆时针绕回起点，中间自然留白。
         /// 角度以 12 点方向为 0，顺时针递增。
+        /// <paramref name="startOffset"/> / <paramref name="endOffset"/> 是起点边、终点边各沿弧向
+        /// 平移的宽度（DIP，正数朝角度增大方向）。两条边因此不是径向线，而是把径向线平行推移后的
+        /// 直线段，所以分界缝在任何半径处都一样宽；若改成按角度内缩，缝会外宽内窄，像两条发散的斜线。
+        /// 两条边分开传是因为 12 点那条缝要整体平移：一侧多挪、另一侧就得少挪。
         /// </summary>
-        private static Geometry BuildRingSliceGeometry(double cx, double cy, double startAngle, double sweepAngle)
+        private static Geometry BuildRingSliceGeometry(
+            double cx, double cy, double startAngle, double sweepAngle,
+            double startOffset, double endOffset)
         {
             double innerRadius = RingOuterRadius - RingWidth;
 
@@ -674,29 +714,38 @@ namespace OCCMissionGoals.Pages
                 return ring;
             }
 
+            // 平移宽度换算成角度偏移：偏移角 = asin(偏移宽度 / 半径)。
+            // 半径越小，同样的宽度占的角度越大，这正是缝能做到等宽的原因；偏移为负就是朝反方向挪。
             double endAngle = startAngle + sweepAngle;
-            bool largeArc = sweepAngle > 180.0;
+            double innerStart = startAngle + AngleShiftDeg(startOffset, innerRadius);
+            double outerStart = startAngle + AngleShiftDeg(startOffset, RingOuterRadius);
+            double outerEnd = endAngle - AngleShiftDeg(endOffset, RingOuterRadius);
+            double innerEnd = endAngle - AngleShiftDeg(endOffset, innerRadius);
+
+            // 侧边平移过，弧实际扫过的角度两头都少了偏移量，是不是大于半圈要按实际弧角判断
+            bool outerLargeArc = outerEnd - outerStart > 180.0;
+            bool innerLargeArc = innerEnd - innerStart > 180.0;
 
             var figure = new PathFigure
             {
-                StartPoint = PolarPoint(cx, cy, innerRadius, startAngle),
+                StartPoint = PolarPoint(cx, cy, innerRadius, innerStart),
                 IsClosed = true,
                 IsFilled = true
             };
-            figure.Segments.Add(new LineSegment(PolarPoint(cx, cy, RingOuterRadius, startAngle), false));
+            figure.Segments.Add(new LineSegment(PolarPoint(cx, cy, RingOuterRadius, outerStart), false));
             figure.Segments.Add(new ArcSegment(
-                PolarPoint(cx, cy, RingOuterRadius, endAngle),
+                PolarPoint(cx, cy, RingOuterRadius, outerEnd),
                 new Size(RingOuterRadius, RingOuterRadius),
                 0.0,
-                largeArc,
+                outerLargeArc,
                 SweepDirection.Clockwise,
                 false));
-            figure.Segments.Add(new LineSegment(PolarPoint(cx, cy, innerRadius, endAngle), false));
+            figure.Segments.Add(new LineSegment(PolarPoint(cx, cy, innerRadius, innerEnd), false));
             figure.Segments.Add(new ArcSegment(
-                PolarPoint(cx, cy, innerRadius, startAngle),
+                PolarPoint(cx, cy, innerRadius, innerStart),
                 new Size(innerRadius, innerRadius),
                 0.0,
-                largeArc,
+                innerLargeArc,
                 SweepDirection.Counterclockwise,
                 false));
 
@@ -706,6 +755,10 @@ namespace OCCMissionGoals.Pages
             return geometry;
         }
 
+        /// <summary>把「沿弧向平移指定宽度」换算成该半径处的角度偏移（度）；正数朝角度增大方向，负数反向。</summary>
+        private static double AngleShiftDeg(double offset, double radius)
+            => offset == 0.0 ? 0.0 : Deg(Math.Asin(Math.Clamp(offset / radius, -1.0, 1.0)));
+
         /// <summary>极坐标取点：角度以 12 点方向为 0，顺时针递增。</summary>
         private static Point PolarPoint(double cx, double cy, double radius, double angleDeg)
         {
@@ -714,6 +767,8 @@ namespace OCCMissionGoals.Pages
         }
 
         private static double Rad(double deg) => deg * Math.PI / 180.0;
+
+        private static double Deg(double rad) => rad * 180.0 / Math.PI;
 
         // ======================== GitHub 同款贡献月表 ========================
 

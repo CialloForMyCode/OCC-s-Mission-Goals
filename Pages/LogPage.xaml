@@ -150,11 +150,13 @@
                                 <DataTemplate>
                                     <Canvas Width="{Binding DataContext.ChartWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             Height="{Binding DataContext.ChartHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
-                                        <!-- 描边取主题的卡片背景色：相邻扇区之间留出背景色的缝，区块分明 -->
+                                        <!-- 几何本身已按 RingSliceGapPx 在相邻扇区之间留出等宽空隙（两侧边界是平行线）；
+                                             这里的描边取主题的卡片背景色，进一步压住边缘的抗锯齿细线。
+                                             描边会向缝里各探出半个线宽，所以它也是缝宽的一部分，缝要细就得一起收 -->
                                         <Path Data="{Binding Geometry}"
                                               Fill="{Binding Brush}"
                                               Stroke="{DynamicResource CardBackgroundBrush}"
-                                              StrokeThickness="2"/>
+                                              StrokeThickness="1"/>
 
                                         <!-- 引线：扇区边缘 → 折点 → 标签列 -->
                                         <Polyline Points="{Binding LeaderPoints}"

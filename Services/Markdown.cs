@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -191,7 +192,9 @@ public static class Markdown
     }
 
     /// <summary>
-    /// 只渲染行内 Markdown（加粗 / 斜体 / 删除线 / 行内代码 / 链接），用于标题、简介等单行文本。
+    /// 只渲染行内 Markdown（加粗 / 斜体 / 删除线 / 链接），用于标题、简介等单行文本。
+    /// 标题 / 简介里不认行内代码 —— 那种灰底胶囊块是正文区块的观感，
+    /// 这里的反引号按普通文字原样显示（<c>`xx`</c> 就显示成 <c>`xx`</c>）。
     /// 返回的 TextBlock 不设置前景 / 字号 / 字重，继承宿主 ContentControl 的样式。
     /// </summary>
     public static TextBlock RenderInline(string? markdown, bool trim = false)
@@ -201,7 +204,9 @@ public static class Markdown
 
         if (!string.IsNullOrEmpty(markdown))
         {
-            var text = Escape(markdown);
+            // 反引号先换成转义占位符：InlineRules 里的行内代码规则就匹配不到它们，
+            // 解析出的普通文字再经 Unescape 还原成字面反引号（含加粗 / 斜体块内的）。
+            var text = Escape(markdown).Replace("`", EscBacktick);
             foreach (var inline in ParseInlines(text))
                 tb.Inlines.Add(inline);
         }
@@ -337,16 +342,53 @@ public static class Markdown
             Grid.SetColumn(code, 2);
             grid.Children.Add(code);
 
-            panel.Children.Add(new ScrollViewer
+            var scroller = new ScrollViewer
             {
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 Content = grid,
-            });
+            };
+
+            // 这个内层 ScrollViewer 即使在垂直方向不可滚动，也会把滚轮事件标记为已处理，
+            // 鼠标停在代码块上时外层页面就收不到滚轮了 —— 这里在隧道阶段把垂直滚轮转给外层页面。
+            scroller.PreviewMouseWheel += ForwardVerticalWheel;
+            panel.Children.Add(scroller);
         }
 
         border.Child = panel;
         return border;
+    }
+
+    /// <summary>
+    /// 代码块内嵌的横向 ScrollViewer 会连垂直滚轮一起吞掉（<c>e.Handled = true</c>），
+    /// 于是鼠标停在代码块上时条目详情页滚不动。这里把垂直滚轮重新投给外层滚动容器，
+    /// 步长与页面其它区域一致；Shift + 滚轮仍留给代码块自己做横向滚动。
+    /// </summary>
+    private static void ForwardVerticalWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (e.Handled || e.Delta == 0) return;
+        if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0) return;
+
+        var outer = FindOuterScrollViewer((DependencyObject)sender);
+        if (outer == null) return;
+
+        outer.RaiseEvent(new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+        {
+            RoutedEvent = UIElement.MouseWheelEvent,
+            Source = outer,
+        });
+        e.Handled = true;
+    }
+
+    /// <summary>从 <paramref name="start"/> 的父级往上找第一个外层 ScrollViewer（不返回 <paramref name="start"/> 自己）。</summary>
+    private static ScrollViewer? FindOuterScrollViewer(DependencyObject start)
+    {
+        for (var node = VisualTreeHelper.GetParent(start); node != null; node = VisualTreeHelper.GetParent(node))
+        {
+            if (node is ScrollViewer viewer) return viewer;
+        }
+
+        return null;
     }
 
     private static FrameworkElement BuildCodeHeader(string language, string codeText)
@@ -675,12 +717,96 @@ public static class Markdown
         return span;
     }
 
+    /// <summary>
+    /// 删除线线宽（相对字号的倍数）：内置删除线由字体度量决定（约 0.05 em，正文字号下实测只有
+    /// 0.62 px 的有效线宽、且仅 62% 不透明），夹在笔画里几乎看不见；0.10 em 约 1.25 px，看得清又不压字。
+    /// </summary>
+    private const double StrikeThicknessEm = 0.10;
+
+    /// <summary>删除线向文字两端各外扩的宽度（DIP）。</summary>
+    private const double StrikeOverhangPx = 2;
+
+    /// <summary>正文默认字号：字号还没继承下来时给外扩段兜底用（与 <see cref="NewTextBlock"/> 一致）。</summary>
+    private const double DefaultFontSize = 12;
+
     private static Inline Strike(List<Inline> inlines)
     {
-        var span = new Span { TextDecorations = TextDecorations.Strikethrough };
+        var span = new Span();
+        span.TextDecorations = BuildStrikethrough(span);
+
+        // WPF 的删除线只画在文字的 advance 范围内（实测两端与文字逐像素对齐），想让线比文字
+        // 两端各长一点，只能在首尾各拼一小段线。InlineUIContainer 不产生字符，
+        // 因此不会污染选中 / 复制 / 导出的文本。
+        span.Inlines.Add(BuildStrikeOverhang(span));
         foreach (var inline in inlines)
             span.Inlines.Add(inline);
+        span.Inlines.Add(BuildStrikeOverhang(span));
         return span;
+    }
+
+    /// <summary>
+    /// 删除线两端外扩的小线段：厚度与线一致（跟随字号），颜色跟随宿主前景，
+    /// 靠 <see cref="BaselineAlignment.Center"/> 与主线的划线位置对齐。
+    /// </summary>
+    private static Inline BuildStrikeOverhang(DependencyObject colorSource)
+    {
+        var overhang = new Rectangle
+        {
+            Width = StrikeOverhangPx,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        BindingOperations.SetBinding(overhang, Rectangle.FillProperty,
+            new Binding { Path = new PropertyPath(TextElement.ForegroundProperty), Source = colorSource });
+        BindingOperations.SetBinding(overhang, FrameworkElement.HeightProperty, new Binding
+        {
+            Path = new PropertyPath(TextElement.FontSizeProperty),
+            Source = colorSource,
+            Converter = StrikeThicknessConverter.Instance,
+            FallbackValue = DefaultFontSize * StrikeThicknessEm,
+        });
+
+        return new InlineUIContainer(overhang) { BaselineAlignment = BaselineAlignment.Center };
+    }
+
+    /// <summary>外扩段的高度：把（继承来的）字号按 <see cref="StrikeThicknessEm"/> 换算成 DIP。</summary>
+    private sealed class StrikeThicknessConverter : IValueConverter
+    {
+        public static readonly StrikeThicknessConverter Instance = new();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => (value is double fontSize ? fontSize : DefaultFontSize) * StrikeThicknessEm;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
+    /// <summary>
+    /// 自绘删除线：内置的 <see cref="TextDecorations.Strikethrough"/> 线宽由字体度量决定（约 0.05 em，
+    /// 正文字号下不足一个像素），夹在笔画中间时很不明显。这里按字号等比加粗到
+    /// <see cref="StrikeThicknessEm"/>；颜色绑定到 <paramref name="colorSource"/> 的前景 ——
+    /// <see cref="TextElement.ForegroundProperty"/> 是继承属性，取到的就是宿主（正文 / 标题 / 简介）的颜色，
+    /// 因此主题切换时会跟着一起变。
+    /// </summary>
+    private static TextDecorationCollection BuildStrikethrough(DependencyObject colorSource)
+    {
+        var pen = new Pen
+        {
+            Thickness = StrikeThicknessEm,
+            StartLineCap = PenLineCap.Flat,
+            EndLineCap = PenLineCap.Flat,
+        };
+        BindingOperations.SetBinding(pen, Pen.BrushProperty,
+            new Binding { Path = new PropertyPath(TextElement.ForegroundProperty), Source = colorSource });
+
+        return new TextDecorationCollection
+        {
+            new TextDecoration
+            {
+                Location = TextDecorationLocation.Strikethrough,
+                Pen = pen,
+                PenThicknessUnit = TextDecorationUnit.FontRenderingEmSize,
+            },
+        };
     }
 
     private static Inline InlineCode(string code)
