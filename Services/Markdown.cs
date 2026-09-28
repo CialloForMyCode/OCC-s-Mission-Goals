@@ -245,9 +245,9 @@ public static class Markdown
         var tb = new TextBlock
         {
             TextWrapping = TextWrapping.Wrap,
-            FontSize = 12,
             Margin = new Thickness(0, 0, 0, 4),
         };
+        tb.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
         tb.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
         return tb;
     }
@@ -268,7 +268,13 @@ public static class Markdown
     {
         var tb = NewTextBlock();
         tb.FontWeight = FontWeights.SemiBold;
-        tb.FontSize = level switch { 1 => 18, 2 => 16, 3 => 14, _ => 13 };
+        tb.SetResourceReference(TextBlock.FontSizeProperty, level switch
+        {
+            1 => "UiFontSize18",
+            2 => "UiFontSize16",
+            3 => "UiFontSize14",
+            _ => "UiFontSize13",
+        });
         tb.Margin = new Thickness(0, 6, 0, 2);
         foreach (var inline in ParseInlines(text))
             tb.Inlines.Add(inline);
@@ -282,11 +288,11 @@ public static class Markdown
 
         var border = new Border
         {
-            BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(4),
             Margin = new Thickness(0, 4, 0, 4),
             Padding = new Thickness(0),
         };
+        border.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
+        border.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusSmall");
         border.SetResourceReference(Border.BackgroundProperty, "CodeBackgroundBrush");
         border.SetResourceReference(Border.BorderBrushProperty, "CodeBorderBrush");
 
@@ -303,10 +309,10 @@ public static class Markdown
         {
             Text = codeText,
             FontFamily = new FontFamily("Consolas"),
-            FontSize = 11,
             TextWrapping = showLineNumbers ? TextWrapping.NoWrap : TextWrapping.Wrap,
             Padding = new Thickness(showLineNumbers ? 0 : 10, 6, 10, 8),
         };
+        code.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize11");
         code.SetResourceReference(TextBlock.ForegroundProperty, "TerminalForegroundBrush");
 
         if (!showLineNumbers || codeLines.Count == 0)
@@ -324,12 +330,12 @@ public static class Markdown
             {
                 Text = string.Join("\n", Enumerable.Range(1, codeLines.Count)),
                 FontFamily = new FontFamily("Consolas"),
-                FontSize = 11,
                 TextWrapping = TextWrapping.NoWrap,
                 TextAlignment = TextAlignment.Right,
                 Padding = new Thickness(10, 6, 8, 8),
                 Opacity = 0.45,
             };
+            gutter.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize11");
             gutter.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
             Grid.SetColumn(gutter, 0);
             grid.Children.Add(gutter);
@@ -401,11 +407,11 @@ public static class Markdown
         {
             Text = string.IsNullOrWhiteSpace(language) ? "CODE" : language.Trim().ToUpperInvariant(),
             FontFamily = new FontFamily("Consolas"),
-            FontSize = 10,
             FontWeight = FontWeights.SemiBold,
             VerticalAlignment = VerticalAlignment.Center,
             Opacity = 0.55,
         };
+        label.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize10");
         label.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
         Grid.SetColumn(label, 0);
         grid.Children.Add(label);
@@ -432,9 +438,9 @@ public static class Markdown
         var text = new TextBlock
         {
             Text = LocalizationManager.T("复制"),
-            FontSize = 11,
             VerticalAlignment = VerticalAlignment.Center,
         };
+        text.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize11");
         text.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
 
         var content = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -537,11 +543,11 @@ public static class Markdown
 
         var border = new Border
         {
-            BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(6),
             Margin = new Thickness(0, 4, 0, 8),
             Padding = new Thickness(0),
         };
+        border.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
+        border.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusMedium");
         border.SetResourceReference(Border.BorderBrushProperty, "CardBorderBrush");
 
         var grid = new Grid();
@@ -583,11 +589,11 @@ public static class Markdown
         var tb = new TextBlock
         {
             TextWrapping = TextWrapping.Wrap,
-            FontSize = 12,
             Margin = new Thickness(0),
             TextAlignment = col < aligns.Count ? aligns[col] : TextAlignment.Left,
         };
         if (isHeader) tb.FontWeight = FontWeights.SemiBold;
+        tb.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
         tb.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
         foreach (var inline in ParseInlines(text))
             tb.Inlines.Add(inline);
@@ -647,12 +653,12 @@ public static class Markdown
         var markerTb = new TextBlock
         {
             Text = marker,
-            FontSize = 12,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 6, 0),
             MinWidth = 18,
             TextAlignment = TextAlignment.Right,
         };
+        markerTb.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
         markerTb.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
 
         var contentTb = NewTextBlock();
@@ -816,10 +822,10 @@ public static class Markdown
         var text = new TextBlock(new Run(code))
         {
             FontFamily = new FontFamily("Consolas"),
-            FontSize = 11,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center
         };
+        text.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize11");
         text.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
 
         var chip = new Border
@@ -827,11 +833,11 @@ public static class Markdown
             Child = text,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,
-            CornerRadius = new CornerRadius(3),
-            BorderThickness = new Thickness(1),
             Margin = new Thickness(1, 0, 1, 0),
             Padding = new Thickness(2,2,2,1),
         };
+        chip.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusXs");
+        chip.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
         chip.SetResourceReference(Border.BackgroundProperty, "CodeBackgroundBrush");
         chip.SetResourceReference(Border.BorderBrushProperty, "CodeBorderBrush");
 

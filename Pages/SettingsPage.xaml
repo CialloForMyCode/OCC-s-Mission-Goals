@@ -22,7 +22,7 @@
                 <TextBlock Grid.Column="0"
                            Text="{Binding Label}"
                            Foreground="{DynamicResource ForegroundBrush}"
-                           FontSize="12" VerticalAlignment="Center"
+                           FontSize="{DynamicResource UiFontSize12}" VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"/>
                 <Border Grid.Column="1" Margin="8,0"
                         Background="{DynamicResource SearchBackgroundBrush}"
@@ -50,7 +50,7 @@
                 <TextBlock Grid.Column="2"
                            Text="{Binding Count}"
                            Foreground="{DynamicResource ForegroundBrush}"
-                           FontSize="12" FontWeight="SemiBold"
+                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"/>
             </Grid>
@@ -68,7 +68,7 @@
                                 Background="Transparent"
                                 BorderBrush="Transparent"
                                 BorderThickness="{DynamicResource UiBorderThickness}"
-                                CornerRadius="13"
+                                CornerRadius="{DynamicResource UiCornerRadiusXLarge}"
                                 Padding="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -98,7 +98,7 @@
                 BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                 Padding="24,16" Margin="0,0,0,8">
             <TextBlock Text="{loc:Loc &quot;设置&quot;}"
-                       FontSize="20" FontWeight="Bold"
+                       FontSize="{DynamicResource UiFontSize20}" FontWeight="Bold"
                        Foreground="{DynamicResource ForegroundBrush}"
                        Margin="8,0,0,0"/>
         </Border>
@@ -124,7 +124,7 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"
+                            FontSize="{DynamicResource UiFontSize12}"
                             FontWeight="Bold"/>
 
                     <Separator Margin="6,8,6,6" Opacity="0.3"/>
@@ -135,28 +135,28 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_Tags"
                             Content="{loc:Loc &quot;标签管理&quot;}" Tag="Tags"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_Stats"
                             Content="{loc:Loc &quot;数据统计&quot;}" Tag="Stats"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_System"
                             Content="{loc:Loc &quot;系统 / 更新&quot;}" Tag="System"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                 </StackPanel>
             </Border>
 
@@ -173,13 +173,13 @@
                         CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Padding="24,20" Margin="0,0,0,8">
+                        Padding="{DynamicResource UiCardPadding}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;外观主题&quot;}"
-                                   FontSize="16" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,12"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiSectionGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;选择应用的整体明暗风格。更改会立即生效并保存。&quot;}"/>
@@ -191,7 +191,7 @@
                                          GroupName="ThemeGroup" Tag="light"
                                          Checked="ThemeRadio_Checked"
                                          Foreground="{DynamicResource ForegroundBrush}"
-                                         FontSize="13" Margin="0,0,24,0"
+                                         FontSize="{DynamicResource UiFontSize13}" Margin="0,0,24,0"
                                          VerticalContentAlignment="Center"/>
                             <RadioButton x:Name="DarkThemeRadio"
                                          Style="{StaticResource SettingsRadioButton}"
@@ -199,15 +199,15 @@
                                          GroupName="ThemeGroup" Tag="dark"
                                          Checked="ThemeRadio_Checked"
                                          Foreground="{DynamicResource ForegroundBrush}"
-                                         FontSize="13" Margin="0,0,0,0"
+                                         FontSize="{DynamicResource UiFontSize13}" Margin="0,0,0,0"
                                          VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <TextBlock Text="{loc:Loc &quot;主题样式&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,18,0,8"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;选择配色方案。每个方案都包含浅色与深色两套配色。&quot;}"/>
@@ -218,10 +218,10 @@
                                   SelectionChanged="ThemeStyle_SelectionChanged"/>
 
                         <TextBlock Text="{loc:Loc &quot;语言&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,18,0,8"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;选择界面显示语言，更改会立即生效并保存。&quot;}"/>
@@ -233,10 +233,10 @@
 
 
                         <TextBlock Text="{loc:Loc &quot;主题色&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,18,0,8"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;选择应用的主题强调色，用于按钮、进度与选中态等。更改会立即生效并保存。&quot;}"/>
@@ -252,7 +252,7 @@
                             <Button Content="{loc:Loc &quot;应用&quot;}" Click="ApplyAccentHex_Click"
                                     Style="{StaticResource DialogConfirmButton}"
                                     Height="28" MinWidth="0" Width="64" Padding="0"
-                                    Margin="8,0,0,0" FontSize="12"/>
+                                    Margin="8,0,0,0" FontSize="{DynamicResource UiFontSize12}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -262,15 +262,15 @@
                         CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Padding="24,20" Margin="0,0,0,8">
+                        Padding="{DynamicResource UiCardPadding}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;项目信息&quot;}"
-                                   FontSize="16" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,12"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiSectionGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   TextWrapping="Wrap" Margin="{DynamicResource UiSectionGap}"
                                    Text="{loc:Loc &quot;编辑当前打开项目的名称与描述。当前版本号由版本管理维护，此处只读展示。&quot;}"/>
 
                         <Grid>
@@ -327,19 +327,19 @@
                         CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Padding="24,20" Margin="0,0,0,8">
+                        Padding="{DynamicResource UiCardPadding}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;标签管理&quot;}"
-                                   FontSize="16" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,12"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiSectionGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   TextWrapping="Wrap" Margin="0,0,0,12"
+                                   TextWrapping="Wrap" Margin="{DynamicResource UiSectionGap}"
                                    Text="{loc:Loc &quot;管理当前项目的类型标签，添加、重命名、删除标签并设置颜色，更改会同步到所有版本中的条目。&quot;}"/>
 
                         <!-- 添加标签 -->
-                        <Grid Margin="0,0,0,12">
+                        <Grid Margin="{DynamicResource UiSectionGap}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="180"/>
@@ -363,7 +363,7 @@
                                     Click="AddTag_Click"
                                     Style="{StaticResource DialogConfirmButton}"
                                     Height="30" MinWidth="0" Width="64" Padding="0"
-                                    Margin="8,0,0,0" FontSize="12"/>
+                                    Margin="8,0,0,0" FontSize="{DynamicResource UiFontSize12}"/>
                         </Grid>
 
                         <!-- 标签列表 -->
@@ -376,13 +376,13 @@
                         CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Padding="24,20" Margin="0,0,0,8">
+                        Padding="{DynamicResource UiCardPadding}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;数据统计&quot;}"
-                                   FontSize="16" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,12"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiSectionGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,14"
                                    Text="{loc:Loc &quot;只读统计：汇总当前项目全部版本中的条目数量与分布。&quot;}"/>
@@ -392,7 +392,7 @@
 
                         <!-- 严重程度分布 -->
                         <TextBlock Text="{loc:Loc &quot;严重程度分布&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,8"/>
                         <ItemsControl x:Name="SeverityDistPanel"
@@ -401,7 +401,7 @@
 
                         <!-- 类型分布 -->
                         <TextBlock Text="{loc:Loc &quot;类型分布&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,8"/>
                         <ItemsControl x:Name="TypeDistPanel"
@@ -410,7 +410,7 @@
 
                         <!-- 版本分布 -->
                         <TextBlock Text="{loc:Loc &quot;版本分布&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    Margin="0,0,0,8"/>
                         <ItemsControl x:Name="VersionDistPanel"
@@ -423,19 +423,19 @@
                         CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Padding="24,20" Margin="0">
+                        Padding="{DynamicResource UiCardPadding}" Margin="0">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc &quot;系统 / 更新&quot;}"
-                                   FontSize="16" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,12"/>
+                                   Margin="{DynamicResource UiSectionGap}"/>
 
                         <!-- 开机自启动 -->
                         <TextBlock Text="{loc:Loc &quot;开机自启动&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,6"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiCardGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;登录 Windows 后自动启动本应用，通过当前用户启动项注册表实现，无需管理员权限。&quot;}"/>
@@ -445,16 +445,16 @@
                                   Content="{loc:Loc &quot;开机自动启动&quot;}"
                                   Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
-                                  FontSize="13" Margin="0,0,0,6"/>
+                                  FontSize="{DynamicResource UiFontSize13}" Margin="{DynamicResource UiCardGap}"/>
 
                         <Separator Margin="0,10,0,14" Opacity="0.2"/>
 
                         <!-- 自动更新 -->
                         <TextBlock Text="{loc:Loc &quot;自动更新&quot;}"
-                                   FontSize="13" FontWeight="SemiBold"
+                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Margin="0,0,0,6"/>
-                        <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                   Margin="{DynamicResource UiCardGap}"/>
+                        <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                    Foreground="{DynamicResource ForegroundBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,10"
                                    Text="{loc:Loc &quot;从 GitHub Releases 检查新版本，确认后自动下载并运行安装程序。&quot;}"/>
@@ -465,7 +465,7 @@
                                        VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <TextBlock x:Name="CurrentVersionText"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="13" VerticalAlignment="Center"/>
+                                       FontSize="{DynamicResource UiFontSize13}" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <CheckBox x:Name="AutoCheckStartupCheck"
@@ -473,31 +473,31 @@
                                   Content="{loc:Loc &quot;启动时自动检查更新&quot;}"
                                   Checked="AutoCheckStartup_Changed" Unchecked="AutoCheckStartup_Changed"
                                   Foreground="{DynamicResource ForegroundBrush}"
-                                  FontSize="13" Margin="0,0,0,12"/>
+                                  FontSize="{DynamicResource UiFontSize13}" Margin="{DynamicResource UiSectionGap}"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Button x:Name="CheckUpdateBtn"
                                     Content="{loc:Loc &quot;检查更新&quot;}"
                                     Click="CheckUpdate_Click"
                                     Style="{StaticResource DialogConfirmButton}"
-                                    Height="32" MinWidth="0" Width="108" Padding="0" FontSize="12"/>
+                                    Height="32" MinWidth="0" Width="108" Padding="0" FontSize="{DynamicResource UiFontSize12}"/>
                             <Button x:Name="DownloadUpdateBtn"
                                     Content="{loc:Loc &quot;下载并安装&quot;}"
                                     Click="DownloadUpdate_Click"
                                     Style="{StaticResource DialogConfirmButton}"
-                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="12"
+                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                     Margin="8,0,0,0" Visibility="Collapsed"/>
                             <Button x:Name="OpenReleaseBtn"
                                     Content="{loc:Loc &quot;打开下载页&quot;}"
                                     Click="OpenRelease_Click"
                                     Style="{StaticResource DialogCancelButton}"
-                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="12"
+                                    Height="32" MinWidth="0" Width="116" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                     Margin="8,0,0,0" Visibility="Collapsed"/>
                         </StackPanel>
 
                         <TextBlock x:Name="UpdateStatusText"
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   Opacity="0.7" FontSize="12"
+                                   Opacity="0.7" FontSize="{DynamicResource UiFontSize12}"
                                    TextWrapping="Wrap" LineHeight="20"/>
                     </StackPanel>
                 </Border>

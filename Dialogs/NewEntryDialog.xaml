@@ -58,10 +58,10 @@
                     BorderBrush="{DynamicResource CardBorderBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="0,0,0,10"
-                    Margin="0,0,0,12">
+                    Margin="{DynamicResource UiSectionGap}">
                 <Grid>
                     <TextBlock x:Name="DialogTitle" Text="{loc:Loc &quot;新建条目&quot;}"
-                               FontSize="16" FontWeight="SemiBold"
+                               FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
                 </Grid>
@@ -92,7 +92,7 @@
                                       Style="{StaticResource DialogComboBoxItem}"/>
                     </ComboBox>
 
-                    <Grid Margin="0,0,0,6">
+                    <Grid Margin="{DynamicResource UiCardGap}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -103,7 +103,7 @@
                     </Grid>
 
                     <!-- 类别输入行：ComboBox + 添加按钮 -->
-                    <Grid Margin="0,0,0,6">
+                    <Grid Margin="{DynamicResource UiCardGap}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -121,7 +121,7 @@
                                 Click="AddType_Click"
                                 Style="{StaticResource DialogConfirmButton}"
                                 Height="30" MinWidth="48"
-                                FontSize="11" FontWeight="Normal"
+                                FontSize="{DynamicResource UiFontSize11}" FontWeight="Normal"
                                 Padding="8,0"/>
                     </Grid>
 
@@ -157,7 +157,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock x:Name="TagText" Text="{Binding Text}"
                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="12"
+                                                   FontSize="{DynamicResource UiFontSize12}"
                                                    VerticalAlignment="Center"/>
                                         <Button Grid.Column="1"
                                                 Style="{StaticResource StatusBarIconButton}"
@@ -215,9 +215,9 @@
                     <TextBlock Text="{loc:Loc &quot;内容区&quot;}"
                                Style="{StaticResource DialogLabel}"/>
                     <TextBlock Text="{loc:Loc &quot;区块：文本（# 标题、粗体、斜体、删除线、编号列表与列表）、表格、分割线、代码块、文件引用、多级列表、子任务。拖拽左侧手柄排序，＋ 添加子块。&quot;}"
-                               FontSize="10" Opacity="0.5"
+                               FontSize="{DynamicResource UiFontSize10}" Opacity="0.5"
                                TextWrapping="Wrap"
-                               Margin="0,0,0,6"
+                               Margin="{DynamicResource UiCardGap}"
                                Foreground="{DynamicResource ForegroundBrush}"/>
                     <dialogs:BlockEditor x:Name="ContentEditor" Margin="0,0,0,16"/>
 
@@ -231,14 +231,14 @@
                                 <Border Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}"
                                         BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusSmall}"
-                                        Padding="8,6" Margin="0,0,0,6">
+                                        Padding="8,6" Margin="{DynamicResource UiCardGap}">
                                     <StackPanel>
                                         <TextBlock Text="{Binding Path}"
-                                                   FontSize="11"
+                                                   FontSize="{DynamicResource UiFontSize11}"
                                                    TextTrimming="CharacterEllipsis"
                                                    ToolTip="{Binding Path}"
                                                    Foreground="{DynamicResource ForegroundBrush}"/>
-                                        <TextBlock FontSize="10" Opacity="0.6" Margin="0,2,0,0"
+                                        <TextBlock FontSize="{DynamicResource UiFontSize10}" Opacity="0.6" Margin="0,2,0,0"
                                                    Foreground="{DynamicResource ForegroundBrush}">
                                             <Run Text="{Binding Function, Mode=OneWay}"/>
                                             <Run Text=" "/>

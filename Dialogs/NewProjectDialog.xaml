@@ -25,10 +25,10 @@
                     BorderBrush="{DynamicResource CardBorderBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="0,0,0,10"
-                    Margin="0,0,0,12">
+                    Margin="{DynamicResource UiSectionGap}">
                 <Grid>
                     <TextBlock x:Name="DialogTitle" Text="{loc:Loc &quot;新建项目&quot;}"
-                               FontSize="16" FontWeight="SemiBold"
+                               FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"/>
                 </Grid>
@@ -38,7 +38,7 @@
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <!-- 模式切换 -->
-                    <StackPanel x:Name="ModeSwitcher" Orientation="Horizontal" Margin="0,0,0,12">
+                    <StackPanel x:Name="ModeSwitcher" Orientation="Horizontal" Margin="{DynamicResource UiSectionGap}">
                         <RadioButton x:Name="NewModeBtn" Content="{loc:Loc &quot;新建项目&quot;}" GroupName="ProjectMode"
                                      Style="{StaticResource ConsoleTabRadioButton}" Margin="0,0,12,0"
                                      Checked="NewModeBtn_Checked"/>
@@ -84,7 +84,7 @@
                                   Margin="0,0,0,10"/>
                         <TextBlock x:Name="OpenHint" Text=""
                                    Foreground="{DynamicResource ForegroundBrush}"
-                                   FontSize="11" Margin="0,0,0,8"/>
+                                   FontSize="{DynamicResource UiFontSize11}" Margin="0,0,0,8"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

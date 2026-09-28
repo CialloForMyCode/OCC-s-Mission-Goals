@@ -2092,7 +2092,7 @@ namespace OCCMissionGoals
         {
             MaximizeIcon.Text = "\uE923"; // 还原图标
             MainBorder.Margin = new Thickness(0);
-            MainBorder.CornerRadius = new CornerRadius(0);
+            MainBorder.CornerRadius = new CornerRadius(0); // 最大化时贴边，圆角固定为 0
             MainBorder.BorderThickness = new Thickness(0);
         }
 
@@ -2100,7 +2100,8 @@ namespace OCCMissionGoals
         {
             MaximizeIcon.Text = "\uE922"; // 最大化图标
             MainBorder.Margin = new Thickness(5);
-            MainBorder.CornerRadius = new CornerRadius(10);
+            // 恢复为窗口圆角令牌，随主题的 UiCornerRadiusWindow 变化
+            MainBorder.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusWindow");
             MainBorder.BorderThickness = new Thickness(2);
         }
         #endregion

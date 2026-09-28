@@ -192,7 +192,7 @@ public partial class ExpandPage : Page
     };
 
     /// <summary>把本地扩展（Expand 目录）转换成扩展中心的目录项。
-    /// 对扩展而言「安装状态」= 是否启用；清单或资源有问题时把原因显示在简介里。</summary>
+    /// 对扩展而言「安装状态」= 是否启用；清单解析失败时把原因显示在简介里。</summary>
     private static PluginInfo BuildExpandPlugin(ExpandInfo ext) => new()
     {
         Id = ext.Id,
@@ -370,7 +370,7 @@ public partial class ExpandPage : Page
         await LoadAsync();
     }
 
-    /// <summary>启用 / 禁用本地扩展：改写它的 expand.json 并立即重新应用资源覆盖。</summary>
+    /// <summary>启用 / 禁用本地扩展：改写它的 expand.json 并立即重新扫描。</summary>
     private void ToggleExpand(PluginInfo plugin)
     {
         if (!_expandMap.TryGetValue(plugin.Id, out var ext))

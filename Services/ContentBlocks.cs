@@ -103,11 +103,11 @@ public static class ContentBlocks
         var tb = new TextBlock
         {
             Text = text,
-            FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center,
             Opacity = 0.7,
             MinWidth = 10,
         };
+        tb.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
         tb.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
         return tb;
     }
@@ -215,10 +215,9 @@ public static class ContentBlocks
         {
             Text = name,
             FontFamily = new FontFamily("Consolas"),
-            FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center,
             TextTrimming = TextTrimming.CharacterEllipsis,
-        }.WithForeground());
+        }.WithFontSize("UiFontSize12").WithForeground());
 
         var meta = BuildFileMeta(file);
         if (meta.Length > 0)
@@ -227,11 +226,10 @@ public static class ContentBlocks
             {
                 Text = meta,
                 FontFamily = new FontFamily("Consolas"),
-                FontSize = 11,
                 Opacity = 0.55,
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(8, 0, 0, 0),
-            }.WithForeground());
+            }.WithFontSize("UiFontSize11").WithForeground());
         }
 
         return panel;
@@ -249,6 +247,13 @@ public static class ContentBlocks
     private static TextBlock WithForeground(this TextBlock tb)
     {
         tb.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
+        return tb;
+    }
+
+    /// <summary>按主题的外观令牌设置字号（键名见 Themes\*.xaml 的 UiFontSize*）。</summary>
+    private static TextBlock WithFontSize(this TextBlock tb, string key)
+    {
+        tb.SetResourceReference(TextBlock.FontSizeProperty, key);
         return tb;
     }
 

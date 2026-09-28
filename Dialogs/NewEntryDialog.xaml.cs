@@ -286,24 +286,25 @@ public partial class NewEntryDialog : UserControl
         {
             Width = 14,
             Height = 14,
-            CornerRadius = new CornerRadius(3),
             Background = string.IsNullOrEmpty(hex) ? Brushes.Transparent : (ColorUtil.ParseBrush(hex) ?? Brushes.Transparent),
             BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
         };
+        swatch.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusXs");
+        swatch.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
 
         if (string.IsNullOrEmpty(hex))
         {
-            swatch.Child = new TextBlock
+            var mark = new TextBlock
             {
                 Text = "✕",
-                FontSize = 9,
                 Foreground = (Brush)Application.Current.FindResource("ForegroundBrush"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
+            mark.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize9");
+            swatch.Child = mark;
         }
 
         rb.Content = swatch;
@@ -318,13 +319,13 @@ public partial class NewEntryDialog : UserControl
         {
             Width = 12,
             Height = 12,
-            CornerRadius = new CornerRadius(3),
             Background = ColorUtil.ParseBrush(colorHex) ?? Brushes.Transparent,
             BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             Margin = new Thickness(0, 0, 6, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
+        swatch.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusXs");
+        swatch.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
         panel.Children.Add(swatch);
         panel.Children.Add(new TextBlock
         {

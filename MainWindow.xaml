@@ -11,7 +11,7 @@
         Title="OCC's Mission &amp; Goals" Height="766" Width="1250">
 
     <Border x:Name="MainBorder" Background="{DynamicResource BackgroundBrush}"
-        BorderBrush="{DynamicResource MainBorderBrush}" CornerRadius="10"
+        BorderBrush="{DynamicResource MainBorderBrush}" CornerRadius="{DynamicResource UiCornerRadiusWindow}"
         BorderThickness="2" Grid.Row="1"
         Margin="5">
         <Grid>
@@ -34,7 +34,7 @@
                 <!-- 主控制器 -->
                 <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Margin="5,5,0,5" CornerRadius="10">
+                        Margin="5,5,0,5" CornerRadius="{DynamicResource UiCornerRadiusWindow}">
                     <Grid ClipToBounds="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -78,24 +78,24 @@
                 <!-- 控制按钮 -->
                 <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                        Margin="5" CornerRadius="10">
+                        Margin="5" CornerRadius="{DynamicResource UiCornerRadiusWindow}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                         <!-- 最小化按钮 -->
                         <Button Style="{StaticResource WinControlButton}"
-                                Click="MinimizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                                Click="MinimizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="{DynamicResource UiFontSize10}">
                             <TextBlock Text="&#xE921;" Foreground="{DynamicResource ForegroundBrush}"/>
                         </Button>
 
                         <!-- 最大化/还原按钮 -->
                         <Button Style="{StaticResource WinControlButton}"
-                                Click="MaximizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                                Click="MaximizeWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="{DynamicResource UiFontSize10}">
                             <TextBlock x:Name="MaximizeIcon" Text="&#xE922;" Foreground="{DynamicResource ForegroundBrush}"/>
                         </Button>
 
                         <!-- 关闭按钮 -->
                         <Button Style="{StaticResource CloseButton}"
-                                Click="CloseWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="10">
+                                Click="CloseWindow_Click" FontFamily="Segoe MDL2 Assets" FontSize="{DynamicResource UiFontSize10}">
                             <TextBlock Text="&#xE106;"/>
                         </Button>
 
@@ -110,7 +110,7 @@
             <!-- 状态 -->
             <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                    Margin="5,0,5,5" CornerRadius="7">
+                    Margin="5,0,5,5" CornerRadius="{DynamicResource UiCornerRadiusLarge}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -189,7 +189,7 @@
                         <StackPanel x:Name="SearchModeHint" Grid.Row="0" Margin="10,8,10,4">
                             <TextBlock Text="{loc:Loc &quot;按模式搜索（点击填入前缀）：&quot;}"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="11" Opacity="0.6"/>
+                                       FontSize="{DynamicResource UiFontSize11}" Opacity="0.6"/>
                             <WrapPanel Margin="0,6,0,0">
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Text: 文字&quot;}" Tag="Text:" Click="SearchModeChip_Click"/>
                                 <Button Style="{StaticResource SearchModeChip}" Content="{loc:Loc &quot;Tag: 标签&quot;}" Tag="Tag:" Click="SearchModeChip_Click"/>
@@ -229,21 +229,21 @@
                                                     <Border Grid.Column="0" CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="7,3"
                                                             VerticalAlignment="Center"
                                                             Background="{Binding KindBrush}">
-                                                        <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="11"/>
+                                                        <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="{DynamicResource UiFontSize11}"/>
                                                     </Border>
                                                     <StackPanel Grid.Column="1" Margin="10,0,8,0" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding Title}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="13" FontWeight="SemiBold"
+                                                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                                                    TextTrimming="CharacterEllipsis"/>
                                                         <TextBlock Text="{Binding Subtitle}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="11" Opacity="0.6"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.6"
                                                                    TextTrimming="CharacterEllipsis"/>
                                                     </StackPanel>
                                                     <TextBlock Grid.Column="2" Text="{Binding ActionLabel}"
                                                                Foreground="{DynamicResource PrimaryBrush}"
-                                                               FontSize="12" VerticalAlignment="Center"/>
+                                                               FontSize="{DynamicResource UiFontSize12}" VerticalAlignment="Center"/>
                                                 </Grid>
                                             </Button>
 
@@ -268,16 +268,16 @@
                                                     <Border Grid.Column="0" CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="7,3"
                                                             VerticalAlignment="Center"
                                                             Background="{Binding KindBrush}">
-                                                        <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="11"/>
+                                                        <TextBlock Text="{Binding KindLabel}" Foreground="White" FontSize="{DynamicResource UiFontSize11}"/>
                                                     </Border>
                                                     <StackPanel Grid.Column="1" Margin="10,0,8,0" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding Title}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="13" FontWeight="SemiBold"
+                                                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                                                    TextTrimming="CharacterEllipsis"/>
                                                         <TextBlock Text="{Binding Subtitle}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="11" Opacity="0.6"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.6"
                                                                    TextTrimming="CharacterEllipsis"/>
                                                     </StackPanel>
                                                     <ComboBox Grid.Column="2"
@@ -300,7 +300,7 @@
                                 Visibility="Collapsed" Padding="16,20">
                             <TextBlock Text="{loc:Loc &quot;没有匹配结果&quot;}"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       FontSize="13" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize13}" Opacity="0.5"
                                        HorizontalAlignment="Center"/>
                         </Border>
                     </Grid>
@@ -309,7 +309,7 @@
 
             <!-- 弹窗遮罩 -->
             <Border x:Name="DialogOverlay" Visibility="Collapsed"
-                    Background="#80000000" CornerRadius="10"/>
+                    Background="#80000000" CornerRadius="{DynamicResource UiCornerRadiusWindow}"/>
 
             <!-- 新建条目弹窗 (480px 适配纵向表单布局) -->
             <dialogs:NewEntryDialog x:Name="NewEntryDialog"

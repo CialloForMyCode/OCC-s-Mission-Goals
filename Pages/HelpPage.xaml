@@ -21,7 +21,7 @@
                 BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                 Padding="24,16" Margin="0,0,0,8">
             <TextBlock Text="{loc:Loc &quot;帮助 / 使用指南&quot;}"
-                       FontSize="20" FontWeight="Bold"
+                       FontSize="{DynamicResource UiFontSize20}" FontWeight="Bold"
                        Foreground="{DynamicResource ForegroundBrush}"
                        Margin="8,0,0,0"/>
         </Border>
@@ -47,7 +47,7 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"
+                            FontSize="{DynamicResource UiFontSize12}"
                             FontWeight="Bold"/>
 
                     <Separator Margin="6,8,6,6" Opacity="0.3"/>
@@ -58,28 +58,28 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                     <Button x:Name="Nav_UnDone"
                             Content="{loc:Loc &quot;未完成条目&quot;}" Tag="UnDone"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                     <Button x:Name="Nav_Done"
                             Content="{loc:Loc &quot;已完成条目&quot;}" Tag="Done"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                     <Button x:Name="Nav_Expand"
                             Content="{loc:Loc &quot;扩展中心&quot;}" Tag="Expand"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
 
                     <Separator Margin="6,8,6,6" Opacity="0.3"/>
 
@@ -89,28 +89,28 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                                         <Button x:Name="Nav_Version"
                             Content="{loc:Loc &quot;版本号&quot;}" Tag="Version"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                     <Button x:Name="Nav_Type"
                             Content="{loc:Loc &quot;条目类型&quot;}" Tag="Type"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
                     <Button x:Name="Nav_RelatedFiles"
                             Content="{loc:Loc &quot;关联文件&quot;}" Tag="RelatedFiles"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="28" Padding="14,0,8,0" Margin="0,1"
-                            FontSize="11"/>
+                            FontSize="{DynamicResource UiFontSize11}"/>
 
                     <Separator Margin="6,8,6,6" Opacity="0.3"/>
 
@@ -120,28 +120,28 @@
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_Search"
                             Content="{loc:Loc &quot;搜索&quot;}" Tag="Search"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_Project"
                             Content="{loc:Loc &quot;项目管理&quot;}" Tag="Project"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                     <Button x:Name="Nav_CLI"
                             Content="{loc:Loc &quot;命令行&quot;}" Tag="CLI"
                             Click="NavButton_Click"
                             Style="{StaticResource CardActionBtn}"
                             HorizontalContentAlignment="Left"
                             Height="32" Margin="0,1"
-                            FontSize="12"/>
+                            FontSize="{DynamicResource UiFontSize12}"/>
                 </StackPanel>
             </Border>
 
@@ -158,15 +158,15 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;概述&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;OCC's Mission &amp; Goals 是一款面向开发者和项目维护者的轻量级任务跟踪工具。以「条目（Mission）」为基本单位，每一条目记录一个独立的目标任务，支持严重程度分级、关联文件追踪以及多项目切换。&quot;}"
-                                       FontSize="13" Foreground="{DynamicResource ForegroundBrush}"
+                                       FontSize="{DynamicResource UiFontSize13}" Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" LineHeight="22" Opacity="0.7"
                                        Margin="0,0,0,10"/>
 
@@ -181,11 +181,11 @@
                                 <Border Grid.Column="0" Padding="0,0,8,0">
                                     <StackPanel>
                                         <TextBlock Text="{loc:Loc &quot;条目 (Mission)&quot;}"
-                                                   FontSize="13" FontWeight="SemiBold"
+                                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Margin="0,0,0,4"/>
                                         <TextBlock Text="{loc:Loc &quot;最基本的工作单元，包含标题、简要、严重程度、状态、类型标签等字段。&quot;}"
-                                                   FontSize="12" LineHeight="20" Opacity="0.5"
+                                                   FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    TextWrapping="Wrap"/>
                                     </StackPanel>
@@ -194,11 +194,11 @@
                                 <Border Grid.Column="1" Padding="0,0,8,0">
                                     <StackPanel>
                                         <TextBlock Text="{loc:Loc &quot;版本 (Version)&quot;}"
-                                                   FontSize="13" FontWeight="SemiBold"
+                                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Margin="0,0,0,4"/>
                                         <TextBlock Text="{loc:Loc &quot;条目按版本号分组管理。版本格式为「主.次.补丁-标签.迭代」，如 0.1.0-alpha.0。&quot;}"
-                                                   FontSize="12" LineHeight="20" Opacity="0.5"
+                                                   FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    TextWrapping="Wrap"/>
                                     </StackPanel>
@@ -207,11 +207,11 @@
                                 <Border Grid.Column="2">
                                     <StackPanel>
                                         <TextBlock Text="{loc:Loc &quot;项目 (Project)&quot;}"
-                                                   FontSize="13" FontWeight="SemiBold"
+                                                   FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    Margin="0,0,0,4"/>
                                         <TextBlock Text="{loc:Loc &quot;支持多项目目录，每个项目有独立的 data.json 和 project.json，便于 Git 版本控制与团队协作。&quot;}"
-                                                   FontSize="12" LineHeight="20" Opacity="0.5"
+                                                   FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                    TextWrapping="Wrap"/>
                                     </StackPanel>
@@ -221,10 +221,10 @@
                             <Separator Margin="0,14,0,6" Opacity="0.2"/>
 
                             <TextBlock Text="{loc:Loc &quot;应用结构&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap"
                                        Margin="6,0,0,0">
@@ -241,55 +241,55 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;仪表盘（LogPage）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;项目总览与数据统计中心&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <!-- 总进度 -->
                             <TextBlock Text="{loc:Loc &quot;总进度卡片&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;显示当前项目的条目完成率：已完成数 / 总数，配百分比进度条。一目了然地反映项目整体推进情况。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <!-- 严重程度分布 -->
                             <TextBlock Text="{loc:Loc &quot;严重程度分布&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;以可视化图表展示五个严重等级（致命/严重/一般/补丁/更新）各自的条目数量，帮助快速识别项目风险分布。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
 
                             <!-- 已完成条目（折线图） -->
                             <TextBlock Text="{loc:Loc &quot;已完成条目&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;横轴是最近 30 天，纵轴是条目完成时的严重程度：每个已完成条目一个点，按完成时间先后连成折线，点的颜色就是它的严重程度色。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <!-- 贡献记录 -->
                             <TextBlock Text="{loc:Loc &quot;贡献记录柱状图&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;按日期汇总完成数量，以柱状图直观展示每日贡献趋势，支持切换时间范围和查看明细。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
@@ -301,23 +301,23 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;未完成条目（UnDonePage）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;管理所有未完成的目标任务&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;核心功能&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
 
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 版本分组折叠 —— 条目按版本号分组，每组可折叠 / 展开，标题显示版本名和条目数&quot;}"/><LineBreak/>
@@ -333,10 +333,10 @@
                             <Separator Margin="0,10,0,6" Opacity="0.2"/>
 
                             <TextBlock Text="{loc:Loc &quot;条目字段一览&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;标题 —— 必填，条目的简短名称&quot;}"/><LineBreak/>
@@ -357,22 +357,22 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;已完成条目（DonePage）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;查看和管理已完成的条目&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;核心功能&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 整体结构与未完成页面一致 —— 版本分组、搜索过滤、详情展开等&quot;}"/><LineBreak/>
@@ -390,22 +390,22 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;扩展中心（ExpandPage）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;插件与功能扩展管理&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;核心功能&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 分类浏览 —— 按插件类别分组展示可用扩展&quot;}"/><LineBreak/>
@@ -422,19 +422,19 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;严重程度（Severity）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;条目优先级分级体系&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;严重程度从高到低共分五级，每级以对应颜色标识：&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,10"/>
 
@@ -444,9 +444,9 @@
                                             Background="#E83D3D">
                                         <StackPanel>
                                             <TextBlock Text="{loc:Loc &quot;致命 Fatal&quot;}"
-                                                       Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                       Foreground="White" FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{loc:Loc &quot;阻断级问题，必须立即处理&quot;}"
-                                                       Foreground="#DDFFFFFF" FontSize="11"
+                                                       Foreground="#DDFFFFFF" FontSize="{DynamicResource UiFontSize11}"
                                                        Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
@@ -456,9 +456,9 @@
                                             Background="#E88D3D">
                                         <StackPanel>
                                             <TextBlock Text="{loc:Loc &quot;严重 Severe&quot;}"
-                                                       Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                       Foreground="White" FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{loc:Loc &quot;重要问题，需尽快解决&quot;}"
-                                                       Foreground="#DDFFFFFF" FontSize="11"
+                                                       Foreground="#DDFFFFFF" FontSize="{DynamicResource UiFontSize11}"
                                                        Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
@@ -468,9 +468,9 @@
                                             Background="#E8D43D">
                                         <StackPanel>
                                             <TextBlock Text="{loc:Loc &quot;一般 General&quot;}"
-                                                       Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                       Foreground="White" FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{loc:Loc &quot;常规任务和需求，默认等级&quot;}"
-                                                       Foreground="#DDFFFFFF" FontSize="11"
+                                                       Foreground="#DDFFFFFF" FontSize="{DynamicResource UiFontSize11}"
                                                        Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
@@ -480,9 +480,9 @@
                                             Background="#4CAF50">
                                         <StackPanel>
                                             <TextBlock Text="{loc:Loc &quot;补丁 Patch&quot;}"
-                                                       Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                       Foreground="White" FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{loc:Loc &quot;小幅修改和修复，低优先级&quot;}"
-                                                       Foreground="#DDFFFFFF" FontSize="11"
+                                                       Foreground="#DDFFFFFF" FontSize="{DynamicResource UiFontSize11}"
                                                        Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
@@ -492,16 +492,16 @@
                                             Background="#3D9DE8">
                                         <StackPanel>
                                             <TextBlock Text="{loc:Loc &quot;更新 Update&quot;}"
-                                                       Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                       Foreground="White" FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{loc:Loc &quot;功能更新和体验优化，最低优先级&quot;}"
-                                                       Foreground="#DDFFFFFF" FontSize="11"
+                                                       Foreground="#DDFFFFFF" FontSize="{DynamicResource UiFontSize11}"
                                                        Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
                                 </WrapPanel>
 
                             <TextBlock Text="{loc:Loc &quot;严重程度直接影响列表默认排序（高→低），同时在仪表盘分布图表中可视化。编辑条目时可随时调整。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0"/>
                         </StackPanel>
@@ -512,26 +512,26 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;版本号（Version）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;版本管理体系&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;版本号采用五段式语义化格式：&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,10"/>
 
                             <Border Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                                     CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="12,8" Margin="6,0,0,10">
-                                <TextBlock FontSize="14" FontWeight="SemiBold"
+                                <TextBlock FontSize="{DynamicResource UiFontSize14}" FontWeight="SemiBold"
                                            FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.7">
@@ -540,7 +540,7 @@
                                 </TextBlock>
                             </Border>
 
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 每个条目归属于一个版本，创建时自动设为当前版本&quot;}"/><LineBreak/>
@@ -557,18 +557,18 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;条目类型（Type）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;分类标签系统&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 每个条目可附带一个或多个类型标签（多选）&quot;}"/><LineBreak/>
@@ -585,19 +585,19 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;关联文件（RelatedFiles）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;代码文件引用追踪&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;每个条目可关联多条代码文件引用，用于记录与任务相关的源代码位置。每条引用包含以下字段：&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,10"/>
 
@@ -615,43 +615,43 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
                                            Text="{loc:Loc &quot;路径 Path&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" Opacity="0.6"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" Opacity="0.6"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1"
                                            Text="{loc:Loc &quot;关联的源代码文件路径（必填）&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
                                            Text="{loc:Loc &quot;函数 Function&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" Opacity="0.6"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" Opacity="0.6"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1"
                                            Text="{loc:Loc &quot;相关的函数或方法名（可选）&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0"
                                            Text="{loc:Loc &quot;行号 Line&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" Opacity="0.6"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" Opacity="0.6"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1"
                                            Text="{loc:Loc &quot;精确的代码行号（可选）&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0"
                                            Text="{loc:Loc &quot;列号 Column&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" Opacity="0.6"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" Opacity="0.6"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                                 <TextBlock Grid.Row="3" Grid.Column="1"
                                            Text="{loc:Loc &quot;精确的代码列号（可选）&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                             </Grid>
 
                             <TextBlock Text="{loc:Loc &quot;在条目详情面板中，「相关文件」表格展示所有关联引用。编辑条目时可添加、修改或删除关联文件。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0"/>
                         </StackPanel>
@@ -662,16 +662,16 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;快捷键&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;键盘快捷操作&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <Grid Margin="6,0,0,0">
                                 <Grid.ColumnDefinitions>
@@ -687,33 +687,33 @@
 
                                 <Border Grid.Row="0" Grid.Column="0"
                                         HorizontalAlignment="Left"
-                                        Padding="8,2" CornerRadius="3"
+                                        Padding="8,2" CornerRadius="{DynamicResource UiCornerRadiusXs}"
                                         Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}">
                                     <TextBlock Text="{loc:Loc &quot;按住 Ctrl&quot;}" VerticalAlignment="Center"
-                                               FontSize="11" FontFamily="Consolas"
+                                               FontSize="{DynamicResource UiFontSize11}" FontFamily="Consolas"
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Opacity="0.6"/>
                                 </Border>
                                 <TextBlock Grid.Row="0" Grid.Column="2"
                                            Text="{loc:Loc &quot;显示底部工具栏和侧边栏选项卡标签&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center"
                                            Margin="8,0,0,0"/>
 
                                 <Border Grid.Row="2" Grid.Column="0"
                                         HorizontalAlignment="Left"
-                                        Padding="8,2" CornerRadius="3"
+                                        Padding="8,2" CornerRadius="{DynamicResource UiCornerRadiusXs}"
                                         Background="{DynamicResource CardBackgroundBrush}"
                                         BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}">
                                     <TextBlock Text="{loc:Loc &quot;松开 Ctrl&quot;}" VerticalAlignment="Center"
-                                               FontSize="11" FontFamily="Consolas"
+                                               FontSize="{DynamicResource UiFontSize11}" FontFamily="Consolas"
                                                Foreground="{DynamicResource ForegroundBrush}"
                                                Opacity="0.6"/>
                                 </Border>
                                 <TextBlock Grid.Row="2" Grid.Column="2"
                                            Text="{loc:Loc &quot;自动收起工具栏和侧边栏，最大化内容视野&quot;}"
-                                           FontSize="12" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}" VerticalAlignment="Center"
                                            Margin="8,0,0,0"/>
                             </Grid>
@@ -721,7 +721,7 @@
                             <Separator Margin="0,12,0,6" Opacity="0.2"/>
 
                             <TextBlock Text="{loc:Loc &quot;底部工具栏提供快速操作入口：新建条目、搜索过滤、排序切换、数据统计、CLI 命令行模式等。按住 Ctrl 键即可查看和使用。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0"/>
                         </StackPanel>
@@ -732,35 +732,35 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;搜索&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;查找条目与设置的完整指南&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;基本用法&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;搜索框位于窗口顶部工具栏中央，始终可见。输入关键词即可实时过滤当前列表页面，同时弹出搜索结果板；点击结果可跳转，或按回车直接执行首条结果。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <TextBlock Text="{loc:Loc &quot;搜索模式&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;支持前缀语法切换匹配范围；不加前缀时默认按文字模式匹配。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12">
                                 <Run Text="{loc:Loc &quot;• Text: / 文字: —— 标题、简要、详情&quot;}"/><LineBreak/>
@@ -773,28 +773,28 @@
                             </TextBlock>
 
                             <TextBlock Text="{loc:Loc &quot;设置搜索&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;Setting: 模式不会筛选条目列表，而是在结果板中列出设置快捷项，且关键词为空时也会显示全部设置项。点击即可直接执行：切换深/浅色主题、打开项目设置、打开数据统计。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <TextBlock Text="{loc:Loc &quot;插件搜索&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;Plugins: 搜索扩展中心全部插件，Expand: 只搜索已安装插件。两者都不筛选条目列表，结果在搜索板中展示，关键词为空时列出全部对应插件；点击结果跳转到扩展中心。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <TextBlock Text="{loc:Loc &quot;结果板&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 条目结果带类型标签（未完成 / 已完成），点击「跳转」定位到对应条目。&quot;}"/><LineBreak/>
@@ -809,31 +809,31 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0,0,0,6">
+                            Padding="{DynamicResource UiCardPadding}" Margin="{DynamicResource UiCardGap}">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;项目管理&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;多项目目录与数据管理&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;项目目录&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;支持多项目目录，每个项目有独立的文件夹。右上角下拉框可随时切换当前项目。各项目之间的条目和版本完全独立，互不影响。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <TextBlock Text="{loc:Loc &quot;数据文件&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12">
                                 <Run Text="{loc:Loc &quot;• data.json —— 存储所有条目数据（未完成 + 已完成），JSON 数组格式&quot;}"/><LineBreak/>
@@ -842,20 +842,20 @@
                             </TextBlock>
 
                             <TextBlock Text="{loc:Loc &quot;删除项目&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;在「设置 → 项目信息」中可修改项目名称与描述并保存，也可一键删除当前项目。删除项目会永久删除该项目的所有版本与条目，且不可恢复。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <TextBlock Text="{loc:Loc &quot;CLI 命令行模式&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;支持通过命令行进行脚本化操作，适用于 CI/CD 集成和批量处理场景。点击底部工具栏的 CLI 按钮或使用命令行参数启动。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
                         </StackPanel>
@@ -866,31 +866,31 @@
                             CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                             Background="{DynamicResource CardBackgroundBrush}"
                             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                            Padding="24,20" Margin="0">
+                            Padding="{DynamicResource UiCardPadding}" Margin="0">
                         <StackPanel>
                             <TextBlock Text="{loc:Loc &quot;命令行（CLI）&quot;}"
-                                       FontSize="16" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="{loc:Loc &quot;OCCMissionGoals.exe 命令行接口&quot;}"
-                                       FontSize="12" Opacity="0.4"
+                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.4"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,12"/>
+                                       Margin="{DynamicResource UiSectionGap}"/>
 
                             <TextBlock Text="{loc:Loc &quot;程序在启动时检测命令行参数：带参数启动进入 CLI 模式（控制台），无参数启动进入 GUI 模式。CLI 所有输出为标准 JSON，错误输出至 stderr，适合 AI / 脚本 / CI 集成。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
                             <!-- 基本用法 -->
                             <TextBlock Text="{loc:Loc &quot;基本用法&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <Border Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                                     CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="12,8" Margin="6,0,0,12">
-                                <TextBlock FontSize="13" FontFamily="Consolas"
+                                <TextBlock FontSize="{DynamicResource UiFontSize13}" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.7">
                                     <Run Text="{loc:Loc &quot;OCCMissionGoals.exe [-p &lt;项目&gt;] &lt;命令&gt; [参数]&quot;}" FontWeight="Bold"/>
@@ -899,7 +899,7 @@
 
                             <!-- 条目命令 -->
                             <TextBlock Text="{loc:Loc &quot;条目操作&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,8"/>
 
@@ -919,93 +919,93 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -a, --add
                                 </TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1"
                                            Text="{loc:Loc &quot;添加条目。数据格式为 JSON 或简化的 key=value 语法。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -c, --check
                                 </TextBlock>
                                 <TextBlock Grid.Row="1" Grid.Column="1"
                                            Text="{loc:Loc &quot;查看条目详情（如 -c 001000001），返回完整 JSON。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -d, --done
                                 </TextBlock>
                                 <TextBlock Grid.Row="2" Grid.Column="1"
                                            Text="{loc:Loc &quot;将条目标记为已完成，自动记录完成日期。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -u, --undone
                                 </TextBlock>
                                 <TextBlock Grid.Row="3" Grid.Column="1"
                                            Text="{loc:Loc &quot;将已完成条目恢复为未完成状态。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -D, --delete
                                 </TextBlock>
                                 <TextBlock Grid.Row="4" Grid.Column="1"
                                            Text="{loc:Loc &quot;删除条目（不可恢复）。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="5" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -f, --favorited
                                 </TextBlock>
                                 <TextBlock Grid.Row="5" Grid.Column="1"
                                            Text="{loc:Loc &quot;收藏 / 取消收藏。用法：-f &lt;编号&gt; true|false&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="6" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -l, --list
                                 </TextBlock>
                                 <TextBlock Grid.Row="6" Grid.Column="1"
                                            Text="{loc:Loc &quot;列出当前项目的所有条目（未完成 + 已完成），JSON 数组。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </Grid>
 
                             <!-- 版本命令 -->
                             <TextBlock Text="{loc:Loc &quot;版本操作&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,8"/>
 
@@ -1023,53 +1023,53 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
                                            Text="{loc:Loc &quot;-v &lt;版本号&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1"
                                            Text="{loc:Loc &quot;切换到指定版本，后续操作在该版本的数据文件上进行。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -v Iterate
                                 </TextBlock>
                                 <TextBlock Grid.Row="1" Grid.Column="1"
                                            Text="{loc:Loc &quot;版本迭代：当前版本号的迭代编号 +1（如 alpha.0 → alpha.1）。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0"
                                            Text="{loc:Loc &quot;-v Delete &lt;版本&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1"
                                            Text="{loc:Loc &quot;删除指定版本的数据文件。不能删除当前版本。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0"
                                            Text="{loc:Loc &quot;-v Archive &lt;版本&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="3" Grid.Column="1"
                                            Text="{loc:Loc &quot;归档指定版本 → versions/archive/ 目录。需版本内全部条目均已完成，不能归档当前版本。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </Grid>
 
                             <!-- 标签操作 -->
                             <TextBlock Text="{loc:Loc &quot;标签操作&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,8"/>
 
@@ -1086,54 +1086,54 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     tag list
                                 </TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1"
                                            Text="{loc:Loc &quot;列出所有标签（含颜色）。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
                                            Text="{loc:Loc &quot;tag add &lt;名称&gt; [--color &lt;hex&gt;]&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1"
                                            Text="{loc:Loc &quot;新建标签，可指定颜色。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0"
                                            Text="{loc:Loc &quot;tag delete &lt;名称&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1"
                                            Text="{loc:Loc &quot;删除标签，并从所有版本条目中移除。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0"
                                            Text="{loc:Loc &quot;tag rename &lt;旧名称&gt; &lt;新名称&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="3" Grid.Column="1"
                                            Text="{loc:Loc &quot;重命名标签，并同步所有版本条目。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </Grid>
 
                             <!-- 全局选项 -->
                             <TextBlock Text="{loc:Loc &quot;全局选项&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        Margin="0,0,0,8"/>
 
@@ -1149,54 +1149,54 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     -p, --project
                                 </TextBlock>
                                 <TextBlock Grid.Row="0" Grid.Column="1"
                                            Text="{loc:Loc &quot;指定目标项目（按目录名或 project.json 中的项目名匹配）。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
                                            Text="{loc:Loc &quot;-v &lt;版本号&gt;&quot;}"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1"
                                            Text="{loc:Loc &quot;配合条目命令时，指定操作的目标版本。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0"
-                                           FontSize="12" FontWeight="SemiBold" FontFamily="Consolas"
+                                           FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" Margin="0,4,0,0">
                                     help, -h, --help
                                 </TextBlock>
                                 <TextBlock Grid.Row="2" Grid.Column="1"
                                            Text="{loc:Loc &quot;打印帮助信息。&quot;}"
-                                           FontSize="12" LineHeight="20" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </Grid>
 
                             <!-- 添加条目示例 -->
                             <TextBlock Text="{loc:Loc &quot;-a 数据格式示例&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
+                                       Margin="{DynamicResource UiCardGap}"/>
                             <TextBlock Text="{loc:Loc &quot;支持标准 JSON 或用 = 代替 : 的简化语法（字段名可不加引号）：&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,8"/>
                             <Border Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
                                     CornerRadius="{DynamicResource UiCornerRadiusSmall}" Padding="12,10" Margin="6,0,0,12">
-                                <TextBlock FontSize="11" FontFamily="Consolas"
+                                <TextBlock FontSize="{DynamicResource UiFontSize11}" FontFamily="Consolas"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Opacity="0.6" LineHeight="18" TextWrapping="Wrap">
                                     <Run Text="OCCMissionGoals.exe -a {Title=&quot;"/><Run Text="{loc:Loc &quot;修复Bug&quot;}"/><Run Text="&quot;, Severity=&quot;Fatal&quot;, Brief=&quot;...&quot;, IsFavorited=false, Type=[&quot;Bug&quot;], RelatedFiles={&quot;P:\auth.cs&quot;=[10,5,&quot;Login&quot;]}}"/>
@@ -1204,7 +1204,7 @@
                             </Border>
 
                             <TextBlock Text="{loc:Loc &quot;必填字段仅 Title。Severity 默认 General。Type 为字符串数组，RelatedFiles 为路径 → [行, 列, 函数] 的映射。&quot;}"
-                                       FontSize="12" LineHeight="20" Opacity="0.5"
+                                       FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,12"/>
 
@@ -1212,10 +1212,10 @@
 
                             <!-- 输出格式 -->
                             <TextBlock Text="{loc:Loc &quot;输出格式&quot;}"
-                                       FontSize="13" FontWeight="SemiBold"
+                                       FontSize="{DynamicResource UiFontSize13}" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ForegroundBrush}"
-                                       Margin="0,0,0,6"/>
-                            <TextBlock FontSize="12" LineHeight="20" Opacity="0.5"
+                                       Margin="{DynamicResource UiCardGap}"/>
+                            <TextBlock FontSize="{DynamicResource UiFontSize12}" LineHeight="20" Opacity="0.5"
                                        Foreground="{DynamicResource ForegroundBrush}"
                                        TextWrapping="Wrap" Margin="6,0,0,0">
                                 <Run Text="{loc:Loc &quot;• 正常输出 JSON（stdout），带缩进便于阅读&quot;}"/><LineBreak/>

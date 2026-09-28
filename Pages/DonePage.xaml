@@ -45,16 +45,16 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock x:Name="GroupArrow"
                                                        Text="{Binding ArrowText}"
-                                                       FontSize="10"
+                                                       FontSize="{DynamicResource UiFontSize10}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
                                                        VerticalAlignment="Center"
                                                        Margin="0,0,6,0"/>
                                             <TextBlock Text="{Binding DisplayName}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="14" FontWeight="SemiBold"
+                                                       FontSize="{DynamicResource UiFontSize14}" FontWeight="SemiBold"
                                                        VerticalAlignment="Center"/>
                                             <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="12" Opacity="0.5"
+                                                       FontSize="{DynamicResource UiFontSize12}" Opacity="0.5"
                                                        VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <Run Text="("/>
                                                 <Run Text="{Binding DisplayCount, Mode=OneWay}"/>
@@ -120,7 +120,7 @@
                                                             VerticalAlignment="Center"
                                                             Background="{Binding SeverityBrush}">
                                                         <TextBlock Text="{Binding SeverityText}"
-                                                                   Foreground="White" FontSize="12"
+                                                                   Foreground="White" FontSize="{DynamicResource UiFontSize12}"
                                                                    VerticalAlignment="Center"/>
                                                     </Border>
 
@@ -136,12 +136,12 @@
                                                         <ContentControl Grid.Column="0"
                                                                         Content="{Binding Title, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}}"
                                                                         Foreground="{DynamicResource ForegroundBrush}"
-                                                                        FontSize="14" FontWeight="SemiBold"
+                                                                        FontSize="{DynamicResource UiFontSize14}" FontWeight="SemiBold"
                                                                         VerticalAlignment="Center"/>
                                                         <ContentControl Grid.Column="1"
                                                                         Content="{Binding Brief, Mode=OneWay, Converter={StaticResource MarkdownInlineConverter}, ConverterParameter=excerpt}"
                                                                         Foreground="{DynamicResource ForegroundBrush}"
-                                                                        FontSize="12"
+                                                                        FontSize="{DynamicResource UiFontSize12}"
                                                                         VerticalAlignment="Center"
                                                                         Margin="10,0,0,0"
                                                                         HorizontalAlignment="Stretch"
@@ -152,7 +152,7 @@
                                                                    Text="{Binding DetailToggleText}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                                    TextDecorations="Underline"
-                                                                   FontSize="12" Cursor="Hand"
+                                                                   FontSize="{DynamicResource UiFontSize12}" Cursor="Hand"
                                                                    Background="Transparent"
                                                                    VerticalAlignment="Center"
                                                                    Margin="6,0,0,0"
@@ -166,7 +166,7 @@
                                                               Width="14" Height="14" Margin="0,0,4,0"
                                                               Data="M8 1.5C4.412 1.5 1.5 4.412 1.5 8S4.412 14.5 8 14.5 14.5 11.588 14.5 8 11.588 1.5 8 1.5zM8 2.5c3.036 0 5.5 2.464 5.5 5.5s-2.464 5.5-5.5 5.5S2.5 11.036 2.5 8 4.964 2.5 8 2.5zM11.354 5.646L10.646 4.94 6.5 9.086 4.854 7.44 4.146 8.146 6.146 10.146 6.5 10.5l.354-.354 4.5-4.5z"/>
                                                         <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="12" VerticalAlignment="Center">
+                                                                   FontSize="{DynamicResource UiFontSize12}" VerticalAlignment="Center">
                                                             <Run Text="{loc:Loc &quot;完成于&quot;}"/>
                                                             <Run Text="{Binding CompletedAt, StringFormat=yyyy-MM-dd HH:mm, Mode=OneWay}"/>
                                                         </TextBlock>
@@ -211,7 +211,7 @@
                                                                 Visibility="{Binding HasType, Converter={StaticResource BoolToVis}}">
                                                         <TextBlock Text="{loc:Loc &quot;类别&quot;}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="12" FontWeight="SemiBold"
+                                                                   FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"
                                                                    VerticalAlignment="Center"
                                                                    Margin="0,0,8,0"/>
                                                         <ItemsControl ItemsSource="{Binding TypeTags}"
@@ -223,14 +223,14 @@
                                                             </ItemsControl.ItemsPanel>
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
-                                                                    <Border x:Name="TagBg" CornerRadius="3" Padding="6,2"
+                                                                    <Border x:Name="TagBg" CornerRadius="{DynamicResource UiCornerRadiusXs}" Padding="6,2"
                                                                             Background="{DynamicResource SubtleBackgroundBrush}"
                                                                             BorderBrush="{DynamicResource CardBorderBrush}"
                                                                             BorderThickness="{DynamicResource UiBorderThickness}"
                                                                             Margin="0,0,5,0">
                                                                         <TextBlock x:Name="TagText" Text="{Binding Text}"
                                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                                   FontSize="11"
+                                                                                   FontSize="{DynamicResource UiFontSize11}"
                                                                                    VerticalAlignment="Center"
                                                                                    Opacity="0.8"/>
                                                                     </Border>
@@ -255,18 +255,18 @@
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Grid.Column="0" Text="{loc:Loc &quot;相关文件&quot;}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="12" FontWeight="SemiBold"/>
+                                                                   FontSize="{DynamicResource UiFontSize12}" FontWeight="SemiBold"/>
                                                         <TextBlock Grid.Column="1" Text="{loc:Loc &quot;函数&quot;}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="11" Opacity="0.5" FontFamily="Consolas"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="16,0,0,0"/>
                                                         <TextBlock Grid.Column="2" Text="{loc:Loc &quot;行&quot;}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="11" Opacity="0.5" FontFamily="Consolas"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="24,0,0,0"/>
                                                         <TextBlock Grid.Column="3" Text="{loc:Loc &quot;列&quot;}"
                                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                                   FontSize="11" Opacity="0.5" FontFamily="Consolas"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.5" FontFamily="Consolas"
                                                                    Margin="16,0,0,0"/>
                                                     </Grid>
                                                     <ItemsControl ItemsSource="{Binding RelatedFiles, Mode=OneWay}">
@@ -283,21 +283,21 @@
                                                                         <ColumnDefinition Width="Auto" SharedSizeGroup="ColCol"/>
                                                                         <ColumnDefinition Width="Auto" SharedSizeGroup="FuncCol"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <TextBlock Grid.Column="0" FontSize="12"
+                                                                    <TextBlock Grid.Column="0" FontSize="{DynamicResource UiFontSize12}"
                                                                                FontFamily="Consolas"
                                                                                Foreground="{DynamicResource ForegroundBrush}"
                                                                                Text="{Binding Path, Mode=OneWay}"/>
-                                                                    <TextBlock Grid.Column="1" FontSize="11"
+                                                                    <TextBlock Grid.Column="1" FontSize="{DynamicResource UiFontSize11}"
                                                                                FontFamily="Consolas"
                                                                                Foreground="{DynamicResource ForegroundBrush}"
                                                                                Opacity="0.6" Margin="16,0,0,0"
                                                                                Text="{Binding Function, Mode=OneWay}"/>
-                                                                    <TextBlock Grid.Column="2" FontSize="11"
+                                                                    <TextBlock Grid.Column="2" FontSize="{DynamicResource UiFontSize11}"
                                                                                FontFamily="Consolas"
                                                                                Foreground="{DynamicResource ForegroundBrush}"
                                                                                Opacity="0.6" Margin="24,0,0,0"
                                                                                Text="{Binding Line, Mode=OneWay}"/>
-                                                                    <TextBlock Grid.Column="3" FontSize="11"
+                                                                    <TextBlock Grid.Column="3" FontSize="{DynamicResource UiFontSize11}"
                                                                                FontFamily="Consolas"
                                                                                Foreground="{DynamicResource ForegroundBrush}"
                                                                                Opacity="0.6" Margin="16,0,0,0"
@@ -331,12 +331,12 @@
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Grid.Column="0"
                                                                    Text="{loc:Loc &quot;概览&quot;}"
-                                                                   FontSize="11" FontWeight="SemiBold"
+                                                                   FontSize="{DynamicResource UiFontSize11}" FontWeight="SemiBold"
                                                                    Margin="0,0,10,0" VerticalAlignment="Center"
                                                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                                         <TextBlock Grid.Column="1"
                                                                    Text="{Binding TypeSummary}"
-                                                                   FontSize="11" Opacity="0.7"
+                                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.7"
                                                                    TextTrimming="CharacterEllipsis"
                                                                    VerticalAlignment="Center"
                                                                    Foreground="{DynamicResource ForegroundBrush}"/>
@@ -353,7 +353,7 @@
                                                                          Foreground="{DynamicResource PrimaryBrush}"
                                                                          Background="{DynamicResource SubtleBackgroundBrush}"/>
                                                             <TextBlock Grid.Column="1" Text="{Binding ProgressText}"
-                                                                       FontSize="11" Opacity="0.7"
+                                                                       FontSize="{DynamicResource UiFontSize11}" Opacity="0.7"
                                                                        Margin="8,0,0,0" VerticalAlignment="Center"
                                                                        Foreground="{DynamicResource ForegroundBrush}"/>
                                                         </Grid>
@@ -396,11 +396,11 @@
                     Background="{DynamicResource CardBackgroundBrush}"
                     BorderBrush="{DynamicResource CardBorderBrush}"
                     BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
-                    Margin="0,0,0,6" Padding="24,20"
+                    Margin="{DynamicResource UiCardGap}" Padding="{DynamicResource UiCardPadding}"
                     VerticalAlignment="Top">
                 <TextBlock Text="{loc:Loc &quot;没有已完成条目&quot;}"
                            Foreground="{DynamicResource ForegroundBrush}"
-                           FontSize="15" Opacity="0.5"
+                           FontSize="{DynamicResource UiFontSize15}" Opacity="0.5"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
             </Border>

@@ -175,10 +175,10 @@ Language packs, themes and extensions installed from the Extension Center are st
 ```
 Languages/            # Language packs (*.xaml)
 Themes/               # Themes (*.xaml)
-Expand/<name>/        # Extensions: expand.json manifest plus optional XAML
+Expand/<name>/        # Extensions: expand.json manifest
 ```
 
-An extension can override resource keys (colors, corner radius, border thickness…) or supply layout fragments that replace parts of the main content.
+Themes decide the whole look: besides colors they define appearance tokens such as corner radius, spacing, sizes and font sizes; extensions only ship an expand.json metadata manifest used to list them and enable/disable them in the Extension Center.
 
 ### Dual Mode
 

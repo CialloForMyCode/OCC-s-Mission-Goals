@@ -20,7 +20,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
+                                CornerRadius="{DynamicResource UiCornerRadiusMedium}"
                                 SnapsToDevicePixels="True">
                             <ScrollViewer Padding="{TemplateBinding Padding}">
                                 <ItemsPresenter/>
@@ -44,7 +44,7 @@
         <!-- 版本列表项样式 -->
         <Style x:Key="VersionListBoxItemStyle" TargetType="ListBoxItem">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="{DynamicResource UiFontSize13}"/>
             <Setter Property="Padding" Value="8,6"/>
             <Setter Property="Margin" Value="0,1"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -92,9 +92,9 @@
                     BorderBrush="{DynamicResource CardBorderBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="0,0,0,10"
-                    Margin="0,0,0,12">
+                    Margin="{DynamicResource UiSectionGap}">
                 <TextBlock Text="{loc:Loc &quot;版本管理&quot;}"
-                           FontSize="16" FontWeight="SemiBold"
+                           FontSize="{DynamicResource UiFontSize16}" FontWeight="SemiBold"
                            Foreground="{DynamicResource ForegroundBrush}"
                            VerticalAlignment="Center"/>
             </Border>
@@ -102,7 +102,7 @@
             <!-- 内容区域 -->
             <StackPanel Grid.Row="1">
                 <!-- 模式切换 -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <StackPanel Orientation="Horizontal" Margin="{DynamicResource UiSectionGap}">
                     <RadioButton x:Name="NewModeBtn" Content="{loc:Loc &quot;新建版本&quot;}" GroupName="Mode"
                                  Style="{StaticResource ConsoleTabRadioButton}" Margin="0,0,12,0"
                                  Checked="NewModeBtn_Checked"/>
@@ -122,7 +122,7 @@
                              Margin="0,0,0,10"/>
                     <TextBlock x:Name="NewHint" Text=""
                                Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="11" Margin="0,0,0,8"/>
+                               FontSize="{DynamicResource UiFontSize11}" Margin="0,0,0,8"/>
                 </StackPanel>
 
                 <!-- 打开模式 -->
@@ -134,7 +134,7 @@
                              Margin="0,0,0,10"/>
                     <TextBlock x:Name="OpenHint" Text=""
                                Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="11" Margin="0,0,0,8"/>
+                               FontSize="{DynamicResource UiFontSize11}" Margin="0,0,0,8"/>
                 </StackPanel>
 
                 <!-- 删除模式 -->
@@ -146,7 +146,7 @@
                              Margin="0,0,0,10"/>
                     <TextBlock x:Name="DeleteHint" Text=""
                                Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="11" Margin="0,0,0,8"/>
+                               FontSize="{DynamicResource UiFontSize11}" Margin="0,0,0,8"/>
                 </StackPanel>
             </StackPanel>
 

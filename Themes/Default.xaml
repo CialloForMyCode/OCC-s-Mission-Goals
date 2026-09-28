@@ -7,6 +7,47 @@
     <s:String x:Key="__theme_name">默认主题</s:String>
 
     <!-- ================================================================
+         外观令牌（形状 / 间距 / 尺寸 / 字号）
+         与配色同在一个文件里，主题因此既能控制颜色，也能控制圆角与排布。
+         无前缀 = 深色 / 浅色共用；要让某个令牌随明暗不同，写成
+         Light.UiXxx / Dark.UiXxx 即可（前缀形式会覆盖无前缀的写法）。
+    ================================================================ -->
+
+    <!-- 形状 -->
+    <CornerRadius x:Key="UiCornerRadiusXs">3</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusSmall">4</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusMedium">6</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusLarge">8</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusXLarge">12</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusWindow">10</CornerRadius>
+    <CornerRadius x:Key="UiCornerRadiusRightPill">0,6,6,0</CornerRadius>
+    <Thickness x:Key="UiBorderThickness">1</Thickness>
+
+    <!-- 间距：卡片内边距 / 卡片之间 / 大版块之间 -->
+    <Thickness x:Key="UiCardPadding">24,20</Thickness>
+    <Thickness x:Key="UiCardGap">0,0,0,6</Thickness>
+    <Thickness x:Key="UiSectionGap">0,0,0,12</Thickness>
+
+    <!-- 尺寸 -->
+    <s:Double x:Key="UiIconSizeSmall">26</s:Double>
+    <s:Double x:Key="UiIconSizeMedium">40</s:Double>
+
+    <!-- 字号（键名即字号，单位 DIP） -->
+    <s:Double x:Key="UiFontSize9">9</s:Double>
+    <s:Double x:Key="UiFontSize10">10</s:Double>
+    <s:Double x:Key="UiFontSize11">11</s:Double>
+    <s:Double x:Key="UiFontSize12">12</s:Double>
+    <s:Double x:Key="UiFontSize13">13</s:Double>
+    <s:Double x:Key="UiFontSize14">14</s:Double>
+    <s:Double x:Key="UiFontSize15">15</s:Double>
+    <s:Double x:Key="UiFontSize16">16</s:Double>
+    <s:Double x:Key="UiFontSize18">18</s:Double>
+    <s:Double x:Key="UiFontSize20">20</s:Double>
+    <s:Double x:Key="UiFontSize22">22</s:Double>
+    <s:Double x:Key="UiFontSize24">24</s:Double>
+    <s:Double x:Key="UiFontSize28">28</s:Double>
+
+    <!-- ================================================================
          浅色配色（Light.*）
          运行时由 ThemeManager 根据当前明暗模式复制到应用资源（去掉前缀）
     ================================================================ -->

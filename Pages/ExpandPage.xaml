@@ -27,7 +27,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{loc:Loc &quot;扩展中心&quot;}"
                                Grid.Column="0"
-                               FontSize="22" FontWeight="Bold"
+                               FontSize="{DynamicResource UiFontSize22}" FontWeight="Bold"
                                Foreground="{DynamicResource ForegroundBrush}"
                                VerticalAlignment="Center"
                                Margin="16,0,0,6"/>
@@ -61,7 +61,7 @@
                             <DataTemplate>
                                 <Button Content="{Binding Name}"
                                         Margin="4" Padding="12,6"
-                                        FontSize="12"
+                                        FontSize="{DynamicResource UiFontSize12}"
                                         Style="{StaticResource CardActionBtn}"
                                         Click="CategoryButton_Click"
                                         Tag="{Binding}"/>
@@ -77,7 +77,7 @@
                             <Border CornerRadius="{DynamicResource UiCornerRadiusLarge}"
                                     Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="{DynamicResource UiBorderThickness}"
-                                    Padding="14,12" Margin="0,0,0,6">
+                                    Padding="14,12" Margin="{DynamicResource UiCardGap}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -91,11 +91,12 @@
 
                                     <!-- 图标 -->
                                     <Border Grid.Column="0" Grid.RowSpan="2"
-                                            Width="40" Height="40" CornerRadius="{DynamicResource UiCornerRadiusMedium}"
+                                            Width="{DynamicResource UiIconSizeMedium}" Height="{DynamicResource UiIconSizeMedium}"
+                                            CornerRadius="{DynamicResource UiCornerRadiusMedium}"
                                             Background="{DynamicResource SearchBackgroundBrush}"
                                             VerticalAlignment="Center" Margin="0,0,14,0">
                                         <Image Source="{Binding Icon}"
-                                               Width="26" Height="26"
+                                               Width="{DynamicResource UiIconSizeSmall}" Height="{DynamicResource UiIconSizeSmall}"
                                                Stretch="Uniform"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
@@ -114,9 +115,9 @@
                                                     VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="14" FontWeight="SemiBold"/>
+                                                       FontSize="{DynamicResource UiFontSize14}" FontWeight="SemiBold"/>
                                             <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="11" Opacity="0.5"
+                                                       FontSize="{DynamicResource UiFontSize11}" Opacity="0.5"
                                                        VerticalAlignment="Center" Margin="8,0,0,0">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
@@ -134,17 +135,17 @@
                                         <TextBlock Grid.Column="1"
                                                    Text="{Binding Description}"
                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="12" Opacity="0.6"
+                                                   FontSize="{DynamicResource UiFontSize12}" Opacity="0.6"
                                                    TextTrimming="CharacterEllipsis"
                                                    MaxWidth="360"
                                                    VerticalAlignment="Center"
                                                    Margin="12,0,0,0"/>
 
-                                        <Border Grid.Column="2" CornerRadius="3"
+                                        <Border Grid.Column="2" CornerRadius="{DynamicResource UiCornerRadiusXs}"
                                                 Background="{DynamicResource PrimaryBrush}"
                                                 Padding="4" Margin="12,0,0,0" VerticalAlignment="Center"
                                                 Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{Binding InstalledLabel}" FontSize="10"
+                                            <TextBlock Text="{Binding InstalledLabel}" FontSize="{DynamicResource UiFontSize10}"
                                                        Foreground="White"/>
                                         </Border>
                                     </Grid>
@@ -153,12 +154,12 @@
                                     <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal"
                                                 Margin="0,2,0,0">
                                         <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="11" Opacity="0.4">
+                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.4">
                                             <Run Text="{loc:Loc &quot;作者:&quot;}"/>
                                             <Run Text="{Binding Author}"/>
                                         </TextBlock>
                                         <TextBlock Foreground="{DynamicResource ForegroundBrush}"
-                                                   FontSize="11" Opacity="0.4">
+                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.4">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Text" Value="{Binding Downloads, StringFormat='  |  ⬇ {0}'}"/>
@@ -172,7 +173,7 @@
                                         </TextBlock>
                                         <TextBlock Text="{Binding CategoryName, StringFormat='  |  {0}'}"
                                                    Foreground="{DynamicResource PrimaryBrush}"
-                                                   FontSize="11" Opacity="0.7"/>
+                                                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.7"/>
                                     </StackPanel>
 
                                     <!-- 操作按钮（横排：安装 / 卸载 ｜ 更新）/ 安装进度 -->
@@ -234,7 +235,7 @@
                                                          Value="{Binding InstallProgress, Mode=OneWay}"/>
                                             <TextBlock Text="{Binding InstallProgressText}"
                                                        Foreground="{DynamicResource ForegroundBrush}"
-                                                       FontSize="11" Opacity="0.6"
+                                                       FontSize="{DynamicResource UiFontSize11}" Opacity="0.6"
                                                        HorizontalAlignment="Center"
                                                        Margin="0,6,0,0"
                                                        TextTrimming="CharacterEllipsis"/>
@@ -252,12 +253,12 @@
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}"
                         BorderThickness="{DynamicResource UiBorderThickness}" CornerRadius="{DynamicResource UiCornerRadiusLarge}"
-                        Margin="0,0,0,6" Padding="24,20"
+                        Margin="{DynamicResource UiCardGap}" Padding="{DynamicResource UiCardPadding}"
                         VerticalAlignment="Top"
                         Visibility="Collapsed">
                     <TextBlock x:Name="EmptyHintText"
                                Foreground="{DynamicResource ForegroundBrush}"
-                               FontSize="15" Opacity="0.5"
+                               FontSize="{DynamicResource UiFontSize15}" Opacity="0.5"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
                 </Border>

@@ -27,6 +27,10 @@ public static class ThemeManager
     /// 路径为 null 表示内置默认主题，从程序集资源读取，而不是磁盘文件。</summary>
     private static readonly List<(string Name, string? File)> _themes = new();
 
+    /// <summary>上一次 ApplyPalette 写进 Application.Resources 的键。应用新主题前先移除它们，
+    /// 使新主题没写的令牌回落到 Styles.xaml 里的默认值，而不是留着上一个主题的取值。</summary>
+    private static readonly HashSet<string> _appliedPaletteKeys = new();
+
     public static bool IsDark => _isDark;
 
     /// <summary>当前主题色（规范化后的 #RRGGBB）。</summary>
@@ -121,7 +125,7 @@ public static class ThemeManager
 
     public static void ToggleTheme() => ApplyTheme(!_isDark);
 
-    /// <summary>应用当前主题样式的深色/浅色配色，并刷新主题色派生画刷。</summary>
+    /// <summary>应用当前主题样式的配色与外观令牌，并刷新主题色派生画刷。</summary>
     public static void ApplyTheme(bool dark)
     {
         _isDark = dark;
@@ -132,14 +136,18 @@ public static class ThemeManager
 
         // 主题切换后重新派生主题色，使选中态跟随明暗主题。
         ApplyAccentDerived(_accentColor);
-
-        // 最后套用扩展的资源覆盖：扩展要盖过主题，就必须排在主题之后。
-        Services.ExpandService.ApplyOverrides();
     }
 
     /// <summary>
-    /// 读取主题 XAML，把其中的 Light.* / Dark.* 画刷按当前明暗模式复制到应用资源。
-    /// 键去掉 "Light." / "Dark." 前缀，与界面里 {DynamicResource ForegroundBrush} 等保持一致。
+    /// 读取主题 XAML，把里面的资源按当前明暗模式复制到应用资源。主题文件可写两类键：
+    ///
+    /// 1. 无前缀键 —— 明暗通用的外观令牌（颜色之外的形状与布局，如 UiCornerRadiusLarge、
+    ///    UiBorderThickness、间距与字号），深浅两套配色共用同一份。
+    /// 2. Light.* / Dark.* 前缀键 —— 只有当前明暗模式的那一套生效，键去掉前缀后写入，
+    ///    与界面里 {DynamicResource ForegroundBrush} 等保持一致；前缀形式同时能覆盖第 1 类，
+    ///    所以同一个令牌可以在浅色 / 深色下取不同值（例如 Ui 前缀写成 Light.UiCornerRadiusLarge）。
+    ///
+    /// 都是先写通用键、再由当前明暗模式的键覆写，因此缺省不写前缀时深浅一致。
     /// <paramref name="file"/> 为 null 时表示内置默认主题，从程序集资源读取。
     /// </summary>
     private static void ApplyPalette(string? file, bool dark)
@@ -153,12 +161,33 @@ public static class ThemeManager
 
         CurrentThemeAccent = NormalizeAccent(rd["__theme_accent"] as string);
 
+        // 先清掉上一轮写入的键，让新主题没写的令牌回落到 Styles.xaml 的默认值。
+        foreach (var applied in _appliedPaletteKeys)
+            resources.Remove(applied);
+        _appliedPaletteKeys.Clear();
+
+        // 1. 无前缀键：明暗通用（元数据键 __ 开头，以及 Light. / Dark. 前缀键都跳过）。
+        foreach (var keyObj in rd.Keys)
+        {
+            if (keyObj is not string key || key.StartsWith("__", StringComparison.Ordinal))
+                continue;
+            if (key.StartsWith("Light.", StringComparison.Ordinal) ||
+                key.StartsWith("Dark.", StringComparison.Ordinal))
+                continue;
+
+            resources[key] = rd[keyObj];
+            _appliedPaletteKeys.Add(key);
+        }
+
+        // 2. 当前明暗模式的键：去前缀覆盖上一步，配色与明暗专属令牌都在这里。
         foreach (var keyObj in rd.Keys)
         {
             if (keyObj is not string key || !key.StartsWith(prefix, StringComparison.Ordinal))
                 continue;
 
-            resources[key[prefix.Length..]] = rd[keyObj];
+            var plain = key[prefix.Length..];
+            resources[plain] = rd[keyObj];
+            _appliedPaletteKeys.Add(plain);
         }
     }
 

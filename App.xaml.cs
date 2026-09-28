@@ -38,7 +38,7 @@ public partial class App : Application
             Environment.Exit(exitCode);
         }
 
-        // 装载扩展。放在主题之后，扩展才能覆盖主题提供的资源键（颜色 / 圆角 / 边框粗细……）。
+        // 扫描扩展目录，扩展中心据此列出可启用 / 禁用的插件（界面外观一律由主题决定）。
         Services.ExpandService.Reload();
 
         // GUI 模式

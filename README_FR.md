@@ -176,10 +176,10 @@ Les packs de langue, thèmes et extensions installés depuis le centre d'extensi
 ```
 Languages/            # Packs de langue (*.xaml)
 Themes/               # Thèmes (*.xaml)
-Expand/<nom>/         # Extensions : manifeste expand.json et XAML facultatif
+Expand/<nom>/         # Extensions : manifeste expand.json
 ```
 
-Une extension peut remplacer des clés de ressources (couleurs, rayon des coins, épaisseur des bordures…) ou fournir des fragments de mise en page qui remplacent une partie du contenu principal.
+L'apparence est décidée par le thème : outre les couleurs, il définit des jetons tels que le rayon des coins, les espacements, les tailles et les tailles de police ; une extension ne fournit qu'un manifeste de métadonnées expand.json, utilisé pour l'afficher et l'activer / désactiver dans le centre d'extensions.
 
 ### Double mode
 

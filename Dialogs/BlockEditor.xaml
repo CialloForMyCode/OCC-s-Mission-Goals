@@ -53,7 +53,7 @@
                             <!-- 拖拽手柄 -->
                             <TextBlock Grid.Column="0"
                                        Text="⣿"
-                                       FontSize="11" Opacity="0.45"
+                                       FontSize="{DynamicResource UiFontSize11}" Opacity="0.45"
                                        Cursor="SizeAll"
                                        VerticalAlignment="Top"
                                        Margin="0,3,6,0"
@@ -64,14 +64,14 @@
 
                             <!-- 类型徽章 -->
                             <Border Grid.Column="2"
-                                    CornerRadius="3" Padding="6,2"
+                                    CornerRadius="{DynamicResource UiCornerRadiusXs}" Padding="6,2"
                                     VerticalAlignment="Top"
                                     Margin="0,1,8,0"
                                     Background="{DynamicResource SubtleBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}"
                                     BorderThickness="{DynamicResource UiBorderThickness}">
                                 <TextBlock Text="{Binding KindLabel}"
-                                           FontSize="10" Opacity="0.75"
+                                           FontSize="{DynamicResource UiFontSize10}" Opacity="0.75"
                                            VerticalAlignment="Center"
                                            Foreground="{DynamicResource ForegroundBrush}"/>
                             </Border>
@@ -80,7 +80,7 @@
                             <Grid Grid.Column="3">
                                 <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource DialogTextBox}"
-                                         FontSize="12"
+                                         FontSize="{DynamicResource UiFontSize12}"
                                          MinHeight="46"
                                          AcceptsReturn="True"
                                          TextWrapping="Wrap"
@@ -90,23 +90,23 @@
                                          Visibility="{Binding ShowTextEditor, Converter={StaticResource BoolToVis}}"/>
 
                                 <TextBlock Text="{loc:Loc &quot;一条分割线&quot;}"
-                                           FontSize="11" Opacity="0.5"
+                                           FontSize="{DynamicResource UiFontSize11}" Opacity="0.5"
                                            VerticalAlignment="Center"
                                            Foreground="{DynamicResource ForegroundBrush}"
                                            Visibility="{Binding ShowDividerLabel, Converter={StaticResource BoolToVis}}"/>
 
                                 <StackPanel Visibility="{Binding ShowTableEditor, Converter={StaticResource BoolToVis}}">
                                     <TextBlock Text="{loc:Loc &quot;表头（用 | 分隔各列）&quot;}"
-                                               FontSize="10" Opacity="0.55" Margin="0,0,0,2"
+                                               FontSize="{DynamicResource UiFontSize10}" Opacity="0.55" Margin="0,0,0,2"
                                                Foreground="{DynamicResource ForegroundBrush}"/>
                                     <TextBox Text="{Binding HeadersText, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                             Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                              Margin="0,0,0,4"/>
                                     <TextBlock Text="{loc:Loc &quot;数据行（每行一条，用 | 分隔各列）&quot;}"
-                                               FontSize="10" Opacity="0.55" Margin="0,0,0,2"
+                                               FontSize="{DynamicResource UiFontSize10}" Opacity="0.55" Margin="0,0,0,2"
                                                Foreground="{DynamicResource ForegroundBrush}"/>
                                     <TextBox Text="{Binding RowsText, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                             Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                              MinHeight="46" AcceptsReturn="True"
                                              TextWrapping="NoWrap"
                                              VerticalScrollBarVisibility="Auto"
@@ -117,20 +117,20 @@
                                 <StackPanel Visibility="{Binding ShowCodeEditor, Converter={StaticResource BoolToVis}}">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                         <TextBlock Text="{loc:Loc &quot;语言&quot;}"
-                                                   FontSize="10" Opacity="0.55"
+                                                   FontSize="{DynamicResource UiFontSize10}" Opacity="0.55"
                                                    VerticalAlignment="Center" Margin="0,0,4,0"
                                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                         <TextBox Text="{Binding Language, UpdateSourceTrigger=PropertyChanged}"
-                                                 Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                                 Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                                  Width="110"/>
                                         <CheckBox Content="{loc:Loc &quot;行号&quot;}"
                                                   Style="{StaticResource SettingsCheckBox}"
                                                   IsChecked="{Binding ShowLineNumbers, UpdateSourceTrigger=PropertyChanged}"
-                                                  FontSize="11" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                                  FontSize="{DynamicResource UiFontSize11}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                     </StackPanel>
                                     <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource DialogTextBox}"
-                                             FontFamily="Consolas" FontSize="11" Padding="4,2"
+                                             FontFamily="Consolas" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                              MinHeight="52" AcceptsReturn="True" AcceptsTab="True"
                                              TextWrapping="NoWrap"
                                              VerticalScrollBarVisibility="Auto"
@@ -140,7 +140,7 @@
 
                                 <StackPanel Visibility="{Binding ShowFileEditor, Converter={StaticResource BoolToVis}}">
                                     <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                             Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                              Margin="0,0,0,4"
                                              ToolTip="{loc:Loc &quot;文件的完整路径&quot;}"/>
                                     <Grid>
@@ -153,22 +153,22 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBox Grid.Column="0"
                                                  Text="{Binding Function, UpdateSourceTrigger=PropertyChanged}"
-                                                 Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                                 Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                                  Margin="0,0,6,0"
                                                  ToolTip="{loc:Loc &quot;命名空间.类.方法&quot;}"/>
                                         <TextBlock Grid.Column="1" Text="{loc:Loc &quot;行&quot;}"
-                                                   FontSize="11" VerticalAlignment="Center" Margin="0,0,3,0"
+                                                   FontSize="{DynamicResource UiFontSize11}" VerticalAlignment="Center" Margin="0,0,3,0"
                                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                         <TextBox Grid.Column="2"
                                                  Text="{Binding Line, UpdateSourceTrigger=PropertyChanged}"
-                                                 Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                                 Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                                  Width="44" TextAlignment="Right" Margin="0,0,6,0"/>
                                         <TextBlock Grid.Column="3" Text="{loc:Loc &quot;列&quot;}"
-                                                   FontSize="11" VerticalAlignment="Center" Margin="0,0,3,0"
+                                                   FontSize="{DynamicResource UiFontSize11}" VerticalAlignment="Center" Margin="0,0,3,0"
                                                    Foreground="{DynamicResource ForegroundBrush}"/>
                                         <TextBox Grid.Column="4"
                                                  Text="{Binding Column, UpdateSourceTrigger=PropertyChanged}"
-                                                 Style="{StaticResource DialogTextBox}" FontSize="11" Padding="4,2"
+                                                 Style="{StaticResource DialogTextBox}" FontSize="{DynamicResource UiFontSize11}" Padding="4,2"
                                                  Width="44" TextAlignment="Right"/>
                                     </Grid>
                                 </StackPanel>
@@ -178,9 +178,9 @@
                                     <CheckBox Content="{loc:Loc &quot;编号列表&quot;}"
                                               Style="{StaticResource SettingsCheckBox}"
                                               IsChecked="{Binding Ordered, UpdateSourceTrigger=PropertyChanged}"
-                                              FontSize="11" VerticalAlignment="Center"/>
+                                              FontSize="{DynamicResource UiFontSize11}" VerticalAlignment="Center"/>
                                     <TextBlock Text="{loc:Loc &quot;条目就是它的子块，子块里再放列表即为多级列表&quot;}"
-                                               FontSize="10" Opacity="0.55"
+                                               FontSize="{DynamicResource UiFontSize10}" Opacity="0.55"
                                                VerticalAlignment="Center" Margin="10,0,0,0"
                                                TextWrapping="Wrap"
                                                Foreground="{DynamicResource ForegroundBrush}"/>
@@ -201,7 +201,7 @@
                                     <TextBox Grid.Column="1"
                                              Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource DialogTextBox}"
-                                             FontSize="12"
+                                             FontSize="{DynamicResource UiFontSize12}"
                                              MinHeight="34"
                                              AcceptsReturn="True"
                                              TextWrapping="Wrap"
@@ -218,19 +218,19 @@
                                         Style="{StaticResource CardActionBtn}"
                                         ContextMenu="{StaticResource AddBlockMenu}"
                                         Click="AddChild_Click"
-                                        Width="22" Height="20" Padding="0" FontSize="12"
+                                        Width="22" Height="20" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                         ToolTip="{loc:Loc &quot;添加子块&quot;}"/>
                                 <Button Content="↑" Click="MoveUp_Click"
                                         Style="{StaticResource CardActionBtn}"
-                                        Width="20" Height="20" Padding="0" FontSize="12"
+                                        Width="20" Height="20" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                         ToolTip="{loc:Loc &quot;上移&quot;}"/>
                                 <Button Content="↓" Click="MoveDown_Click"
                                         Style="{StaticResource CardActionBtn}"
-                                        Width="20" Height="20" Padding="0" FontSize="12"
+                                        Width="20" Height="20" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                         ToolTip="{loc:Loc &quot;下移&quot;}"/>
                                 <Button Content="✕" Click="Remove_Click"
                                         Style="{StaticResource CardActionBtn}"
-                                        Width="20" Height="20" Padding="0" FontSize="12"
+                                        Width="20" Height="20" Padding="0" FontSize="{DynamicResource UiFontSize12}"
                                         Foreground="#E86A6A"
                                         ToolTip="{loc:Loc &quot;删除&quot;}"/>
                             </StackPanel>
@@ -260,7 +260,7 @@
 
         <TextBlock x:Name="EmptyHint"
                    Text="{loc:Loc &quot;内容区为空。用下面的按钮添加区块。&quot;}"
-                   FontSize="11" Opacity="0.5" Margin="2,2,0,6"
+                   FontSize="{DynamicResource UiFontSize11}" Opacity="0.5" Margin="2,2,0,6"
                    Foreground="{DynamicResource ForegroundBrush}"/>
 
         <Button Content="{loc:Loc &quot;＋ 添加区块&quot;}"
@@ -268,6 +268,6 @@
                 Click="AddRoot_Click"
                 HorizontalAlignment="Left"
                 Style="{StaticResource DialogConfirmButton}"
-                Height="26" FontSize="11" FontWeight="Normal" Padding="10,0"/>
+                Height="26" FontSize="{DynamicResource UiFontSize11}" FontWeight="Normal" Padding="10,0"/>
     </StackPanel>
 </UserControl>

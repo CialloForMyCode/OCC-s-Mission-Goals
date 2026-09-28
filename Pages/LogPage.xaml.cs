@@ -484,11 +484,11 @@ namespace OCCMissionGoals.Pages
                 var label = new TextBlock
                 {
                     Text = Models.SeverityHelper.GetText(SeverityOf(level)),
-                    FontSize = 12,
                     Width = TrendPlotLeft - 12,
                     TextAlignment = TextAlignment.Right,
                     Opacity = 0.5
                 };
+                label.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
                 label.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
                 Canvas.SetLeft(label, 0);
                 Canvas.SetTop(label, lineY - 9);
@@ -535,11 +535,11 @@ namespace OCCMissionGoals.Pages
                 var label = new TextBlock
                 {
                     Text = date.ToString("M/d"),
-                    FontSize = 12,
                     Width = 60,
                     TextAlignment = isLast ? TextAlignment.Right : TextAlignment.Center,
                     Opacity = 0.5
                 };
+                label.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
                 label.SetResourceReference(TextBlock.ForegroundProperty, "ForegroundBrush");
                 Canvas.SetLeft(label, isLast ? x - 60 : x - 30);
                 Canvas.SetTop(label, axisY + 8);

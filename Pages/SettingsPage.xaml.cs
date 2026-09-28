@@ -311,13 +311,13 @@ public partial class SettingsPage : Page
         {
             Width = 18,
             Height = 18,
-            CornerRadius = new CornerRadius(9),
+            CornerRadius = new CornerRadius(9), // 半径 = 边长的一半，保持正圆；不随主题圆角令牌变化
             Background = ColorUtil.ParseBrush(hex) ?? Brushes.Transparent,
             BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
         };
+        swatch.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
 
         rb.Content = swatch;
         rb.Checked += AccentSwatch_Checked;
@@ -456,24 +456,25 @@ public partial class SettingsPage : Page
         {
             Width = 12,
             Height = 12,
-            CornerRadius = new CornerRadius(3),
             Background = string.IsNullOrEmpty(hex) ? Brushes.Transparent : (ColorUtil.ParseBrush(hex) ?? Brushes.Transparent),
             BorderBrush = (Brush)Application.Current.FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             Margin = new Thickness(0, 0, 6, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
+        swatch.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusXs");
+        swatch.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
 
         if (string.IsNullOrEmpty(hex))
         {
-            swatch.Child = new TextBlock
+            var mark = new TextBlock
             {
                 Text = "✕",
-                FontSize = 9,
                 Foreground = (Brush)Application.Current.FindResource("ForegroundBrush"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
+            mark.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize9");
+            swatch.Child = mark;
         }
 
         panel.Children.Add(swatch);
@@ -518,14 +519,15 @@ public partial class SettingsPage : Page
 
             if (cfg.TypeOptions.Count == 0)
             {
-                TagListPanel.Children.Add(new TextBlock
+                var empty = new TextBlock
                 {
                     Text = LocalizationManager.T("暂无标签，请在上方添加。"),
-                    FontSize = 12,
                     Opacity = 0.5,
                     Foreground = (Brush)FindResource("ForegroundBrush"),
                     Margin = new Thickness(0, 4, 0, 0)
-                });
+                };
+                empty.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
+                TagListPanel.Children.Add(empty);
                 return;
             }
 
@@ -572,9 +574,9 @@ public partial class SettingsPage : Page
             Width = 64,
             Padding = new Thickness(0),
             Margin = new Thickness(8, 0, 0, 0),
-            FontSize = 12,
             Cursor = System.Windows.Input.Cursors.Hand
         };
+        deleteBtn.SetResourceReference(Control.FontSizeProperty, "UiFontSize12");
         deleteBtn.Click += DeleteTag_Click;
 
         var grid = new Grid();
@@ -589,16 +591,17 @@ public partial class SettingsPage : Page
         grid.Children.Add(colorCombo);
         grid.Children.Add(deleteBtn);
 
-        return new Border
+        var row = new Border
         {
             Margin = new Thickness(0, 0, 0, 8),
             Padding = new Thickness(10, 8, 10, 8),
-            CornerRadius = new CornerRadius(6),
             Background = (Brush)FindResource("CardBackgroundBrush"),
             BorderBrush = (Brush)FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             Child = grid
         };
+        row.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusMedium");
+        row.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
+        return row;
     }
 
     private void AddTag_Click(object sender, RoutedEventArgs e)
@@ -809,33 +812,34 @@ public partial class SettingsPage : Page
         var valueBlock = new TextBlock
         {
             Text = value,
-            FontSize = 24,
             FontWeight = FontWeights.Bold,
             Foreground = accent ?? (Brush)FindResource("ForegroundBrush"),
         };
+        valueBlock.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize24");
         var labelBlock = new TextBlock
         {
             Text = label,
-            FontSize = 12,
             Opacity = 0.6,
             Foreground = (Brush)FindResource("ForegroundBrush"),
             Margin = new Thickness(0, 2, 0, 0),
         };
+        labelBlock.SetResourceReference(TextBlock.FontSizeProperty, "UiFontSize12");
         var panel = new StackPanel();
         panel.Children.Add(valueBlock);
         panel.Children.Add(labelBlock);
 
-        return new Border
+        var card = new Border
         {
             MinWidth = 92,
             Margin = new Thickness(0, 0, 16, 8),
             Padding = new Thickness(16, 10, 16, 10),
-            CornerRadius = new CornerRadius(8),
             Background = (Brush)FindResource("CardBackgroundBrush"),
             BorderBrush = (Brush)FindResource("CardBorderBrush"),
-            BorderThickness = new Thickness(1),
             Child = panel,
         };
+        card.SetResourceReference(Border.CornerRadiusProperty, "UiCornerRadiusLarge");
+        card.SetResourceReference(Border.BorderThicknessProperty, "UiBorderThickness");
+        return card;
     }
 
     private void BuildSeverityDist(List<Models.GoalEntry> all)
